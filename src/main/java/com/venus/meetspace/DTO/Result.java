@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Result <T> {
-    private int code;
+    private int code; // 200 - success 400 - fail 500 - auth fail
     private String msg;
     private T data;
 
@@ -30,5 +30,11 @@ public class Result <T> {
         result.setData(null);
         return result;
     }
-
+    public static <T> Result<T> fail(String msg, int code) {
+        Result<T> result = new Result<T>();
+        result.setCode(code);
+        result.setMsg(msg);
+        result.setData(null);
+        return result;
+    }
 }
