@@ -3,7 +3,7 @@ package com.venus.meetspace.DTO;
 import lombok.Data;
 
 @Data
-public class UserDTO {
-    private long id;
+public class RegisterRequest {
     private String username;
+    private String password;
 }

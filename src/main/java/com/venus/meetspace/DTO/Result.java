@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Result <T> {
-    private int code; // 200 - success 400 - fail 500 - auth fail
+    private int code; // 200 - success 400 - fail 500 - system error
     private String msg;
     private T data;
 
