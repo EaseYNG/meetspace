@@ -19,11 +19,12 @@ public class JWTUtil {
     private final String secret = "your-256-bit-secret-key-123456789012345678901234";
     private long expiration = 1000*60*60; // 1 hour
 
-    public String generateUserToken(UserDTO userDTO) {
+    public String generateUserToken(User user) {
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
         Map<String, Object> claim = new HashMap<>();
 
-        claim.put("username", userDTO.getUsername());
+        claim.put("id", user.getId());
+        claim.put("username", user.getUsername());
 
         return Jwts.builder()
                 .setIssuedAt(new Date())
@@ -33,6 +34,7 @@ public class JWTUtil {
                 .compact();
     }
 
+    // 从token获取claims (implements Map)
     private Claims getClaimsFromToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
         return Jwts.parserBuilder()
@@ -47,12 +49,6 @@ public class JWTUtil {
 
         temp.setUsername(claim.get("username", String.class));
         temp.setPassword(claim.get("password", String.class));
-//        temp.setNickname(claim.get("nickname", String.class));
-//        temp.setAge(claim.get("age", Integer.class));
-//        temp.setGender(claim.get("gender", String.class));
-//        temp.setEmail(claim.get("email", String.class));
-//        temp.setFirstname(claim.get("firstname", String.class));
-//        temp.setLastname(claim.get("lastname", String.class));
 
         return temp;
     }

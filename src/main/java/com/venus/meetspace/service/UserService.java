@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserService {
     User findById(long id);
     User findByUsername(String username);
-    Result<User> register(RegisterRequest rq);
+    User register(RegisterRequest rq);
     Result<Void> update(UserDTO userDTO);
     Result<Void> delete(UserDTO userDTO);
     List<User> getAllUsers();

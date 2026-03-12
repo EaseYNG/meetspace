@@ -1,27 +1,29 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.DTO.Result;
+import com.venus.meetspace.DTO.AuthDTO;
 import com.venus.meetspace.entity.User;
+import com.venus.meetspace.exception.BusinessException;
+import com.venus.meetspace.repository.UserRepository;
 import com.venus.meetspace.service.AuthService;
-import com.venus.meetspace.util.JWTUtil;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-    private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final PasswordEncoder pe;
 
-    public AuthServiceImpl(JWTUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
-
-
-    @Override
-    public Result<User> loginSuccess() {
-        return null;
+    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder pe) {
+        this.userRepository = userRepository;
+        this.pe = pe;
     }
 
     @Override
-    public Result<Void> loginFail() {
-        return null;
+    public User login(AuthDTO authDTO) {
+        User temp = userRepository.findByUsername(authDTO.getUsername());
+        if(!pe.matches(authDTO.getPassword(), temp.getPassword()))
+            throw new BusinessException(412, "密码错误");
+
+        return temp;
     }
 }
