@@ -44,16 +44,8 @@ public class JWTUtil {
                 .getBody();
     }
 
-    public User getUserFromClaims(Claims claim) {
-        User temp = new User();
-
-        temp.setUsername(claim.get("username", String.class));
-        temp.setPassword(claim.get("password", String.class));
-
-        return temp;
-    }
-
-    public User getUserFromToken(String token) {
-        return getUserFromClaims(getClaimsFromToken(token));
+    public long getIdFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("id", Long.class);
     }
 }
