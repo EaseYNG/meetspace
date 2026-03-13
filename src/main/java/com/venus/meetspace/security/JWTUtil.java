@@ -1,6 +1,5 @@
-package com.venus.meetspace.util;
+package com.venus.meetspace.security;
 
-import com.venus.meetspace.DTO.UserDTO;
 import com.venus.meetspace.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

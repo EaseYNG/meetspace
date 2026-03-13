@@ -1,8 +1,7 @@
 package com.venus.meetspace.service;
 
+import com.venus.meetspace.DTO.Profile;
 import com.venus.meetspace.DTO.RegisterRequest;
-import com.venus.meetspace.DTO.Result;
-import com.venus.meetspace.DTO.UserDTO;
 import com.venus.meetspace.entity.User;
 
 import java.util.List;
@@ -11,7 +10,6 @@ public interface UserService {
     User findById(long id);
     User findByUsername(String username);
     User register(RegisterRequest rq);
-    Result<Void> update(UserDTO userDTO);
-    Result<Void> delete(UserDTO userDTO);
-    List<User> getAllUsers();
+    void setProfile(Profile temp, long id); // 接受Controller发送的Profile
+    Profile getProfile(long id); // 获取某用户的Profile
 }

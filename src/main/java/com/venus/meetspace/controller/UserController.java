@@ -3,15 +3,10 @@ package com.venus.meetspace.controller;
 import com.venus.meetspace.DTO.AuthDTO;
 import com.venus.meetspace.DTO.RegisterRequest;
 import com.venus.meetspace.DTO.Result;
-import com.venus.meetspace.VO.UserVO;
-import com.venus.meetspace.entity.User;
 import com.venus.meetspace.service.impl.AuthServiceImpl;
 import com.venus.meetspace.service.impl.UserServiceImpl;
-import com.venus.meetspace.util.JWTUtil;
+import com.venus.meetspace.security.JWTUtil;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @RestController
@@ -29,24 +24,15 @@ public class UserController {
 
     // 注册必须提供nickname, username, password
     @PostMapping("/register")
-    public Result<UserVO> register(@RequestBody RegisterRequest rq) {
-        UserVO vo = usi.toVO(usi.register(rq));
-        return Result.success(vo, "用户创建成功！");
+    public Result<Void> register(@RequestBody RegisterRequest rq) {
+        usi.register(rq);
+        return Result.success(null, "用户创建成功！");
     }
 
     @PostMapping("/login")
     public Result<String> login(@RequestBody AuthDTO authDTO) {
         String token = jwtUtil.generateUserToken(asi.login(authDTO));
         return Result.success(token, "登录成功！");
-    }
-
-    @GetMapping("/display")
-    public Result<List<UserVO>> displayAllUsers() {
-        List<UserVO> vos = new ArrayList<>();
-        for(User u : usi.getAllUsers()) {
-            vos.add(usi.toVO(u));
-        }
-        return Result.success(vos);
     }
 
     @GetMapping("/test")

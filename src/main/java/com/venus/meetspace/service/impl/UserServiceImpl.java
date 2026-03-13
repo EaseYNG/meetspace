@@ -1,17 +1,13 @@
 package com.venus.meetspace.service.impl;
 
+import com.venus.meetspace.DTO.Profile;
 import com.venus.meetspace.DTO.RegisterRequest;
-import com.venus.meetspace.DTO.Result;
-import com.venus.meetspace.DTO.UserDTO;
-import com.venus.meetspace.VO.UserVO;
 import com.venus.meetspace.entity.User;
 import com.venus.meetspace.exception.BusinessException;
 import com.venus.meetspace.repository.UserRepository;
 import com.venus.meetspace.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -46,39 +42,28 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return user;
     }
+    @Override
+    public void setProfile(Profile temp, long id) {
+        User user = this.findById(id);
+
+        user.setAge(temp.getAge());
+        user.setGender(temp.getGender());
+        user.setEmail(temp.getEmail());
+        user.setFirstname(temp.getFirstname());
+        user.setLastname(temp.getLastname());
+    }
 
     @Override
-    public Result<Void> update(UserDTO userDTO) {
-        return null;
-    }
+    public Profile getProfile(long id) {
+        Profile profile = new Profile();
+        User user = this.findById(id);
 
-    @Override
-    public Result<Void> delete(UserDTO userDTO) {
-        return null;
-    }
+        profile.setAge(user.getAge());
+        profile.setGender(user.getGender());
+        profile.setEmail(user.getEmail());
+        profile.setFirstname(user.getFirstname());
+        profile.setLastname(user.getLastname());
 
-    @Override
-    public List<User> getAllUsers() {
-        return (List<User>) userRepository.findAll();
-    }
-
-
-    // UserDTO, UserVO, User 间转换方法
-    public User toUser(UserDTO userDTO) {
-        User temp = new User();
-        temp.setUsername(userDTO.getUsername());
-        return temp;
-    }
-    public UserDTO toDTO(User user) {
-        UserDTO temp = new UserDTO();
-        temp.setUsername(user.getUsername());
-        temp.setId(user.getId());
-        return temp;
-    }
-    public UserVO toVO(User user) {
-        UserVO temp = new UserVO();
-        temp.setUsername(user.getUsername());
-        temp.setNickname(user.getNickname());
-        return temp;
+        return profile;
     }
 }

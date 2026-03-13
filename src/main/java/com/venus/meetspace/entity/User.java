@@ -14,13 +14,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(unique=true, nullable=false)
+    @Column(unique = true, nullable = false)
+    private String nickname;
+    @Column(nullable=false)
     private String username;
     @Column(nullable=false)
     private String password;
 
-    // 登陆后属性
-    private String nickname;
+    // 登陆后属性(profile)
     private int age;
     private String gender;
     private String email;
