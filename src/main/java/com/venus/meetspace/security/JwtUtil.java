@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class JWTUtil {
+public class JwtUtil {
 
     private final String secret = "your-256-bit-secret-key-123456789012345678901234";
     private long expiration = 1000*60*60; // 1 hour

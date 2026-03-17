@@ -1,9 +1,9 @@
-package com.venus.meetspace.DTO;
+package com.venus.meetspace.DTO.request;
 
 import lombok.Data;
 
 @Data
-public class AuthDTO {
+public class AuthRequest {
     private String username;
     private String password;
 }

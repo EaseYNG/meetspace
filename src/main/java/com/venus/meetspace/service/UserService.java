@@ -1,10 +1,10 @@
 package com.venus.meetspace.service;
 
-import com.venus.meetspace.DTO.Profile;
-import com.venus.meetspace.DTO.RegisterRequest;
+import com.venus.meetspace.DTO.request.RegisterRequest;
+import com.venus.meetspace.DTO.response.Profile;
 import com.venus.meetspace.entity.User;
 
-import java.util.List;
+
 
 public interface UserService {
     User findById(long id);

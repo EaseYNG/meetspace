@@ -1,6 +1,6 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.DTO.Profile;
+import com.venus.meetspace.DTO.response.Profile;
 import com.venus.meetspace.entity.User;
 import com.venus.meetspace.service.HomeService;
 import org.springframework.stereotype.Service;

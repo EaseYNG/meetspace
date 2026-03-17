@@ -1,11 +1,11 @@
 package com.venus.meetspace.controller;
 
-import com.venus.meetspace.DTO.AuthDTO;
-import com.venus.meetspace.DTO.RegisterRequest;
 import com.venus.meetspace.DTO.Result;
+import com.venus.meetspace.DTO.request.AuthRequest;
+import com.venus.meetspace.DTO.request.RegisterRequest;
 import com.venus.meetspace.service.impl.AuthServiceImpl;
 import com.venus.meetspace.service.impl.UserServiceImpl;
-import com.venus.meetspace.security.JWTUtil;
+import com.venus.meetspace.security.JwtUtil;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserServiceImpl usi;
     private final AuthServiceImpl asi;
-    private final JWTUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    public UserController(UserServiceImpl usi, AuthServiceImpl asi, JWTUtil jwtUtil) {
+    public UserController(UserServiceImpl usi, AuthServiceImpl asi, JwtUtil jwtUtil) {
         this.usi = usi;
         this.asi = asi;
         this.jwtUtil = jwtUtil;
@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Result<String> login(@RequestBody AuthDTO authDTO) {
+    public Result<String> login(@RequestBody AuthRequest authDTO) {
         String token = jwtUtil.generateUserToken(asi.login(authDTO));
         return Result.success(token, "登录成功！");
     }

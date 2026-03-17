@@ -1,25 +1,25 @@
 package com.venus.meetspace.config;
 
-import com.venus.meetspace.security.JWTInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import com.venus.meetspace.security.JwtInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Autowired
-    private JWTInterceptor jwtInterceptor;
+    private final JwtInterceptor jwtInterceptor;
 
-    // 注册JWT拦截器
-    @Bean
+    public WebConfig(JwtInterceptor jwtInterceptor) {
+        this.jwtInterceptor = jwtInterceptor;
+    }
+
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/**")
+        registry.addInterceptor(this.jwtInterceptor)
+                .addPathPatterns("/home")
                 .excludePathPatterns(
-                        "/user/register",
-                        "/user/login"
+                        "/user/login",
+                        "/user/register"
                 );
     }
 }
