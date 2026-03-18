@@ -1,13 +1,17 @@
 package com.venus.meetspace.service.impl;
 
 import com.venus.meetspace.DTO.request.RegisterRequest;
-import com.venus.meetspace.DTO.response.Profile;
+import com.venus.meetspace.DTO.Profile;
 import com.venus.meetspace.entity.User;
 import com.venus.meetspace.exception.BusinessException;
 import com.venus.meetspace.repository.UserRepository;
 import com.venus.meetspace.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,6 +31,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public List<User> findAll() {
+        List<User> users = new ArrayList<>();
+        users.addAll((Collection<? extends User>) userRepository.findAll());
+        return users;
     }
 
     @Override
@@ -51,6 +61,8 @@ public class UserServiceImpl implements UserService {
         user.setEmail(temp.getEmail());
         user.setFirstname(temp.getFirstname());
         user.setLastname(temp.getLastname());
+        
+        userRepository.save(user);
     }
 
     @Override
@@ -65,5 +77,10 @@ public class UserServiceImpl implements UserService {
         profile.setLastname(user.getLastname());
 
         return profile;
+    }
+
+    @Override
+    public void save(User user) {
+        userRepository.save(user);
     }
 }

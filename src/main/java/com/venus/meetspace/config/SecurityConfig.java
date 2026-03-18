@@ -19,8 +19,10 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable()) // 关闭CSRF
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 启用CORS
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // 所有请求允许
-                );
+                        .requestMatchers("/user/register", "/user/login", "/h2-console/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
         return http.build();
     }
 

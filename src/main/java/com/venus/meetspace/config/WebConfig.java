@@ -16,10 +16,12 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(this.jwtInterceptor)
-                .addPathPatterns("/home")
+                .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/user/login",
-                        "/user/register"
+                        "/user/register",
+                        "/h2-console",
+                        "/db/**"
                 );
     }
 }
