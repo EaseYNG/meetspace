@@ -1,14 +1,16 @@
 package com.venus.meetspace.controller;
 
+import com.venus.meetspace.annotation.CurrentUserId;
+import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.common.Result;
 import com.venus.meetspace.DTO.Profile;
-import com.venus.meetspace.security.UserContext;
 import com.venus.meetspace.service.impl.HomeServiceImpl;
 import com.venus.meetspace.service.impl.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/home")
+@Log
 public class HomeController {
     private final UserServiceImpl usi;
     private final HomeServiceImpl hsi;
@@ -19,19 +21,18 @@ public class HomeController {
     }
 
     @GetMapping("")
-    public Result<Profile> home() {
-        long id = UserContext.get(); // 获取已存入的userId
-        return Result.success(usi.getProfile(id), "已获取用户profile！");
+    public Result<Profile> home(@CurrentUserId Long userId) {
+        return Result.success(null, "主页");
     }
 
     @PostMapping("/profile")
-    public Result<Void> setProfile(@RequestBody Profile p) {
-        hsi.setProfile(p);
-        return Result.success(null, "已修改Profile");
+    public Result<Void> setProfile(@RequestBody Profile p, @CurrentUserId Long userId) {
+        hsi.setProfile(p, userId);
+        return Result.success(null, "已修改用户Profile");
     }
 
     @GetMapping("/profile")
-    public Result<Profile> getProfile() {
-        return null;
+    public Result<Profile> getProfile(@CurrentUserId Long userId) {
+        return Result.success(usi.getProfile(userId), "已获取用户Profile！");
     }
 }

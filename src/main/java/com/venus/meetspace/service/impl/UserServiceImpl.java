@@ -33,12 +33,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
-    public List<User> findAll() {
-        List<User> users = new ArrayList<>();
-        users.addAll((Collection<? extends User>) userRepository.findAll());
-        return users;
-    }
-
     @Override
     public User register(RegisterRequest rq) {
         if(this.userRepository.findByUsername(rq.getUsername()) != null) {

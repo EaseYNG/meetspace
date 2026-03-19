@@ -17,10 +17,9 @@ public class HomeServiceImpl implements HomeService {
 
 
     @Override
-    public void setProfile(Profile profile) {
+    public void setProfile(Profile profile, long id) {
         if(UserContext.get() == null) throw new RuntimeException("未登录");
 
-        long id = UserContext.get();
         User current = usi.findById(id);
         current.setAge(profile.getAge());
         current.setGender(profile.getGender());

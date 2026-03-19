@@ -1,7 +1,6 @@
 package com.venus.meetspace.aspect;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -29,7 +28,7 @@ public class LogAspect {
     }
 
     @Pointcut("@annotation(com.venus.meetspace.annotation.Log) || " +
-            "@within(com.venus.meetspace.annotation.Log)") // 标识在类和方法上都可用
+            "@within(com.venus.meetspace.annotation.Log)")
     public void logPointCut() {}
 
     @Around("logPointCut()")
@@ -53,7 +52,7 @@ public class LogAspect {
         try {
             result = joinPoint.proceed(); // 执行原方法
         } catch (Exception e) {
-            log.error("执行异常", e);
+            log.error("方法执行异常", e);
             throw e;
         }
 

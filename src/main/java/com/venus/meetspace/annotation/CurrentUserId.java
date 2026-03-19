@@ -6,14 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author Void Yang <br>
- * {@code @Target} 表明这个注解用于方法<br>
- * {@code @Retention} 表明滞留策略<br>
- * 本注解用于标识Log切点
+ * 用于在Controller中标识需要获取当前用户Id
  */
 
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Log {
+public @interface CurrentUserId {
     String value() default "";
 }
