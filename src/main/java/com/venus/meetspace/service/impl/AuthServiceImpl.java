@@ -1,6 +1,6 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.DTO.request.AuthRequest;
+import com.venus.meetspace.dto.request.AuthRequest;
 import com.venus.meetspace.entity.User;
 import com.venus.meetspace.exception.BusinessException;
 import com.venus.meetspace.repository.UserRepository;
@@ -22,7 +22,7 @@ public class AuthServiceImpl implements AuthService {
     public User login(AuthRequest authDTO) {
         User temp = userRepository.findByUsername(authDTO.getUsername());
         if(!pe.matches(authDTO.getPassword(), temp.getPassword()))
-            throw new BusinessException(412, "密码错误");
+            throw new BusinessException(401, "密码错误");
 
         return temp;
     }

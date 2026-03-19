@@ -34,8 +34,4 @@ public class User {
         this.firstname = firstname;
         this.lastname = lastname;
     }
-
-    public String toString() {
-        return String.format("id: %l, username: %s", id, username);
-    }
 }

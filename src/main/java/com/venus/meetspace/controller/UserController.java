@@ -1,8 +1,8 @@
 package com.venus.meetspace.controller;
 
 import com.venus.meetspace.common.Result;
-import com.venus.meetspace.DTO.request.AuthRequest;
-import com.venus.meetspace.DTO.request.RegisterRequest;
+import com.venus.meetspace.dto.request.AuthRequest;
+import com.venus.meetspace.dto.request.RegisterRequest;
 import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.service.impl.AuthServiceImpl;
 import com.venus.meetspace.service.impl.UserServiceImpl;

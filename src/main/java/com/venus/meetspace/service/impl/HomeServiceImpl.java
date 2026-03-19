@@ -1,8 +1,5 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.DTO.Profile;
-import com.venus.meetspace.entity.User;
-import com.venus.meetspace.security.UserContext;
 import com.venus.meetspace.service.HomeService;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +13,4 @@ public class HomeServiceImpl implements HomeService {
     }
 
 
-    @Override
-    public void setProfile(Profile profile, long id) {
-        if(UserContext.get() == null) throw new RuntimeException("未登录");
-
-        User current = usi.findById(id);
-        current.setAge(profile.getAge());
-        current.setGender(profile.getGender());
-        current.setEmail(profile.getEmail());
-        current.setFirstname(profile.getFirstname());
-        current.setLastname(profile.getLastname());
-        
-        usi.save(current);
-    }
 }

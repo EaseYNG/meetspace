@@ -1,4 +1,4 @@
-package com.venus.meetspace.DTO.request;
+package com.venus.meetspace.dto.request;
 
 import lombok.Data;
 

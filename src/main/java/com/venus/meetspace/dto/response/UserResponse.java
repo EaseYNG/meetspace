@@ -1,6 +1,5 @@
-package com.venus.meetspace.DTO.response;
+package com.venus.meetspace.dto.response;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data

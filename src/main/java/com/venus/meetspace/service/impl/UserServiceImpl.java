@@ -1,17 +1,13 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.DTO.request.RegisterRequest;
-import com.venus.meetspace.DTO.Profile;
+import com.venus.meetspace.dto.request.RegisterRequest;
+import com.venus.meetspace.dto.Profile;
 import com.venus.meetspace.entity.User;
 import com.venus.meetspace.exception.BusinessException;
 import com.venus.meetspace.repository.UserRepository;
 import com.venus.meetspace.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,9 +30,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(RegisterRequest rq) {
+    public void register(RegisterRequest rq) {
         if(this.userRepository.findByUsername(rq.getUsername()) != null) {
-            throw new BusinessException(411, "用户已存在"); // 用户已存在
+            throw new BusinessException(405, "用户已存在"); // 用户已存在
         }
 
         User user = new User();
@@ -44,7 +40,6 @@ public class UserServiceImpl implements UserService {
         user.setUsername(rq.getUsername());
         user.setPassword(pe.encode(rq.getPassword()));
         userRepository.save(user);
-        return user;
     }
     @Override
     public void setProfile(Profile temp, long id) {
