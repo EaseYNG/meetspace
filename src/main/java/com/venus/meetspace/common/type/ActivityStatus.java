@@ -1,4 +1,4 @@
-package com.venus.meetspace.type;
+package com.venus.meetspace.common.type;
 
 public enum ActivityStatus {
     READY, CLOSED, OVER

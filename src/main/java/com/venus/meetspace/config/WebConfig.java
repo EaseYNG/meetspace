@@ -20,8 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/user/login",
                         "/user/register",
-                        "/h2-console",
-                        "/db/**"
+                        "/h2-console/**",
+                        "/user/test",
+                        "/error/**"
                 );
     }
 }

@@ -1,6 +1,6 @@
 package com.venus.meetspace.util;
 
-import com.venus.meetspace.DTO.Result;
+import com.venus.meetspace.common.Result;
 import com.venus.meetspace.DTO.response.UserResponse;
 import com.venus.meetspace.entity.User;
 import com.venus.meetspace.service.impl.UserServiceImpl;

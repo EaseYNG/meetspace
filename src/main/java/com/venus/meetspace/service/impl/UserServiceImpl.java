@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         user.setFirstname(temp.getFirstname());
         user.setLastname(temp.getLastname());
         
-        userRepository.save(user);
+        userRepository.save(user); // 保存至db
     }
 
     @Override

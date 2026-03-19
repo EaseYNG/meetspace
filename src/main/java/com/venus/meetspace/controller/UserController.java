@@ -1,8 +1,9 @@
 package com.venus.meetspace.controller;
 
-import com.venus.meetspace.DTO.Result;
+import com.venus.meetspace.common.Result;
 import com.venus.meetspace.DTO.request.AuthRequest;
 import com.venus.meetspace.DTO.request.RegisterRequest;
+import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.service.impl.AuthServiceImpl;
 import com.venus.meetspace.service.impl.UserServiceImpl;
 import com.venus.meetspace.security.JwtUtil;
@@ -23,6 +24,7 @@ public class UserController {
     }
 
     // 注册必须提供nickname, username, password
+    @Log
     @PostMapping("/register")
     public Result<Void> register(@RequestBody RegisterRequest rq) {
         usi.register(rq);
@@ -30,12 +32,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @Log
     public Result<String> login(@RequestBody AuthRequest authDTO) {
         String token = jwtUtil.generateUserToken(asi.login(authDTO));
         return Result.success(token, "登录成功！");
     }
 
     @GetMapping("/test")
+    @Log
     public String test() {
         return "ok";
     }

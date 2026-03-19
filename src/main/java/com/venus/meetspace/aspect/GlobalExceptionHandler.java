@@ -1,6 +1,7 @@
-package com.venus.meetspace.exception;
+package com.venus.meetspace.aspect;
 
-import com.venus.meetspace.DTO.Result;
+import com.venus.meetspace.common.Result;
+import com.venus.meetspace.exception.BusinessException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

@@ -13,8 +13,4 @@ public class MeetspaceApplication {
         SpringApplication.run(MeetspaceApplication.class, args);
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }

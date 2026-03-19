@@ -1,6 +1,6 @@
 package com.venus.meetspace.entity;
 
-import com.venus.meetspace.type.ActivityStatus;
+import com.venus.meetspace.common.type.ActivityStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

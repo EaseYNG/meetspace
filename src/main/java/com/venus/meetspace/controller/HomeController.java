@@ -1,6 +1,6 @@
 package com.venus.meetspace.controller;
 
-import com.venus.meetspace.DTO.Result;
+import com.venus.meetspace.common.Result;
 import com.venus.meetspace.DTO.Profile;
 import com.venus.meetspace.security.UserContext;
 import com.venus.meetspace.service.impl.HomeServiceImpl;
