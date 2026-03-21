@@ -1,13 +1,14 @@
 package com.venus.meetspace.service;
 
-import com.venus.meetspace.dto.request.ActivityRequest;
+import com.venus.meetspace.dto.request.ActivityCreateRequest;
+import com.venus.meetspace.dto.request.ActivityUpdateRequest;
 import com.venus.meetspace.dto.response.ActivityResponse;
 
 import java.util.List;
 
 public interface ActivityService {
-    void createActivity(ActivityRequest activityRequest, Long ownerId);
-    void updateActivity(long id, ActivityRequest activityRequest, Long ownerId);
+    void createActivity(ActivityCreateRequest activityRequest, Long ownerId);
+    void updateActivity(long id, ActivityUpdateRequest activityUpdateRequest, Long ownerId);
     void deleteActivity(long id);
 
     /**

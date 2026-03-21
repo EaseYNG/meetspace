@@ -3,7 +3,8 @@ package com.venus.meetspace.controller;
 import com.venus.meetspace.annotation.CurrentUserId;
 import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.common.Result;
-import com.venus.meetspace.dto.request.ActivityRequest;
+import com.venus.meetspace.dto.request.ActivityCreateRequest;
+import com.venus.meetspace.dto.request.ActivityUpdateRequest;
 import com.venus.meetspace.dto.response.ActivityResponse;
 import com.venus.meetspace.service.impl.ActivityServiceImpl;
 import org.springframework.web.bind.annotation.*;
@@ -21,16 +22,16 @@ public class ActivityController {
     }
 
     @PostMapping("/create")
-    public Result<Void> createActivity(@RequestBody ActivityRequest ar,
+    public Result<Void> createActivity(@RequestBody ActivityCreateRequest ar,
                                        @CurrentUserId Long userId) {
         asi.createActivity(ar, userId);
 
         return Result.success(null, "活动创建成功！");
     }
 
-    @PutMapping("/update")
-    public Result<Void> updateActivity(@RequestParam Long activityId,
-                                       @RequestBody ActivityRequest ar,
+    @PatchMapping("/update/{activityId}")
+    public Result<Void> updateActivity(@PathVariable Long activityId,
+                                       @RequestBody ActivityUpdateRequest ar,
                                        @CurrentUserId Long userId) {
         asi.updateActivity(activityId, ar, userId);
 
