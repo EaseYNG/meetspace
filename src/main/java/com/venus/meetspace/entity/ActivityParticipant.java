@@ -8,6 +8,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "activity_participant")
 public class ActivityParticipant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

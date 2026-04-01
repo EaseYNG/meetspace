@@ -30,7 +30,7 @@ public class Activity {
     private String description;
     @Column(nullable = false)
     private String address;
-
+    @Column(nullable = false)
     private ActivityStatus status;
 
     private String image;

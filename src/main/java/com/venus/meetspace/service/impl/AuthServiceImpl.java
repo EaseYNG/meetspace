@@ -20,7 +20,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User login(AuthRequest authDTO) {
-        User temp = userRepository.findByUsername(authDTO.getUsername());
+        userRepository.findByUsername(authDTO.getUsername())
+                .orElseThrow(() -> new BusinessException(404, "用户未找到！"));
+        User temp = userRepository.findByUsername(authDTO.getUsername()).get();
         if(!pe.matches(authDTO.getPassword(), temp.getPassword()))
             throw new BusinessException(401, "密码错误");
 

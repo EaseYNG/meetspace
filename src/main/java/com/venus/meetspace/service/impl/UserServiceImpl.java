@@ -9,6 +9,8 @@ import com.venus.meetspace.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -20,20 +22,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(long id) {
+    public Optional<User> findById(long id) {
         return userRepository.findById(id);
     }
 
     @Override
-    public User findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     @Override
     public void register(RegisterRequest rq) {
-        if(this.userRepository.findByUsername(rq.getUsername()) != null) {
-            throw new BusinessException(405, "用户已存在"); // 用户已存在
-        }
+        this.userRepository.findByUsername(rq.getUsername())
+                .orElseThrow(() -> new BusinessException(405, "用户不存在！"));
 
         User user = new User();
         user.setNickname(rq.getNickname());
@@ -43,21 +44,24 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public void setProfile(Profile temp, long id) {
-        User user = this.findById(id);
-
+        this.findById(id)
+                .orElseThrow(() -> new BusinessException(404, "用户未找到！"));
+        User user = this.findById(id).get();
         user.setAge(temp.getAge());
         user.setGender(temp.getGender());
         user.setEmail(temp.getEmail());
         user.setFirstname(temp.getFirstname());
         user.setLastname(temp.getLastname());
-        
+
         userRepository.save(user); // 保存至db
     }
 
     @Override
     public Profile getProfile(long id) {
         Profile profile = new Profile();
-        User user = this.findById(id);
+        this.findById(id)
+                .orElseThrow(() -> new BusinessException(404, "用户未找到！"));
+        User user = this.findById(id).get();
 
         profile.setAge(user.getAge());
         profile.setGender(user.getGender());

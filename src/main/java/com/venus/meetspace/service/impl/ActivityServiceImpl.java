@@ -1,5 +1,6 @@
 package com.venus.meetspace.service.impl;
 
+import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.common.type.ActivityStatus;
 import com.venus.meetspace.dto.request.ActivityCreateRequest;
 import com.venus.meetspace.dto.request.ActivityUpdateRequest;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Log
 public class ActivityServiceImpl implements ActivityService {
 
     private final ActivityRepository activityRepository;
@@ -42,8 +44,10 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public void updateActivity(long id, ActivityUpdateRequest activityUpdateRequest, Long ownerId) {
-        Activity activity = activityRepository.findById(id);
+    public void updateActivity(Long id, ActivityUpdateRequest activityUpdateRequest, Long ownerId) {
+        activityRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
+        Activity activity = activityRepository.findById(id).get();
 
         if(activity.getStatus() == ActivityStatus.CLOSED ||
                 activity.getStatus() == ActivityStatus.DELETED) {
@@ -56,28 +60,24 @@ public class ActivityServiceImpl implements ActivityService {
 
 
     @Override
-    public void deleteActivity(long id) {
-        Activity activity = activityRepository.findById(id);
+    public void deleteActivity(Long id) {
+        activityRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
+        Activity activity = activityRepository.findById(id).get();
         activity.setStatus(ActivityStatus.DELETED); // 设置活动状态
-
         activityRepository.save(activity);
     }
 
     @Override
-    public ActivityResponse getActivityById(long id) {
-        Activity activity;
-        try {
-            activity = activityRepository.findById(id);
-        } catch (Exception e) {
-            throw new BusinessException(407, "未找到该活动！");
-        }
-
-        ActivityResponse ar = activityMapper.toResponse(activity);
-        return ar;
+    public ActivityResponse getActivityById(Long id) {
+        activityRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
+        Activity activity = activityRepository.findById(id).get();
+        return activityMapper.toResponse(activity);
     }
 
     @Override
-    public List<ActivityResponse> getActivityByOwnerId(long id) {
+    public List<ActivityResponse> getActivityByOwnerId(Long id) {
         List<Activity> temp = activityRepository.findByOwnerId(id);
         if(temp == null) {
             throw new BusinessException(407, "获取活动列表失败！");
@@ -86,7 +86,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public List<ActivityResponse> getActiveActivityByOwnerId(long id) {
+    public List<ActivityResponse> getActiveActivityByOwnerId(Long id) {
 
         return List.of();
     }
