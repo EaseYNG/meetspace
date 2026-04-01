@@ -45,9 +45,8 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public void updateActivity(Long id, ActivityUpdateRequest activityUpdateRequest, Long ownerId) {
-        activityRepository.findById(id)
+        Activity activity = activityRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
-        Activity activity = activityRepository.findById(id).get();
 
         if(activity.getStatus() == ActivityStatus.CLOSED ||
                 activity.getStatus() == ActivityStatus.DELETED) {
@@ -61,27 +60,23 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public void deleteActivity(Long id) {
-        activityRepository.findById(id)
+        Activity activity = activityRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
-        Activity activity = activityRepository.findById(id).get();
         activity.setStatus(ActivityStatus.DELETED); // 设置活动状态
         activityRepository.save(activity);
     }
 
     @Override
     public ActivityResponse getActivityById(Long id) {
-        activityRepository.findById(id)
+        Activity activity = activityRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
-        Activity activity = activityRepository.findById(id).get();
         return activityMapper.toResponse(activity);
     }
 
     @Override
     public List<ActivityResponse> getActivityByOwnerId(Long id) {
-        List<Activity> temp = activityRepository.findByOwnerId(id);
-        if(temp == null) {
-            throw new BusinessException(407, "获取活动列表失败！");
-        }
+        List<Activity> temp = activityRepository.findByOwnerId(id)
+                .orElseThrow(() -> new BusinessException(408, "该用户没有创建活动！"));
         return activityMapper.toResponseList(temp);
     }
 

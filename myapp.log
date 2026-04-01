@@ -2574,3 +2574,380 @@ This generated password is for development use only. Your security configuration
 2026-04-01 21:48:47.025 [SpringApplicationShutdownHook] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-04-01 21:48:47.026 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-04-01 21:48:47.028 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-01 22:50:53.894 [main] INFO  com.venus.meetspace.MeetspaceApplication - Starting MeetspaceApplication using Java 17.0.17 with PID 21144 (E:\dev\JavaProjects\meetspace\meetspace\target\classes started by Void in E:\dev\JavaProjects\meetspace\meetspace)
+2026-04-01 22:50:53.897 [main] INFO  com.venus.meetspace.MeetspaceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-01 22:50:54.334 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-01 22:50:54.375 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 36 ms. Found 3 JPA repository interfaces.
+2026-04-01 22:50:54.710 [main] INFO  org.springframework.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-04-01 22:50:54.718 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-01 22:50:54.718 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.18]
+2026-04-01 22:50:54.753 [main] INFO  o.s.b.w.c.servlet.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 769 ms
+2026-04-01 22:50:54.871 [main] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-01 22:50:54.908 [main] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.4.Final
+2026-04-01 22:50:55.144 [main] INFO  o.s.o.j.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-01 22:50:55.160 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-01 22:50:55.245 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@33e8694b
+2026-04-01 22:50:55.246 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-01 22:50:55.275 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-01 22:50:55.292 [main] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/meetspace_db?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.4.8
+	Default catalog/schema: meetspace_db/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-01 22:50:55.858 [main] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-01 22:50:55.883 [main] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-01 22:50:55.962 [main] INFO  o.s.d.jpa.repository.query.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-01 22:50:56.288 [main] WARN  o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-01 22:50:56.302 [main] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 7d03f306-a984-45b6-9526-73dd96e331fc
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-04-01 22:50:56.306 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-04-01 22:50:56.657 [main] INFO  org.springframework.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-04-01 22:50:56.659 [main] INFO  com.venus.meetspace.MeetspaceApplication - Started MeetspaceApplication in 3.07 seconds (process running for 3.41)
+2026-04-01 22:55:15.832 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-01 22:55:15.832 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-04-01 22:55:15.833 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-04-01 22:57:34.668 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 22:57:34.668 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/user/login
+2026-04-01 22:57:34.668 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - method: POST
+2026-04-01 22:57:34.668 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.UserController
+2026-04-01 22:57:34.680 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - args: [{"password":"test","username":"test"}]
+2026-04-01 22:57:34.738 [http-nio-8080-exec-4] ERROR com.venus.meetspace.aspect.LogAspect - 方法执行异常
+com.venus.meetspace.exception.BusinessException: 用户未找到！
+	at com.venus.meetspace.service.impl.AuthServiceImpl.lambda$login$0(AuthServiceImpl.java:24)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.venus.meetspace.service.impl.AuthServiceImpl.login(AuthServiceImpl.java:24)
+	at com.venus.meetspace.controller.UserController.login(UserController.java:36)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:82)
+	at com.venus.meetspace.aspect.LogAspect.around(LogAspect.java:53)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:648)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:630)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:70)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:168)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
+	at com.venus.meetspace.controller.UserController$$SpringCGLIB$$0.login(<generated>)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:235)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:371)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:181)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:110)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:96)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:237)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:317)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:355)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:272)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+2026-04-01 23:04:05.295 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:05.295 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/user/login
+2026-04-01 23:04:05.295 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - method: POST
+2026-04-01 23:04:05.295 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.UserController
+2026-04-01 23:04:05.296 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - args: [{"password":"123456","username":"admin"}]
+2026-04-01 23:04:05.378 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":"eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImV4cCI6MTc3NTA1OTQ0NX0.NVVLnwia4B7DQnH9w_n3bgruJeDO6LCpp8MVxaJdmaE","msg":"登录成功！"}
+2026-04-01 23:04:05.378 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - duration: 83 ms
+2026-04-01 23:04:06.524 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:06.524 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:06.524 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:06.525 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.ActivityController
+2026-04-01 23:04:06.525 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:06.526 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:06.526 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:06.526 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:06.526 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.service.impl.ActivityServiceImpl
+2026-04-01 23:04:06.526 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:06.532 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - response: [{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}]
+2026-04-01 23:04:06.532 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - duration: 4 ms
+2026-04-01 23:04:06.532 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":[{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}],"msg":null}
+2026-04-01 23:04:06.533 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - duration: 8 ms
+2026-04-01 23:04:14.823 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:14.823 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:14.823 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:14.823 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.ActivityController
+2026-04-01 23:04:14.823 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:14.823 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:14.823 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:14.823 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:14.823 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.service.impl.ActivityServiceImpl
+2026-04-01 23:04:14.823 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:14.826 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - response: [{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}]
+2026-04-01 23:04:14.826 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - duration: 3 ms
+2026-04-01 23:04:14.826 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":[{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}],"msg":null}
+2026-04-01 23:04:14.826 [http-nio-8080-exec-1] INFO  com.venus.meetspace.aspect.LogAspect - duration: 3 ms
+2026-04-01 23:04:16.213 [http-nio-8080-exec-2] WARN  o.s.w.s.m.support.DefaultHandlerExceptionResolver - Resolved [org.springframework.web.method.annotation.MethodArgumentTypeMismatchException: Method parameter 'participantId': Failed to convert value of type 'java.lang.String' to required type 'java.lang.Long'; For input string: "null"]
+2026-04-01 23:04:16.749 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:16.749 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:16.749 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:16.749 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.ActivityController
+2026-04-01 23:04:16.749 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:16.749 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:16.749 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:16.749 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:16.749 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.service.impl.ActivityServiceImpl
+2026-04-01 23:04:16.749 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:16.751 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - response: [{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}]
+2026-04-01 23:04:16.751 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - duration: 2 ms
+2026-04-01 23:04:16.751 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":[{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}],"msg":null}
+2026-04-01 23:04:16.751 [http-nio-8080-exec-3] INFO  com.venus.meetspace.aspect.LogAspect - duration: 2 ms
+2026-04-01 23:04:18.632 [http-nio-8080-exec-6] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:18.632 [http-nio-8080-exec-6] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/home/profile
+2026-04-01 23:04:18.632 [http-nio-8080-exec-6] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:18.632 [http-nio-8080-exec-6] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.HomeController
+2026-04-01 23:04:18.632 [http-nio-8080-exec-6] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:18.644 [http-nio-8080-exec-6] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":{"age":20,"email":"admin@email.com","firstname":"Void","gender":"male","lastname":"Yang"},"msg":"已获取用户Profile！"}
+2026-04-01 23:04:18.645 [http-nio-8080-exec-6] INFO  com.venus.meetspace.aspect.LogAspect - duration: 12 ms
+2026-04-01 23:04:28.997 [http-nio-8080-exec-5] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:28.997 [http-nio-8080-exec-5] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/home/profile
+2026-04-01 23:04:28.997 [http-nio-8080-exec-5] INFO  com.venus.meetspace.aspect.LogAspect - method: POST
+2026-04-01 23:04:28.997 [http-nio-8080-exec-5] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.HomeController
+2026-04-01 23:04:28.998 [http-nio-8080-exec-5] INFO  com.venus.meetspace.aspect.LogAspect - args: [{"age":20,"email":"admin@email.com","firstname":"Void","gender":"male","lastname":"Yang"},1]
+2026-04-01 23:04:29.006 [http-nio-8080-exec-5] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":null,"msg":"已修改用户Profile"}
+2026-04-01 23:04:29.006 [http-nio-8080-exec-5] INFO  com.venus.meetspace.aspect.LogAspect - duration: 9 ms
+2026-04-01 23:04:30.455 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:30.455 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:30.455 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:30.455 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.ActivityController
+2026-04-01 23:04:30.455 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:30.455 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:30.455 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:30.455 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:30.455 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.service.impl.ActivityServiceImpl
+2026-04-01 23:04:30.455 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:30.456 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - response: [{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}]
+2026-04-01 23:04:30.456 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - duration: 1 ms
+2026-04-01 23:04:30.457 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":[{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}],"msg":null}
+2026-04-01 23:04:30.457 [http-nio-8080-exec-4] INFO  com.venus.meetspace.aspect.LogAspect - duration: 1 ms
+2026-04-01 23:04:31.996 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:31.996 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:31.996 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:31.996 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.ActivityController
+2026-04-01 23:04:31.996 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:31.996 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:31.996 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:31.996 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:31.996 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.service.impl.ActivityServiceImpl
+2026-04-01 23:04:31.996 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:31.998 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - response: [{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}]
+2026-04-01 23:04:31.998 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - duration: 2 ms
+2026-04-01 23:04:31.998 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":[{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}],"msg":null}
+2026-04-01 23:04:31.998 [http-nio-8080-exec-9] INFO  com.venus.meetspace.aspect.LogAspect - duration: 2 ms
+2026-04-01 23:04:34.542 [http-nio-8080-exec-10] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:34.542 [http-nio-8080-exec-10] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/home/profile
+2026-04-01 23:04:34.542 [http-nio-8080-exec-10] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:34.542 [http-nio-8080-exec-10] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.HomeController
+2026-04-01 23:04:34.542 [http-nio-8080-exec-10] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:34.544 [http-nio-8080-exec-10] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":{"age":20,"email":"admin@email.com","firstname":"Void","gender":"male","lastname":"Yang"},"msg":"已获取用户Profile！"}
+2026-04-01 23:04:34.544 [http-nio-8080-exec-10] INFO  com.venus.meetspace.aspect.LogAspect - duration: 2 ms
+2026-04-01 23:04:35.866 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:35.866 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:35.867 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:35.867 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.ActivityController
+2026-04-01 23:04:35.867 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:35.867 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:35.867 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:35.867 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:35.867 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.service.impl.ActivityServiceImpl
+2026-04-01 23:04:35.867 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:35.869 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - response: [{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}]
+2026-04-01 23:04:35.869 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - duration: 2 ms
+2026-04-01 23:04:35.869 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":[{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}],"msg":null}
+2026-04-01 23:04:35.869 [http-nio-8080-exec-7] INFO  com.venus.meetspace.aspect.LogAspect - duration: 3 ms
+2026-04-01 23:04:40.428 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:40.428 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:40.428 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:40.428 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.controller.ActivityController
+2026-04-01 23:04:40.428 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:40.428 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - --------------- log ---------------
+2026-04-01 23:04:40.428 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - url: http://localhost:8080/activity/created
+2026-04-01 23:04:40.428 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - method: GET
+2026-04-01 23:04:40.428 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - class: com.venus.meetspace.service.impl.ActivityServiceImpl
+2026-04-01 23:04:40.428 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - args: [1]
+2026-04-01 23:04:40.430 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - response: [{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}]
+2026-04-01 23:04:40.430 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - duration: 2 ms
+2026-04-01 23:04:40.430 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - response: {"code":"SUCCESS","data":[{"address":"chengdu","description":"description1","endTime":"2026-04-05T15:30:00","id":1,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-01T20:30:00","status":"READY","title":"1"},{"address":"lanzhou","description":"description2","endTime":"2026-04-05T15:30:00","id":2,"image":null,"signupDeadline":"2026-03-29T15:30:00","startTime":"2026-04-02T20:30:00","status":"READY","title":"2"}],"msg":null}
+2026-04-01 23:04:40.430 [http-nio-8080-exec-8] INFO  com.venus.meetspace.aspect.LogAspect - duration: 2 ms
+2026-04-01 23:04:42.920 [http-nio-8080-exec-1] ERROR o.a.c.c.C.[.[localhost].[/].[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.NullPointerException: Cannot invoke "String.replace(java.lang.CharSequence, java.lang.CharSequence)" because "header" is null] with root cause
+java.lang.NullPointerException: Cannot invoke "String.replace(java.lang.CharSequence, java.lang.CharSequence)" because "header" is null
+	at com.venus.meetspace.security.JwtInterceptor.preHandle(JwtInterceptor.java:39)
+	at org.springframework.web.servlet.HandlerExecutionChain.applyPreHandle(HandlerExecutionChain.java:145)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:957)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:235)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:371)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:181)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:110)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:96)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:380)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:237)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:317)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:355)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:272)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+2026-04-01 23:05:22.156 [SpringApplicationShutdownHook] INFO  org.springframework.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-01 23:05:22.168 [tomcat-shutdown] INFO  org.springframework.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-04-01 23:05:22.171 [SpringApplicationShutdownHook] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-01 23:05:22.172 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-01 23:05:22.175 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

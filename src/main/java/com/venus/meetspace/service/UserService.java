@@ -8,20 +8,6 @@ import java.util.Optional;
 
 public interface UserService {
     /**
-     * 通过id查询用户
-     * @param id 用户id
-     * @return id对应用户
-     */
-    Optional<User> findById(long id);
-
-    /**
-     * 通过用户名查找用户
-     * @param username 用户名
-     * @return username对应用户
-     */
-    Optional<User> findByUsername(String username);
-
-    /**
      * 用户注册
      * @param rq 注册POST请求体
      */

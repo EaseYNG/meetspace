@@ -22,21 +22,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findById(long id) {
-        return userRepository.findById(id);
-    }
-
-    @Override
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Override
     public void register(RegisterRequest rq) {
-        this.userRepository.findByUsername(rq.getUsername())
+        User user = this.userRepository.findByUsername(rq.getUsername())
                 .orElseThrow(() -> new BusinessException(405, "用户不存在！"));
-
-        User user = new User();
         user.setNickname(rq.getNickname());
         user.setUsername(rq.getUsername());
         user.setPassword(pe.encode(rq.getPassword()));
@@ -44,9 +32,8 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public void setProfile(Profile temp, long id) {
-        this.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(404, "用户未找到！"));
-        User user = this.findById(id).get();
         user.setAge(temp.getAge());
         user.setGender(temp.getGender());
         user.setEmail(temp.getEmail());
@@ -59,9 +46,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public Profile getProfile(long id) {
         Profile profile = new Profile();
-        this.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(404, "用户未找到！"));
-        User user = this.findById(id).get();
 
         profile.setAge(user.getAge());
         profile.setGender(user.getGender());

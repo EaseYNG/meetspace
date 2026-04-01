@@ -12,7 +12,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface ActivityMapper extends GlobalMapper {
+public interface ActivityMapper {
     Activity toEntity(ActivityCreateRequest acr);
     Activity toEntity(ActivityUpdateRequest aur);
     ActivityCreateRequest toCreateRequest(Activity activity);

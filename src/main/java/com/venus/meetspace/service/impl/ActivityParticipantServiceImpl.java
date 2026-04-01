@@ -23,21 +23,19 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
     private final ActivityRepository activityRepository;
     private final ActivityParticipantRepository activityParticipantRepository;
     private final ActivityMapper activityMapper;
-    private final ActivityParticipantMapper activityParticipantMapper;
 
     public ActivityParticipantServiceImpl(ActivityRepository activityRepository,
-                                          ActivityParticipantRepository activityParticipantRepository, ActivityMapper activityMapper, ActivityParticipantMapper activityParticipantMapper) {
+                                          ActivityParticipantRepository activityParticipantRepository,
+                                          ActivityMapper activityMapper) {
         this.activityRepository = activityRepository;
         this.activityParticipantRepository = activityParticipantRepository;
         this.activityMapper = activityMapper;
-        this.activityParticipantMapper = activityParticipantMapper;
     }
 
     @Override
     public void signup(Long activityId, Long userId) {
-        activityRepository.findById(activityId)
+        Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new BusinessException(407, "活动未找到！"));
-        Activity activity = activityRepository.findById(activityId).get();
 
         // 检测活动状态
         if(!activity.getStatus().equals(ActivityStatus.READY)) {
@@ -56,12 +54,11 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
 
     @Override
     public void quit(Long activityId, Long userId) {
-        activityRepository.findById(activityId)
+        Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new BusinessException(407, "活动未找到！"));
-        Activity activity = activityRepository.findById(activityId).get();
         if(!activity.getStatus().equals(ActivityStatus.READY) &&
                 !activity.getStatus().equals(ActivityStatus.CLOSED)) {
-            throw new BusinessException(408, "活动状态不可退出！");
+            throw new BusinessException(408, "活动已结束！");
         }
         ActivityParticipant ap = new ActivityParticipant();
         ap.setParticipantId(userId);
@@ -72,14 +69,13 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
     @Override
     public List<ActivityResponse> getParticipatedActivities(Long participantId) {
         List<Activity> activities = new ArrayList<>();
-        List<ActivityParticipant> participants =
-                activityParticipantRepository.findByParticipantId(participantId);
+        List<ActivityParticipant> participants = activityParticipantRepository
+                .findByParticipantId(participantId)
+                .orElseThrow(() -> new BusinessException(404, "活动参加未找到！"));
         for(ActivityParticipant ap : participants) {
             long activityId = ap.getActivityId();
-            Activity temp = activityRepository.findById(activityId);
-            if(temp == null) {
-                throw new BusinessException(404, "活动未找到！");
-            }
+            Activity temp = activityRepository.findById(activityId)
+                    .orElseThrow(() -> new BusinessException(404, "活动未找到！"));
             activities.add(temp);
         }
 

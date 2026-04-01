@@ -60,17 +60,29 @@ const handleLogin = async () => {
 
   try {
     const res = await login(form.value)
-    if (res.code === 200) {
-      localStorage.setItem('token', res.data)
+    console.log('登录响应:', res)
+
+    if (res.code === 'SUCCESS') {
+      // 后端返回的data就是token字符串
+      const token = res.data
+      localStorage.setItem('token', token)
+
+      // 解析token获取用户信息(或者需要额外调用获取用户信息的接口)
+      // 这里暂时存储用户名,后续可以通过token获取完整用户信息
+      localStorage.setItem('user', JSON.stringify({
+        username: form.value.username,
+        id: null // 后续可以通过API获取
+      }))
+
       alert('登录成功！')
-      // 登录成功后可以跳转到主页
-      // router.push('/home')
+      // 登录成功后跳转到主页
+      router.push('/home')
     } else {
       errorMsg.value = res.msg || '登录失败'
     }
   } catch (error) {
-    errorMsg.value = '网络错误，请稍后重试'
     console.error('登录错误:', error)
+    errorMsg.value = error.response?.data?.msg || error.message || '网络错误，请稍后重试'
   } finally {
     loading.value = false
   }
