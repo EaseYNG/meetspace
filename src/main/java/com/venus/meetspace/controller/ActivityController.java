@@ -53,8 +53,8 @@ public class ActivityController {
         return Result.success(null, "活动报名成功！");
     }
 
-    @GetMapping("/participated/{participantId}")
-    public Result<List<ActivityResponse>> getParticipatedActivities(@PathVariable Long participantId) {
+    @GetMapping("/participated")
+    public Result<List<ActivityResponse>> getParticipatedActivities(@CurrentUserId Long participantId) {
         return Result.success(apsi.getParticipatedActivities(participantId), "用户参加活动列表获取成功！");
     }
 

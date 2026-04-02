@@ -23,12 +23,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(RegisterRequest rq) {
-        User user = this.userRepository.findByUsername(rq.getUsername())
-                .orElseThrow(() -> new BusinessException(405, "用户不存在！"));
-        user.setNickname(rq.getNickname());
-        user.setUsername(rq.getUsername());
-        user.setPassword(pe.encode(rq.getPassword()));
-        userRepository.save(user);
+        this.userRepository.findByUsername(rq.getUsername())
+                .ifPresent(user -> {
+                    user.setNickname(rq.getNickname());
+                    user.setUsername(rq.getUsername());
+                    user.setPassword(pe.encode(rq.getPassword()));
+                    userRepository.save(user);
+                });
     }
     @Override
     public void setProfile(Profile temp, long id) {
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
         user.setFirstname(temp.getFirstname());
         user.setLastname(temp.getLastname());
 
-        userRepository.save(user); // 保存至db
+        userRepository.save(user);
     }
 
     @Override
@@ -56,10 +57,5 @@ public class UserServiceImpl implements UserService {
         profile.setLastname(user.getLastname());
 
         return profile;
-    }
-
-    @Override
-    public void save(User user) {
-        userRepository.save(user);
     }
 }

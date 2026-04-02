@@ -27,9 +27,4 @@ public interface UserService {
      */
     Profile getProfile(long id);
 
-    /**
-     * 保存
-     * @param user 保存用户信息
-     */
-    void save(User user);
 }
