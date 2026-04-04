@@ -20,12 +20,10 @@ import java.util.List;
 public class ActivityServiceImpl implements ActivityService {
 
     private final ActivityRepository activityRepository;
-    private final UserServiceImpl usi;
     private final ActivityMapper activityMapper;
 
-    public ActivityServiceImpl(ActivityRepository activityRepository, UserServiceImpl usi, ActivityMapper activityMapper) {
+    public ActivityServiceImpl(ActivityRepository activityRepository, ActivityMapper activityMapper) {
         this.activityRepository = activityRepository;
-        this.usi = usi;
         this.activityMapper = activityMapper;
     }
 
