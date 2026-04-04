@@ -20,6 +20,10 @@ class _RegisterPageState extends State<RegisterPage> {
     // 调用api
   }
 
+  void _click() {
+    print("clicked");
+  }
+
   void _submit() {
     print("submit");
     _register();
@@ -28,10 +32,14 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.amber,
+      ),
       body: Center(
         child: Column(
           children: [
+            const Text("Register:"),
             TextFormField(
               controller: _textController,
               decoration: InputDecoration(hintText: "Enter username: "),
@@ -56,6 +64,25 @@ class _RegisterPageState extends State<RegisterPage> {
             FloatingActionButton(onPressed: _submit, child: const Text("提交")),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 4,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 16,
+              children: [
+                ElevatedButton(onPressed: _click, child: Text('1')),
+                ElevatedButton(onPressed: _click, child: Text('2')),
+                ElevatedButton(onPressed: _click, child: Text('3')),
+                ElevatedButton(onPressed: _click, child: Text('4')),
+              ],
+            ),
+            const Text("meetspace v1.0")
+          ],
+        )
       ),
     );
   }

@@ -26,7 +26,7 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
 
     public ActivityParticipantServiceImpl(ActivityRepository activityRepository,
                                           ActivityParticipantRepository activityParticipantRepository,
-                                          ActivityMapper activityMapper) {
+                                           ActivityMapper activityMapper) {
         this.activityRepository = activityRepository;
         this.activityParticipantRepository = activityParticipantRepository;
         this.activityMapper = activityMapper;
