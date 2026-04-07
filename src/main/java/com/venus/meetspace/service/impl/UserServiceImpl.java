@@ -23,13 +23,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(RegisterRequest rq) {
+        // 用户名已存在则抛出异常
         this.userRepository.findByUsername(rq.getUsername())
-                .ifPresent(user -> {
-                    user.setNickname(rq.getNickname());
-                    user.setUsername(rq.getUsername());
-                    user.setPassword(pe.encode(rq.getPassword()));
-                    userRepository.save(user);
-                });
+                .ifPresent(u -> { throw new BusinessException(409, "用户名已被注册！"); });
+        // 用户名不存在，创建新用户
+        User user = new User();
+        user.setNickname(rq.getNickname());
+        user.setUsername(rq.getUsername());
+        user.setPassword(pe.encode(rq.getPassword()));
+        userRepository.save(user);
     }
     @Override
     public void setProfile(Profile temp, long id) {
