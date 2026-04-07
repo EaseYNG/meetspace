@@ -46,6 +46,13 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
         if(activity.getSignupDeadline().isBefore(LocalDateTime.now())) {
             throw new BusinessException(408, "已过报名时间！");
         }
+
+        // 检测是否报名过
+        activityParticipantRepository.findByActivityIdAndParticipantId(activityId, userId)
+                .ifPresent(activityParticipant -> {
+                    throw new BusinessException(408, "已报名该活动！");}
+                );
+
         ActivityParticipant ap = new ActivityParticipant();
         ap.setParticipantId(userId);
         ap.setActivityId(activityId);
@@ -63,7 +70,7 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
         ActivityParticipant ap = new ActivityParticipant();
         ap.setParticipantId(userId);
         ap.setActivityId(activityId);
-        activityParticipantRepository.delete(ap);
+        activityParticipantRepository.deleteByIds(activityId, userId);
     }
 
     @Override
@@ -71,7 +78,7 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
         List<Activity> activities = new ArrayList<>();
         List<ActivityParticipant> participants = activityParticipantRepository
                 .findByParticipantId(participantId)
-                .orElseThrow(() -> new BusinessException(404, "活动参加未找到！"));
+                .orElseThrow();
         for(ActivityParticipant ap : participants) {
             long activityId = ap.getActivityId();
             Activity temp = activityRepository.findById(activityId)

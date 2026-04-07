@@ -12,7 +12,8 @@ import java.util.Optional;
 
 @Repository
 public interface ActivityParticipantRepository extends JpaRepository<ActivityParticipant, Long> {
-    Optional<ActivityParticipant> findByActivityId(Long activityId);
+    Optional<ActivityParticipant> findByActivityIdAndParticipantId(
+            Long activityId, Long participantId);
 
     // 按状态顺序排序返回List
     @Query("SELECT ap FROM ActivityParticipant ap " +
@@ -23,11 +24,11 @@ public interface ActivityParticipantRepository extends JpaRepository<ActivityPar
             "   WHEN 'READY' THEN 1 " +
             "   WHEN 'CLOSED' THEN 2 " +
             "   ELSE 3 END, " +
-            "a.endTime DESC")
+            "a.startTime DESC")
     Optional<List<ActivityParticipant>> findByParticipantId(@Param("participantId") Long participantId);
     void deleteById(Long id);
 
     @Modifying
-    @Query("DELETE FROM ActivityParticipant ap WHERE ap.activityId = : activityId AND ap.participantId = : participantId")
+    @Query("DELETE FROM ActivityParticipant ap WHERE ap.activityId = :activityId AND ap.participantId = :participantId")
     void deleteByIds(@Param("activityId") Long activityId, @Param("participantId") Long ParticipantId);
 }

@@ -42,21 +42,17 @@ class _SquarePageState extends State<SquarePage> {
   void _applyFilter() {
     List<dynamic> temp = List.from(_all);
     if (_selectedTag != '全部') {
-      final statusMap = {
-        '报名中': 'READY',
-        '已截止': 'CLOSED',
-        '已结束': 'OVER',
-      };
-      temp = temp
-          .where((a) => a['status'] == statusMap[_selectedTag])
-          .toList();
+      final statusMap = {'报名中': 'READY', '已截止': 'CLOSED', '已结束': 'OVER'};
+      temp = temp.where((a) => a['status'] == statusMap[_selectedTag]).toList();
     }
     if (_searchQuery.isNotEmpty) {
       temp = temp
-          .where((a) =>
-              (a['title'] ?? '').contains(_searchQuery) ||
-              (a['address'] ?? '').contains(_searchQuery) ||
-              (a['description'] ?? '').contains(_searchQuery))
+          .where(
+            (a) =>
+                (a['title'] ?? '').contains(_searchQuery) ||
+                (a['address'] ?? '').contains(_searchQuery) ||
+                (a['description'] ?? '').contains(_searchQuery),
+          )
           .toList();
     }
     _filtered = temp;
@@ -78,9 +74,10 @@ class _SquarePageState extends State<SquarePage> {
               title: Text(
                 '活动广场',
                 style: GoogleFonts.inter(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(110),
@@ -98,8 +95,9 @@ class _SquarePageState extends State<SquarePage> {
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
                           ),
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 10),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                          ),
                         ),
                         onChanged: (v) {
                           setState(() {
@@ -115,7 +113,7 @@ class _SquarePageState extends State<SquarePage> {
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         itemCount: _tags.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        separatorBuilder: (_, _) => const SizedBox(width: 8),
                         itemBuilder: (ctx, i) {
                           final selected = _tags[i] == _selectedTag;
                           return GestureDetector(
@@ -128,7 +126,9 @@ class _SquarePageState extends State<SquarePage> {
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 6),
+                                horizontal: 16,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 color: selected
                                     ? const Color(0xFF6C63FF)
@@ -158,8 +158,8 @@ class _SquarePageState extends State<SquarePage> {
             if (_loading)
               const SliverFillRemaining(
                 child: Center(
-                    child:
-                        CircularProgressIndicator(color: Color(0xFF6C63FF))),
+                  child: CircularProgressIndicator(color: Color(0xFF6C63FF)),
+                ),
               )
             else if (_filtered.isEmpty)
               SliverFillRemaining(
@@ -167,12 +167,19 @@ class _SquarePageState extends State<SquarePage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.search_off_rounded,
-                          size: 60, color: Colors.grey.shade300),
+                      Icon(
+                        Icons.search_off_rounded,
+                        size: 60,
+                        color: Colors.grey.shade300,
+                      ),
                       const SizedBox(height: 12),
-                      Text('没有找到相关活动',
-                          style: GoogleFonts.inter(
-                              color: Colors.grey.shade400, fontSize: 14)),
+                      Text(
+                        '没有找到相关活动',
+                        style: GoogleFonts.inter(
+                          color: Colors.grey.shade400,
+                          fontSize: 14,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -181,8 +188,7 @@ class _SquarePageState extends State<SquarePage> {
               SliverPadding(
                 padding: const EdgeInsets.all(16),
                 sliver: SliverGrid(
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 1,
                     mainAxisSpacing: 12,
                     childAspectRatio: 3.0,
@@ -284,8 +290,11 @@ class _SquareActivityCard extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.event_rounded,
-                    color: Colors.white, size: 26),
+                child: const Icon(
+                  Icons.event_rounded,
+                  color: Colors.white,
+                  size: 26,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -296,23 +305,29 @@ class _SquareActivityCard extends StatelessWidget {
                     Text(
                       activity['title'] ?? '',
                       style: GoogleFonts.inter(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.location_on_outlined,
-                            size: 12, color: Colors.grey.shade400),
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 12,
+                          color: Colors.grey.shade400,
+                        ),
                         const SizedBox(width: 2),
                         Expanded(
                           child: Text(
                             activity['address'] ?? '',
                             style: TextStyle(
-                                fontSize: 12, color: Colors.grey.shade500),
+                              fontSize: 12,
+                              color: Colors.grey.shade500,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -322,13 +337,18 @@ class _SquareActivityCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.calendar_today_outlined,
-                            size: 12, color: Colors.grey.shade400),
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          size: 12,
+                          color: Colors.grey.shade400,
+                        ),
                         const SizedBox(width: 2),
                         Text(
                           _formatDate(activity['startTime']),
                           style: TextStyle(
-                              fontSize: 12, color: Colors.grey.shade500),
+                            fontSize: 12,
+                            color: Colors.grey.shade500,
+                          ),
                         ),
                       ],
                     ),
@@ -340,7 +360,9 @@ class _SquareActivityCard extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: _statusColor(status).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
@@ -348,14 +370,18 @@ class _SquareActivityCard extends StatelessWidget {
                     child: Text(
                       _statusLabel(status),
                       style: TextStyle(
-                          fontSize: 11,
-                          color: _statusColor(status),
-                          fontWeight: FontWeight.w600),
+                        fontSize: 11,
+                        color: _statusColor(status),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Icon(Icons.arrow_forward_ios_rounded,
-                      size: 14, color: Color(0xFF6C63FF)),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 14,
+                    color: Color(0xFF6C63FF),
+                  ),
                 ],
               ),
             ],

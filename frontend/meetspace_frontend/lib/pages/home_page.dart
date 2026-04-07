@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:meetspace_frontend/services/api_service.dart';
-import 'package:meetspace_frontend/services/token_service.dart';
 import 'package:meetspace_frontend/pages/activity_detail_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -74,18 +73,22 @@ class _HomePageState extends State<HomePage> {
             _loading
                 ? const SliverFillRemaining(
                     child: Center(
-                        child: CircularProgressIndicator(
-                            color: Color(0xFF6C63FF))))
-                : _activities.isEmpty
-                    ? SliverToBoxAdapter(child: _buildEmpty())
-                    : SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (ctx, i) => _ActivityCard(
-                              activity: _activities[i],
-                              onTap: () => _openDetail(_activities[i])),
-                          childCount: _activities.length,
-                        ),
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF6C63FF),
                       ),
+                    ),
+                  )
+                : _activities.isEmpty
+                ? SliverToBoxAdapter(child: _buildEmpty())
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (ctx, i) => _ActivityCard(
+                        activity: _activities[i],
+                        onTap: () => _openDetail(_activities[i]),
+                      ),
+                      childCount: _activities.length,
+                    ),
+                  ),
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
           ],
         ),
@@ -123,15 +126,20 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     '来看看你的活动吧',
                     style: GoogleFonts.inter(
-                        fontSize: 14, color: Colors.grey.shade500),
+                      fontSize: 14,
+                      color: Colors.grey.shade500,
+                    ),
                   ),
                 ],
               ),
               CircleAvatar(
                 radius: 24,
                 backgroundColor: const Color(0xFF6C63FF).withOpacity(0.1),
-                child: const Icon(Icons.person_rounded,
-                    color: Color(0xFF6C63FF), size: 28),
+                child: const Icon(
+                  Icons.person_rounded,
+                  color: Color(0xFF6C63FF),
+                  size: 28,
+                ),
               ),
             ],
           ),
@@ -171,30 +179,42 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('探索新活动',
-                    style: GoogleFonts.inter(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
+                Text(
+                  '探索新活动',
+                  style: GoogleFonts.inter(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
                 const SizedBox(height: 6),
-                Text('发现志同道合的伙伴',
-                    style: GoogleFonts.inter(
-                        fontSize: 13, color: Colors.white.withOpacity(0.85))),
+                Text(
+                  '发现志同道合的伙伴',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: Colors.white.withOpacity(0.85),
+                  ),
+                ),
                 const SizedBox(height: 14),
                 InkWell(
                   onTap: () {},
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 6),
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text('去广场逛逛',
-                        style: GoogleFonts.inter(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF6C63FF))),
+                    child: Text(
+                      '去广场逛逛',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF6C63FF),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -211,9 +231,10 @@ class _HomePageState extends State<HomePage> {
       child: Text(
         title,
         style: GoogleFonts.inter(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87),
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
       ),
     );
   }
@@ -225,12 +246,19 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.event_busy_rounded,
-                size: 54, color: Colors.grey.shade300),
+            Icon(
+              Icons.event_busy_rounded,
+              size: 54,
+              color: Colors.grey.shade300,
+            ),
             const SizedBox(height: 12),
-            Text('还没有参加任何活动',
-                style: GoogleFonts.inter(
-                    color: Colors.grey.shade400, fontSize: 14)),
+            Text(
+              '还没有参加任何活动',
+              style: GoogleFonts.inter(
+                color: Colors.grey.shade400,
+                fontSize: 14,
+              ),
+            ),
           ],
         ),
       ),
@@ -240,8 +268,7 @@ class _HomePageState extends State<HomePage> {
   void _openDetail(Map<String, dynamic> activity) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (_) => ActivityDetailPage(activity: activity)),
+      MaterialPageRoute(builder: (_) => ActivityDetailPage(activity: activity)),
     );
   }
 }
@@ -324,16 +351,19 @@ class _ActivityCard extends StatelessWidget {
                           child: Text(
                             activity['title'] ?? '',
                             style: GoogleFonts.inter(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: _statusColor(status).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
@@ -341,19 +371,24 @@ class _ActivityCard extends StatelessWidget {
                           child: Text(
                             _statusLabel(status),
                             style: TextStyle(
-                                fontSize: 11,
-                                color: _statusColor(status),
-                                fontWeight: FontWeight.w600),
+                              fontSize: 11,
+                              color: _statusColor(status),
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     _iconText(
-                        Icons.location_on_outlined, activity['address'] ?? ''),
+                      Icons.location_on_outlined,
+                      activity['address'] ?? '',
+                    ),
                     const SizedBox(height: 4),
-                    _iconText(Icons.access_time_outlined,
-                        _formatTime(activity['startTime'])),
+                    _iconText(
+                      Icons.access_time_outlined,
+                      _formatTime(activity['startTime']),
+                    ),
                   ],
                 ),
               ),

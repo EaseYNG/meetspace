@@ -45,7 +45,9 @@ public class ActivityServiceImpl implements ActivityService {
     public void updateActivity(Long id, ActivityUpdateRequest activityUpdateRequest, Long ownerId) {
         Activity activity = activityRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
-
+        if(activity.getOwnerId() != ownerId) {
+            throw new BusinessException(408, "活动不可编辑");
+        }
         if(activity.getStatus() == ActivityStatus.CLOSED ||
                 activity.getStatus() == ActivityStatus.DELETED) {
             throw new BusinessException(408, "活动不可编辑");
@@ -74,7 +76,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public List<ActivityResponse> getActivityByOwnerId(Long id) {
         List<Activity> temp = activityRepository.findByOwnerId(id)
-                .orElseThrow(() -> new BusinessException(408, "该用户没有创建活动！"));
+                .orElseThrow();
         return activityMapper.toResponseList(temp);
     }
 
