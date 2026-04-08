@@ -1,0 +1,31 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'activity_create_request.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+ActivityCreateRequest _$ActivityCreateRequestFromJson(
+  Map<String, dynamic> json,
+) => ActivityCreateRequest(
+  title: json['title'] as String,
+  startTime: DateTime.parse(json['startTime'] as String),
+  endTime: DateTime.parse(json['endTime'] as String),
+  signupDeadline: DateTime.parse(json['signupDeadline'] as String),
+  address: json['address'] as String,
+  image: json['image'] as String?,
+  description: json['description'] as String?,
+);
+
+Map<String, dynamic> _$ActivityCreateRequestToJson(
+  ActivityCreateRequest instance,
+) => <String, dynamic>{
+  'title': instance.title,
+  'startTime': instance.startTime.toIso8601String(),
+  'endTime': instance.endTime.toIso8601String(),
+  'signupDeadline': instance.signupDeadline.toIso8601String(),
+  'address': instance.address,
+  'image': instance.image,
+  'description': instance.description,
+};
