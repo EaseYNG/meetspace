@@ -18,6 +18,6 @@ class UserService {
       '/home/profile',
       data: profile.toJson(),
     );
-    return Result<void>.fromJson(response.data, (json) => null);
+    return Result<void>.fromJson(response.data, (json) {});
   }
 }

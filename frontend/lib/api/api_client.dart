@@ -23,11 +23,16 @@ class ApiClient {
 
     // Web 平台使用固定的 baseUrl，因为自动检测会受到 CORS 限制
     const useFixedHost = bool.fromEnvironment('dart.library.js_util');
+    // Android 平台检测
+    const isAndroid = bool.fromEnvironment('dart.library.io');
+
     if (useFixedHost) {
       _baseUrl = 'http://localhost:8080';
-      print('Web platform: Using fixed baseUrl: $_baseUrl');
+    } else if (isAndroid) {
+      // Android 模拟器使用 10.0.2.2 访问宿主机
+      _baseUrl = 'http://10.0.2.2:8080';
     } else {
-      // 非 Web 平台尝试自动检测
+      // 其他平台（iOS、桌面端）尝试自动检测
       await _autoDetectHost();
     }
 
@@ -79,10 +84,24 @@ class ApiClient {
         onError: (error, handler) {
           print('[Dio Error] Type: ${error.type}');
           print('[Dio Error] Message: ${error.message}');
-          print('[Dio Error] Stack: ${error.error}');
+          print('[Dio Error] BaseUrl: ${_baseUrl}');
           if (error.response != null) {
             print('[Dio Error] Status: ${error.response?.statusCode}');
             print('[Dio Error] Data: ${error.response?.data}');
+          } else {
+            // 提供更详细的错误提示
+            if (error.type == DioExceptionType.connectionTimeout) {
+              print('[Dio Error] 连接超时 - 请检查后端服务是否启动');
+            } else if (error.type == DioExceptionType.sendTimeout) {
+              print('[Dio Error] 发送超时 - 网络可能不稳定');
+            } else if (error.type == DioExceptionType.receiveTimeout) {
+              print('[Dio Error] 接收超时 - 服务器响应慢');
+            } else if (error.type == DioExceptionType.connectionError) {
+              print('[Dio Error] 连接错误 - 请检查：');
+              print('  1. 后端服务是否启动（端口 8080）');
+              print('  2. Android 模拟器应使用 http://10.0.2.2:8080');
+              print('  3. 防火墙是否阻止连接');
+            }
           }
           handler.next(error);
         },

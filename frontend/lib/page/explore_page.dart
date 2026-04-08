@@ -37,7 +37,7 @@ class _ExplorePageState extends State<ExplorePage> {
     setState(() => _isLoading = true);
     try {
       final result = await _activityService.getAllActivities();
-      print('Load activities result: ${result}');
+      print('Load activities result: $result');
       if (mounted && result.isSuccess) {
         print('Activities loaded: ${result.data?.length ?? 0}');
         setState(() => _activities = result.data ?? []);
@@ -66,7 +66,7 @@ class _ExplorePageState extends State<ExplorePage> {
   Future<void> _loadParticipated() async {
     try {
       final result = await _activityService.getParticipatedActivities();
-      print('Load participated result: ${result}');
+      print('Load participated result: $result');
       if (mounted && result.isSuccess) {
         print('Participated activities loaded: ${result.data?.length ?? 0}');
         setState(() {
