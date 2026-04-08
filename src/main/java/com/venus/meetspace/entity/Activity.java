@@ -4,6 +4,10 @@ import com.venus.meetspace.common.type.ActivityStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 
 import java.time.LocalDateTime;
 
@@ -40,5 +44,14 @@ public class Activity {
     private String image;
     private double latitude;
     private double longitude;
+    @Column(name = "location", columnDefinition = "POINT")
+    private Point location;
 
+    // 自动设定location
+    @PrePersist
+    @PreUpdate
+    public void updateLocation() {
+        GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
+        this.location = factory.createPoint(new Coordinate(this.longitude, this.latitude));
+    }
 }
