@@ -1,16 +1,16 @@
 package com.venus.meetspace.controller;
 
 import com.venus.meetspace.annotation.CurrentUserId;
-import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.common.Result;
 import com.venus.meetspace.dto.Profile;
 import com.venus.meetspace.service.impl.HomeServiceImpl;
 import com.venus.meetspace.service.impl.UserServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/home")
-@Log
+@Slf4j
 public class HomeController {
     private final UserServiceImpl usi;
     private final HomeServiceImpl hsi;

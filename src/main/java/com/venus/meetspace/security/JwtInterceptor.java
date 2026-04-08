@@ -2,10 +2,12 @@ package com.venus.meetspace.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
+@Slf4j
 public class JwtInterceptor implements HandlerInterceptor {
     /**
      * jwt拦截器，实现HandlerInterceptor，用于处理登录后的token请求
@@ -33,7 +35,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) throws Exception {
-        System.out.println("URL: " + request.getRequestURI());
+        log.info("拦截url: " + request.getRequestURL());
 
         String header = request.getHeader("Authorization");
         String token = header.replace("Bearer ", "");

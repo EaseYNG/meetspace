@@ -1,6 +1,5 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.common.type.ActivityStatus;
 import com.venus.meetspace.dto.request.ActivityCreateRequest;
 import com.venus.meetspace.dto.request.ActivityUpdateRequest;
@@ -10,13 +9,14 @@ import com.venus.meetspace.exception.BusinessException;
 import com.venus.meetspace.mapper.ActivityMapper;
 import com.venus.meetspace.repository.ActivityRepository;
 import com.venus.meetspace.service.ActivityService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@Log
+@Slf4j
 public class ActivityServiceImpl implements ActivityService {
 
     private final ActivityRepository activityRepository;
@@ -39,6 +39,7 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setStatus(ActivityStatus.READY); // 确保活动处于就绪状态
 
         activityRepository.save(activity);
+        log.info("活动创建: " + activity.getId());
     }
 
     @Override
@@ -55,6 +56,7 @@ public class ActivityServiceImpl implements ActivityService {
         // 编辑逻辑
         activityMapper.update(activityUpdateRequest, activity);
         activityRepository.save(activity);
+        log.info("活动更新: " + activity.getId());
     }
 
 
@@ -64,12 +66,14 @@ public class ActivityServiceImpl implements ActivityService {
                 .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
         activity.setStatus(ActivityStatus.DELETED); // 设置活动状态
         activityRepository.save(activity);
+        log.info("活动删除: " + activity.getId());
     }
 
     @Override
     public ActivityResponse getActivityById(Long id) {
         Activity activity = activityRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
+        log.info("获取活动: " + activity.getId());
         return activityMapper.toResponse(activity);
     }
 
@@ -77,6 +81,10 @@ public class ActivityServiceImpl implements ActivityService {
     public List<ActivityResponse> getActivityByOwnerId(Long id) {
         List<Activity> temp = activityRepository.findByOwnerId(id)
                 .orElseThrow();
+        log.info("获取活动列表: ");
+        for(Activity a : temp) {
+            log.info(String.valueOf(a.getId()));
+        }
         return activityMapper.toResponseList(temp);
     }
 

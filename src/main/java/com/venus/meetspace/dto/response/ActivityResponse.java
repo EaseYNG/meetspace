@@ -15,6 +15,8 @@ public class ActivityResponse {
     private LocalDateTime signupDeadline;
     private String address;
     private ActivityStatus status;
+    private int minParticipants;
+    private int maxParticipants;
 
     private String image;
     private String description;

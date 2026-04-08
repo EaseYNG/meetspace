@@ -1,16 +1,15 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.common.type.ActivityStatus;
 import com.venus.meetspace.dto.response.ActivityResponse;
 import com.venus.meetspace.entity.Activity;
 import com.venus.meetspace.entity.ActivityParticipant;
 import com.venus.meetspace.exception.BusinessException;
 import com.venus.meetspace.mapper.ActivityMapper;
-import com.venus.meetspace.mapper.ActivityParticipantMapper;
 import com.venus.meetspace.repository.ActivityParticipantRepository;
 import com.venus.meetspace.repository.ActivityRepository;
 import com.venus.meetspace.service.ActivityParticipantService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Log
+@Slf4j
 public class ActivityParticipantServiceImpl implements ActivityParticipantService {
     private final ActivityRepository activityRepository;
     private final ActivityParticipantRepository activityParticipantRepository;
@@ -57,6 +56,7 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
         ap.setParticipantId(userId);
         ap.setActivityId(activityId);
         activityParticipantRepository.save(ap);
+        log.info("报名活动: " + "user_id: " + userId + "activity_id: " + activityId);
     }
 
     @Override
@@ -71,6 +71,7 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
         ap.setParticipantId(userId);
         ap.setActivityId(activityId);
         activityParticipantRepository.deleteByIds(activityId, userId);
+        log.info("退出活动: " + "user_id: " + userId + "activity_id: " + activityId);
     }
 
     @Override
@@ -85,7 +86,7 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
                     .orElseThrow(() -> new BusinessException(404, "活动未找到！"));
             activities.add(temp);
         }
-
+        log.info("获取全部参与的活动: ");
         return activityMapper.toResponseList(activities);
     }
 }

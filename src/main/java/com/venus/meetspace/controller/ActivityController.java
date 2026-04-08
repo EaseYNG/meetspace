@@ -1,7 +1,6 @@
 package com.venus.meetspace.controller;
 
 import com.venus.meetspace.annotation.CurrentUserId;
-import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.common.Result;
 import com.venus.meetspace.dto.request.ActivityCreateRequest;
 import com.venus.meetspace.dto.request.ActivitySearchRequest;
@@ -10,13 +9,14 @@ import com.venus.meetspace.dto.response.ActivityResponse;
 import com.venus.meetspace.service.impl.ActivityFilterImpl;
 import com.venus.meetspace.service.impl.ActivityParticipantServiceImpl;
 import com.venus.meetspace.service.impl.ActivityServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/activity")
-@Log
+@Slf4j
 public class ActivityController {
     private final ActivityServiceImpl asi;
     private final ActivityParticipantServiceImpl apsi;

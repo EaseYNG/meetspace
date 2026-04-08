@@ -3,16 +3,16 @@ package com.venus.meetspace.controller;
 import com.venus.meetspace.common.Result;
 import com.venus.meetspace.dto.request.AuthRequest;
 import com.venus.meetspace.dto.request.RegisterRequest;
-import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.service.impl.AuthServiceImpl;
 import com.venus.meetspace.service.impl.UserServiceImpl;
 import com.venus.meetspace.security.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("/user")
-@Log
+@Slf4j
 public class UserController {
     private final UserServiceImpl usi;
     private final AuthServiceImpl asi;

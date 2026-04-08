@@ -6,11 +6,13 @@ import com.venus.meetspace.entity.Activity;
 import com.venus.meetspace.mapper.ActivityMapper;
 import com.venus.meetspace.repository.ActivityRepository;
 import com.venus.meetspace.service.ActivityFilter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class ActivityFilterImpl implements ActivityFilter {
     private final ActivityRepository activityRepository;
     private final ActivityMapper activityMapper;

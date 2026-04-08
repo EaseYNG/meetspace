@@ -6,12 +6,14 @@ import com.venus.meetspace.entity.User;
 import com.venus.meetspace.exception.BusinessException;
 import com.venus.meetspace.repository.UserRepository;
 import com.venus.meetspace.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder pe;
@@ -32,6 +34,7 @@ public class UserServiceImpl implements UserService {
         user.setUsername(rq.getUsername());
         user.setPassword(pe.encode(rq.getPassword()));
         userRepository.save(user);
+        log.info("注册成功! " + user.getId());
     }
     @Override
     public void setProfile(Profile temp, long id) {
@@ -44,6 +47,7 @@ public class UserServiceImpl implements UserService {
         user.setLastname(temp.getLastname());
 
         userRepository.save(user);
+        log.info("设置个人资料: user_id: " + user.getId());
     }
 
     @Override
@@ -57,7 +61,7 @@ public class UserServiceImpl implements UserService {
         profile.setEmail(user.getEmail());
         profile.setFirstname(user.getFirstname());
         profile.setLastname(user.getLastname());
-
+        log.info("获取个人资料: user_id: " + user.getId());
         return profile;
     }
 }
