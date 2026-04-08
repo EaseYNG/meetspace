@@ -39,6 +39,6 @@ testdb.trace.db
 .arts
 .codeartsdoer
 
-.log
-.workbuddy
-.idea
+*.log
+/workbuddy
+*.gz
