@@ -4,8 +4,10 @@ import com.venus.meetspace.annotation.CurrentUserId;
 import com.venus.meetspace.annotation.Log;
 import com.venus.meetspace.common.Result;
 import com.venus.meetspace.dto.request.ActivityCreateRequest;
+import com.venus.meetspace.dto.request.ActivitySearchRequest;
 import com.venus.meetspace.dto.request.ActivityUpdateRequest;
 import com.venus.meetspace.dto.response.ActivityResponse;
+import com.venus.meetspace.service.impl.ActivityFilterImpl;
 import com.venus.meetspace.service.impl.ActivityParticipantServiceImpl;
 import com.venus.meetspace.service.impl.ActivityServiceImpl;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +20,13 @@ import java.util.List;
 public class ActivityController {
     private final ActivityServiceImpl asi;
     private final ActivityParticipantServiceImpl apsi;
+    private final ActivityFilterImpl afi;
 
     public ActivityController(ActivityServiceImpl asi,
-                              ActivityParticipantServiceImpl apsi) {
+                              ActivityParticipantServiceImpl apsi, ActivityFilterImpl afi) {
         this.asi = asi;
         this.apsi = apsi;
+        this.afi = afi;
     }
 
     @PostMapping("/create")
@@ -61,6 +65,11 @@ public class ActivityController {
     @GetMapping("/created")
     public Result<List<ActivityResponse>> getCreatedActivities(@CurrentUserId Long userId) {
         return Result.success(asi.getActivityByOwnerId(userId));
+    }
+
+    @PostMapping("/search")
+    public Result<List<ActivityResponse>> searchActivities(@RequestBody ActivitySearchRequest ar) {
+        return Result.success(afi.search(ar));
     }
 
     /**

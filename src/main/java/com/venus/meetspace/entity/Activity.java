@@ -32,6 +32,10 @@ public class Activity {
     private String address;
     @Column(nullable = false)
     private ActivityStatus status;
+    @Column(nullable = false, name = "min_participants")
+    private int minParticipants;
+    @Column(nullable = false, name = "max_participants")
+    private int maxParticipants;
 
     private String image;
     private double latitude;
