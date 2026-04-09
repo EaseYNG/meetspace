@@ -3,12 +3,15 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'api/api_client.dart';
 import 'l10n/app_localizations.dart';
 import 'page/login_page.dart';
+import 'service/location_search_service.dart';
 import 'theme/theme_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ApiClient().init();
   await ThemeManager().init();
+  // 初始化位置搜索服务
+  await LocationSearchService().init();
   runApp(const MeetSpaceApp());
 }
 

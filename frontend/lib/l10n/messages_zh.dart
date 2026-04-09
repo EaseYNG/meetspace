@@ -41,5 +41,16 @@ class MessagesZh {
     'theme': '主题',
     'about': '关于',
     'versionInfo': 'MeetSpace v1.0 2026',
+    'searchLocation': '搜索地点...',
+    'noResults': '没有找到相关结果',
+    'locating': '正在定位...',
+    'selectedLocation': '选中的位置',
+    'addressLoading': '获取地址中...',
+    'addressNotAvailable': '无法获取地址',
+    'latitude': '纬度',
+    'longitude': '经度',
+    'confirm': '确认',
+    'cancel': '取消',
+    'selectLocation': '选择位置',
   };
 }

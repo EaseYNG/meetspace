@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../component/activity_card.dart';
-import '../component/page_title.dart';
 import '../l10n/app_localizations.dart';
 import '../model/activity.dart';
 import '../service/activity_service.dart';

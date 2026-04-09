@@ -1,6 +1,6 @@
 name: frontend
 description: "MeetSpace - Activity Discovery Platform"
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -18,9 +18,11 @@ dependencies:
   shared_preferences: ^2.3.3
   flutter_localizations:
     sdk: flutter
-  geolocator: ^14.0.2
   flutter_map: ^8.2.2
   latlong2: ^0.9.1
+  # 地理位置和权限
+  geolocator: ^14.0.2
+  permission_handler: ^11.0.0
 
 dev_dependencies:
   flutter_test:

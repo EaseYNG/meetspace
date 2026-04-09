@@ -41,5 +41,16 @@ class MessagesEn {
     'theme': 'Theme',
     'about': 'About',
     'versionInfo': 'MeetSpace v1.0 2026',
+    'searchLocation': 'Search location...',
+    'noResults': 'No results found',
+    'locating': 'Locating...',
+    'selectedLocation': 'Selected Location',
+    'addressLoading': 'Loading address...',
+    'addressNotAvailable': 'Address not available',
+    'latitude': 'Latitude',
+    'longitude': 'Longitude',
+    'confirm': 'Confirm',
+    'cancel': 'Cancel',
+    'selectLocation': 'Select Location',
   };
 }

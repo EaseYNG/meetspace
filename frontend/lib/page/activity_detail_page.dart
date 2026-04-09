@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:latlong2/latlong.dart';
 import '../component/custom_button.dart';
 import '../component/page_title.dart';
 import '../l10n/app_localizations.dart';
 import '../model/activity.dart';
 import '../service/activity_service.dart';
+import '../service/navigation_service.dart';
 import 'create_activity_page.dart';
 
 class ActivityDetailPage extends StatefulWidget {
@@ -102,12 +103,23 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
   Future<void> _openNavigation() async {
     final lat = _activity.latitude;
     final lon = _activity.longitude;
-    if (lat == null || lon == null) return;
-    final uri = Uri.parse(
-      'https://uri.amap.com/navigation?to=$lat,$lon&mode=car&coordinate=gaode&callnative=1',
+    if (lat == null || lon == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.addressNotAvailable)));
+      return;
+    }
+
+    final destination = LatLng(lat, lon);
+    final success = await NavigationService.openGaodeOrDownload(
+      destination: destination,
+      destinationName: _activity.title,
     );
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+    if (!success && mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('无法启动导航，请确保已安装高德地图')));
     }
   }
 

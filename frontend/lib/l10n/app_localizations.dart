@@ -54,13 +54,26 @@ class AppLocalizations {
   String get endTime => get('endTime') ?? 'End Time';
   String get signupDeadline => get('signupDeadline') ?? 'Signup Deadline';
   String get participants => get('participants') ?? 'Participants';
-  String get searchActivities => get('searchActivities') ?? 'Search activities...';
+  String get searchActivities =>
+      get('searchActivities') ?? 'Search activities...';
   String get editProfile => get('editProfile') ?? 'Edit Profile';
   String get logout => get('logout') ?? 'Logout';
   String get language => get('language') ?? 'Language';
   String get theme => get('theme') ?? 'Theme';
   String get about => get('about') ?? 'About';
   String get versionInfo => get('versionInfo') ?? 'MeetSpace v1.0 2026';
+  String get searchLocation => get('searchLocation') ?? 'Search location...';
+  String get noResults => get('noResults') ?? 'No results found';
+  String get locating => get('locating') ?? 'Locating...';
+  String get selectedLocation => get('selectedLocation') ?? 'Selected Location';
+  String get addressLoading => get('addressLoading') ?? 'Loading address...';
+  String get addressNotAvailable =>
+      get('addressNotAvailable') ?? 'Address not available';
+  String get latitude => get('latitude') ?? 'Latitude';
+  String get longitude => get('longitude') ?? 'Longitude';
+  String get confirm => get('confirm') ?? 'Confirm';
+  String get cancel => get('cancel') ?? 'Cancel';
+  String get selectLocation => get('selectLocation') ?? 'Select Location';
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
@@ -71,8 +84,7 @@ class _AppLocalizationsDelegate
   const _AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) =>
-      ['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => ['en', 'zh'].contains(locale.languageCode);
 
   @override
   Future<AppLocalizations> load(Locale locale) async {

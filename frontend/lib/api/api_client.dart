@@ -1,10 +1,19 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
   factory ApiClient() => _instance;
   ApiClient._internal();
+
+  // 允许通过 `--dart-define=BASE_URL=http://<ip>:8080` 覆盖，便于真机调试
+  // - Android 模拟器：通常用 http://10.0.2.2:8080
+  // - Android 真机：需要用电脑的局域网 IP（例如 http://192.168.1.10:8080）
+  static const String _baseUrlOverride = String.fromEnvironment(
+    'BASE_URL',
+    defaultValue: '',
+  );
 
   static const List<String> _possibleHosts = [
     'localhost',
@@ -21,25 +30,29 @@ class ApiClient {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    // Web 平台使用固定的 baseUrl，因为自动检测会受到 CORS 限制
-    const useFixedHost = bool.fromEnvironment('dart.library.js_util');
-    // Android 平台检测
-    const isAndroid = bool.fromEnvironment('dart.library.io');
-
-    if (useFixedHost) {
+    if (_baseUrlOverride.trim().isNotEmpty) {
+      _baseUrl = _baseUrlOverride.trim();
+    } else if (kIsWeb) {
       _baseUrl = 'http://localhost:8080';
-    } else if (isAndroid) {
-      // Android 模拟器使用 10.0.2.2 访问宿主机
-      _baseUrl = 'http://10.0.2.2:8080';
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      // 默认使用 10.0.2.2 适配模拟器
+      // 如果你运行了 `adb reverse tcp:8080 tcp:8080`，
+      // 请通过 --dart-define=BASE_URL=http://localhost:8080 覆盖
+      _baseUrl = 'http://localhost:8080';
     } else {
       // 其他平台（iOS、桌面端）尝试自动检测
       await _autoDetectHost();
     }
 
+    print(
+      '[ApiClient] baseUrl=$_baseUrl (override=${_baseUrlOverride.isNotEmpty}, '
+      'platform=${kIsWeb ? 'web' : defaultTargetPlatform.name})',
+    );
+
     _dio = Dio(
       BaseOptions(
         baseUrl: _baseUrl,
-        connectTimeout: const Duration(seconds: 30),
+        connectTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 30),
         sendTimeout: const Duration(seconds: 30),
         headers: {

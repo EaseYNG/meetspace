@@ -9,7 +9,6 @@ import '../model/request/activity_update_request.dart';
 import '../service/activity_service.dart';
 import '../service/location_service.dart';
 import 'map_picker_page.dart';
-import 'package:latlong2/latlong.dart';
 
 class CreateActivityPage extends StatefulWidget {
   final Activity? activity;
@@ -69,8 +68,9 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
       setState(() {
         _latitude = locationResult.latitude;
         _longitude = locationResult.longitude;
-        if (locationResult.address != null && _addressController.text.isEmpty) {
-          _addressController.text = locationResult.address!;
+        // 自动填充地址，如果当前地址栏为空
+        if (_addressController.text.isEmpty) {
+          _addressController.text = locationResult.address ?? "";
         }
       });
     }
