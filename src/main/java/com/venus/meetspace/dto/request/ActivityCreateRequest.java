@@ -17,6 +17,8 @@ public class ActivityCreateRequest {
     private LocalDateTime signupDeadline;
     @NonNull
     private String address;
+    private int minParticipants;
+    private int maxParticipants;
 
     private String image;
     private String description;

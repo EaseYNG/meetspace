@@ -11,6 +11,7 @@ MeetSpace 是一个综合性的活动社交平台，提供用户注册登录、�
 - **报名系统**：活动报名、退出、参与记录
 - **搜索筛选**：基于时间、地点、人数的多维度活动搜索
 - **地理定位**：支持基于地理位置的活动推荐
+- **地图选点**：集成高德地图，支持活动位置选择和导航
 - **国际化**：中英文双语支持
 - **安全认证**：JWT Token 认证机制
 
@@ -30,6 +31,10 @@ MeetSpace 是一个综合性的活动社交平台，提供用户注册登录、�
 | SharedPreferences | ^2.3.3 | 本地存储 |
 | Flutter Localizations | SDK | 国际化支持 |
 | Material Design 3 | - | UI 组件库 |
+| flutter_map | ^7.0.2 | 地图组件 |
+| latlong2 | ^0.9.1 | 地理坐标处理 |
+| geolocator | ^12.0.0 | 地理位置获取 |
+| url_launcher | ^6.3.0 | 外部链接/导航启动 |
 
 ### 后端技术栈
 
@@ -169,7 +174,8 @@ frontend/
 │   ├── service/                # 业务服务
 │   │   ├── auth_service.dart   # 认证服务
 │   │   ├── activity_service.dart # 活动服务
-│   │   └── user_service.dart   # 用户服务
+│   │   ├── user_service.dart   # 用户服务
+│   │   └── location_service.dart # 位置服务
 │   └── main.dart               # 应用入口
 ├── android/                    # Android 平台配置
 ├── ios/                        # iOS 平台配置
@@ -198,6 +204,7 @@ frontend/
 - `AuthService`: 注册、登录、登出
 - `ActivityService`: 活动 CRUD、报名、查询
 - `UserService`: 用户资料管理
+- `LocationService`: 地理位置获取、地址解析（高德地图 API）
 
 **4. UI 组件**
 - Material Design 3 风格
@@ -897,6 +904,24 @@ flutter test integration_test
 - 检查 @Scheduled 注解是否启用
 - 验证定时任务 cron 表达式
 - 查看日志确认任务执行情况
+
+### Q5: Web 平台地图缩放时出现错误
+
+**问题描述**:
+在 Chrome 浏览器中调试时，大幅度缩放地图可能报错：
+```
+Locations: Error adding location for E:/env/flutter/packages/flutter/lib/src/foundation/change_notifier.dart: FormatException: Unsupported URI form
+```
+
+**解决方案**:
+已在 `map_picker_page.dart` 中应用以下优化：
+1. 使用 `NetworkTileProvider` 作为瓦片提供器，避免缓存问题
+2. 禁用 `retinaMode`（设置为 false），避免 Web 平台渲染问题
+
+这些修改已有效缓解 Web 平台上的地图缩放问题。如果仍有问题，可以考虑：
+- 降低最大缩放级别（如从 18.0 降到 17.0）
+- 调整地图交互选项
+- 优化瓦片加载策略
 
 ---
 

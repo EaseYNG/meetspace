@@ -14,6 +14,8 @@ ActivityCreateRequest _$ActivityCreateRequestFromJson(
   endTime: DateTime.parse(json['endTime'] as String),
   signupDeadline: DateTime.parse(json['signupDeadline'] as String),
   address: json['address'] as String,
+  minParticipants: (json['minParticipants'] as num).toInt(),
+  maxParticipants: (json['maxParticipants'] as num).toInt(),
   image: json['image'] as String?,
   description: json['description'] as String?,
 );
@@ -26,6 +28,8 @@ Map<String, dynamic> _$ActivityCreateRequestToJson(
   'endTime': instance.endTime.toIso8601String(),
   'signupDeadline': instance.signupDeadline.toIso8601String(),
   'address': instance.address,
+  'minParticipants': instance.minParticipants,
+  'maxParticipants': instance.maxParticipants,
   'image': instance.image,
   'description': instance.description,
 };

@@ -12,7 +12,9 @@ class Activity {
   final DateTime signupDeadline;
   final String address;
   final ActivityStatus status;
+  @JsonKey(name: 'minParticipants', defaultValue: 0)
   final int minParticipants;
+  @JsonKey(name: 'maxParticipants', defaultValue: 0)
   final int maxParticipants;
   final String? image;
   final String? description;

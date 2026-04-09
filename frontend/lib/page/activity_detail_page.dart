@@ -43,16 +43,16 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
       await _activityService.signupActivity(_activity.id.toInt());
       if (mounted) {
         setState(() => _isParticipated = true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.signupSuccess)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.signupSuccess)));
         widget.onRefresh();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -83,17 +83,17 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
       try {
         await _activityService.deleteActivity(_activity.id.toInt());
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Activity deleted')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Activity deleted')));
           widget.onRefresh();
           Navigator.of(context).pop();
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.toString())),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(e.toString())));
         }
       }
     }
@@ -121,44 +121,52 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
 
     if (status.name == 'ready') {
       if (!_isParticipated) {
-        buttons.add(CustomButton(
-          text: context.l10n.signUpForActivity,
-          onPressed: _handleSignup,
-          isLoading: _isLoading,
-        ));
+        buttons.add(
+          CustomButton(
+            text: context.l10n.signUpForActivity,
+            onPressed: _handleSignup,
+            isLoading: _isLoading,
+          ),
+        );
       }
       buttons.add(const SizedBox(height: 10));
-      buttons.add(CustomButton(
-        text: context.l10n.edit,
-        onPressed: () async {
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => CreateActivityPage(activity: _activity),
-            ),
-          );
-          widget.onRefresh();
-        },
-        backgroundColor: Colors.blue[400],
-      ));
+      buttons.add(
+        CustomButton(
+          text: context.l10n.edit,
+          onPressed: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => CreateActivityPage(activity: _activity),
+              ),
+            );
+            widget.onRefresh();
+          },
+          backgroundColor: Colors.blue[400],
+        ),
+      );
     }
 
     if (_isParticipated && status.name == 'ready') {
       buttons.add(const SizedBox(height: 10));
-      buttons.add(CustomButton(
-        text: context.l10n.quit,
-        onPressed: () async {
-          // quit activity
-        },
-        backgroundColor: Colors.orange[400],
-      ));
+      buttons.add(
+        CustomButton(
+          text: context.l10n.quit,
+          onPressed: () async {
+            // quit activity
+          },
+          backgroundColor: Colors.orange[400],
+        ),
+      );
     }
 
     buttons.add(const SizedBox(height: 10));
-    buttons.add(CustomButton(
-      text: context.l10n.delete,
-      onPressed: _handleDelete,
-      backgroundColor: Colors.red[300],
-    ));
+    buttons.add(
+      CustomButton(
+        text: context.l10n.delete,
+        onPressed: _handleDelete,
+        backgroundColor: Colors.red[300],
+      ),
+    );
 
     return buttons;
   }
@@ -167,17 +175,16 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFCFA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 18),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text(
-          _activity.title,
-          style: GoogleFonts.inter(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[800],
-          ),
+          l10n.activityDetail,
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600),
         ),
       ),
       body: SingleChildScrollView(
@@ -201,17 +208,17 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
             PageTitle(title: l10n.activityDetail),
             _buildInfoRow(l10n.description, _activity.description ?? '-'),
             _buildInfoRow(l10n.address, _activity.address),
+            _buildInfoRow(l10n.startTime, _formatDateTime(_activity.startTime)),
+            _buildInfoRow(l10n.endTime, _formatDateTime(_activity.endTime)),
             _buildInfoRow(
-                l10n.startTime, _formatDateTime(_activity.startTime)),
+              l10n.signupDeadline,
+              _formatDateTime(_activity.signupDeadline),
+            ),
             _buildInfoRow(
-                l10n.endTime, _formatDateTime(_activity.endTime)),
-            _buildInfoRow(l10n.signupDeadline,
-                _formatDateTime(_activity.signupDeadline)),
-            _buildInfoRow(
-                l10n.participants,
-                '${_activity.minParticipants} - ${_activity.maxParticipants}'),
-            if (_activity.latitude != null &&
-                _activity.longitude != null) ...[
+              l10n.participants,
+              '${_activity.minParticipants} - ${_activity.maxParticipants}',
+            ),
+            if (_activity.latitude != null && _activity.longitude != null) ...[
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: _openNavigation,
@@ -258,6 +265,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
   }
 
   Widget _buildInfoRow(String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -270,14 +278,17 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
+                color: isDark ? Colors.grey[400] : Colors.grey[700],
               ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: GoogleFonts.inter(fontSize: 14, color: Colors.grey[600]),
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: isDark ? Colors.white : Colors.grey[600],
+              ),
             ),
           ),
         ],

@@ -102,21 +102,13 @@ class _ExplorePageState extends State<ExplorePage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFCFA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-          onPressed: () {},
-        ),
         title: Text(
           l10n.explore,
-          style: GoogleFonts.inter(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[800],
-          ),
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600),
         ),
       ),
       body: Column(

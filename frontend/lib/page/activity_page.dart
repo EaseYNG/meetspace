@@ -42,6 +42,17 @@ class _ActivityPageState extends State<ActivityPage> {
         setState(() {
           _createdActivities = results[0].data ?? [];
           _participatedActivities = results[1].data ?? [];
+
+          // 确保创建的活动也属于已报名的集合，这样在卡片上就会显示“已报名”
+          final participatedIds = _participatedActivities
+              .map((p) => p.id)
+              .toSet();
+          for (var activity in _createdActivities) {
+            if (!participatedIds.contains(activity.id)) {
+              _participatedActivities.add(activity);
+            }
+          }
+
           _allActivities = [
             ..._createdActivities,
             ..._participatedActivities.where(
@@ -103,13 +114,13 @@ class _ActivityPageState extends State<ActivityPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFCFA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-          onPressed: () {},
+        title: Text(
+          l10n.activities,
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600),
         ),
         actions: [
           IconButton(
@@ -122,14 +133,6 @@ class _ActivityPageState extends State<ActivityPage> {
             },
           ),
         ],
-        title: Text(
-          l10n.activities,
-          style: GoogleFonts.inter(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[800],
-          ),
-        ),
       ),
       body: Column(
         children: [
@@ -145,7 +148,7 @@ class _ActivityPageState extends State<ActivityPage> {
               ],
             ),
           ),
-          PageTitle(title: l10n.activities),
+          const SizedBox(height: 8),
           Expanded(
             child: RefreshIndicator(
               onRefresh: _loadData,

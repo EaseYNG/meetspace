@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../component/page_title.dart';
 import '../l10n/app_localizations.dart';
+import '../service/auth_service.dart';
 import 'settings_page.dart';
+import 'login_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -12,11 +14,15 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final AuthService _authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFCFA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -31,10 +37,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: Colors.green[100],
+                    color: isDark ? Colors.green[900] : Colors.green[100],
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.person, size: 40, color: Colors.green[400]),
+                  child: Icon(
+                    Icons.person,
+                    size: 40,
+                    color: isDark ? Colors.green[400] : Colors.green[400],
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -44,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: GoogleFonts.inter(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
+                    color: isDark ? Colors.white : Colors.grey[800],
                   ),
                 ),
               ),
@@ -77,7 +87,33 @@ class _ProfilePageState extends State<ProfilePage> {
                 icon: Icons.logout,
                 title: l10n.logout,
                 onTap: () async {
-                  // handle logout
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(l10n.logout),
+                      content: const Text('确定要退出登录吗？'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('取消'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text('确定', style: TextStyle(color: Colors.red)),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirmed == true) {
+                    await _authService.logout();
+                    if (mounted) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                        (route) => false,
+                      );
+                    }
+                  }
                 },
                 isDestructive: true,
               ),
@@ -95,30 +131,55 @@ class _ProfilePageState extends State<ProfilePage> {
     required VoidCallback onTap,
     bool isDestructive = false,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 22,
-              color: isDestructive ? Colors.red[400] : Colors.grey[600],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          if (!isDark)
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Text(
-                title,
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  color: isDestructive ? Colors.red[400] : Colors.grey[800],
+        ],
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 22,
+                color: isDestructive
+                    ? Colors.red[400]
+                    : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: isDestructive
+                        ? Colors.red[400]
+                        : (isDark ? Colors.white : Colors.grey[800]),
+                  ),
                 ),
               ),
-            ),
-            Icon(Icons.chevron_right, size: 20, color: Colors.grey[400]),
-          ],
+              Icon(
+                Icons.chevron_right,
+                size: 20,
+                color: isDark ? Colors.grey[600] : Colors.grey[300],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -7,6 +7,9 @@ import '../model/activity.dart';
 import '../model/request/activity_create_request.dart';
 import '../model/request/activity_update_request.dart';
 import '../service/activity_service.dart';
+import '../service/location_service.dart';
+import 'map_picker_page.dart';
+import 'package:latlong2/latlong.dart';
 
 class CreateActivityPage extends StatefulWidget {
   final Activity? activity;
@@ -30,7 +33,11 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   DateTime? _endTime;
   DateTime? _signupDeadline;
 
+  double? _latitude;
+  double? _longitude;
+
   final ActivityService _activityService = ActivityService();
+  final LocationService _locationService = LocationService();
   bool _isLoading = false;
   bool get _isEdit => widget.activity != null;
 
@@ -48,6 +55,24 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
       _startTime = a.startTime;
       _endTime = a.endTime;
       _signupDeadline = a.signupDeadline;
+      _latitude = a.latitude;
+      _longitude = a.longitude;
+    } else {
+      _autoLocate();
+    }
+  }
+
+  Future<void> _autoLocate() async {
+    final locationResult = await _locationService
+        .getCurrentLocationWithAddress();
+    if (mounted && locationResult != null) {
+      setState(() {
+        _latitude = locationResult.latitude;
+        _longitude = locationResult.longitude;
+        if (locationResult.address != null && _addressController.text.isEmpty) {
+          _addressController.text = locationResult.address!;
+        }
+      });
     }
   }
 
@@ -115,8 +140,12 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
             endTime: _endTime!,
             signupDeadline: _signupDeadline!,
             address: _addressController.text.trim(),
+            minParticipants: int.tryParse(_minController.text),
+            maxParticipants: int.tryParse(_maxController.text),
             image: _imageController.text.trim(),
             description: _descriptionController.text.trim(),
+            latitude: _latitude,
+            longitude: _longitude,
           ),
         );
       } else {
@@ -127,8 +156,12 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
             endTime: _endTime!,
             signupDeadline: _signupDeadline!,
             address: _addressController.text.trim(),
+            minParticipants: int.tryParse(_minController.text) ?? 1,
+            maxParticipants: int.tryParse(_maxController.text) ?? 10,
             image: _imageController.text.trim(),
             description: _descriptionController.text.trim(),
+            latitude: _latitude,
+            longitude: _longitude,
           ),
         );
       }
@@ -158,9 +191,8 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFCFA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 18),
@@ -168,11 +200,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         ),
         title: Text(
           _isEdit ? l10n.edit : l10n.createActivity,
-          style: GoogleFonts.inter(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[800],
-          ),
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w600),
         ),
       ),
       body: SingleChildScrollView(
@@ -185,7 +213,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
               PageTitle(title: _isEdit ? l10n.edit : l10n.createActivity),
               _buildTextField(_titleController, l10n.explore),
               const SizedBox(height: 12),
-              _buildTextField(_addressController, l10n.address),
+              _buildLocationField(),
               const SizedBox(height: 12),
               _buildTextField(
                 _descriptionController,
@@ -240,20 +268,156 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
     );
   }
 
+  Widget _buildLocationField() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = context.l10n;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.transparent : Colors.grey[300]!,
+        ),
+      ),
+      child: Column(
+        children: [
+          TextFormField(
+            controller: _addressController,
+            style: GoogleFonts.inter(
+              color: isDark ? Colors.white : Colors.grey[900],
+            ),
+            decoration: InputDecoration(
+              labelText: l10n.address,
+              labelStyle: GoogleFonts.inter(
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 16,
+              ),
+            ),
+          ),
+          Divider(
+            height: 1,
+            color: isDark ? Colors.grey[800] : Colors.grey[200],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextButton.icon(
+                  onPressed: () async {
+                    setState(() => _isLoading = true);
+                    final locationResult = await _locationService
+                        .getCurrentLocationWithAddress();
+                    setState(() => _isLoading = false);
+
+                    if (locationResult != null) {
+                      setState(() {
+                        _latitude = locationResult.latitude;
+                        _longitude = locationResult.longitude;
+                        _addressController.text =
+                            locationResult.address ??
+                            "当前定位 (${locationResult.latitude.toStringAsFixed(4)}, ${locationResult.longitude.toStringAsFixed(4)})";
+                      });
+                    } else if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('无法获取当前位置，请检查权限或网络')),
+                      );
+                    }
+                  },
+                  icon: Icon(
+                    Icons.my_location,
+                    size: 18,
+                    color: Colors.blue[400],
+                  ),
+                  label: Text(
+                    '自动定位',
+                    style: GoogleFonts.inter(
+                      color: Colors.blue[400],
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: 1,
+                height: 24,
+                color: isDark ? Colors.grey[800] : Colors.grey[200],
+              ),
+              Expanded(
+                child: TextButton.icon(
+                  onPressed: () async {
+                    final result = await Navigator.of(context)
+                        .push<Map<String, dynamic>>(
+                          MaterialPageRoute(
+                            builder: (_) => MapPickerPage(
+                              initialLat: _latitude,
+                              initialLng: _longitude,
+                            ),
+                          ),
+                        );
+                    if (result != null) {
+                      setState(() {
+                        _latitude = result['lat'] as double;
+                        _longitude = result['lng'] as double;
+                        final addr = result['address'] as String;
+                        _addressController.text =
+                            addr.isNotEmpty &&
+                                addr != '无法解析当前地址' &&
+                                addr != '无法获取该位置的详细地址'
+                            ? addr
+                            : "地图选点 (${_latitude!.toStringAsFixed(4)}, ${_longitude!.toStringAsFixed(4)})";
+                      });
+                    }
+                  },
+                  icon: Icon(
+                    Icons.map_outlined,
+                    size: 18,
+                    color: Colors.orange[400],
+                  ),
+                  label: Text(
+                    '地图选点',
+                    style: GoogleFonts.inter(
+                      color: Colors.orange[400],
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTextField(
     TextEditingController controller,
     String label, {
     int maxLines = 1,
     bool isNumber = false,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+      style: GoogleFonts.inter(color: isDark ? Colors.white : Colors.grey[900]),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: GoogleFonts.inter(color: Colors.grey[600]),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        labelStyle: GoogleFonts.inter(
+          color: isDark ? Colors.grey[400] : Colors.grey[600],
+        ),
+        filled: true,
+        fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: isDark
+              ? BorderSide.none
+              : BorderSide(color: Colors.grey[300]!),
+        ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFF4CAF50), width: 1.5),
@@ -262,23 +426,37 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
     );
   }
 
-  Widget _buildDateField(String label, DateTime? value, VoidCallback onTap) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: label,
-            labelStyle: GoogleFonts.inter(color: Colors.grey[600]),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            suffixIcon: Icon(Icons.calendar_today, color: Colors.grey[500]),
+  Widget _buildDateField(String label, DateTime? dt, VoidCallback onTap) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark ? Colors.transparent : Colors.grey[300]!,
           ),
-          child: Text(
-            _formatDt(value),
-            style: GoogleFonts.inter(fontSize: 15, color: Colors.grey[800]),
-          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
+            Text(
+              _formatDt(dt),
+              style: GoogleFonts.inter(
+                color: isDark ? Colors.white : Colors.grey[800],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );

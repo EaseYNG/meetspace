@@ -83,7 +83,11 @@ public class ActivityServiceImpl implements ActivityService {
                 .orElseThrow();
         log.info("获取活动列表: ");
         for(Activity a : temp) {
-            log.info(String.valueOf(a.getId()));
+            log.info(String.valueOf(a.getId())
+                    + " "
+                    + a.getMinParticipants()
+                    + " "
+                    + a.getMaxParticipants());
         }
         return activityMapper.toResponseList(temp);
     }

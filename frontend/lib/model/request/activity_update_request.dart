@@ -9,8 +9,12 @@ class ActivityUpdateRequest {
   final DateTime? endTime;
   final DateTime? signupDeadline;
   final String? address;
+  final int? minParticipants;
+  final int? maxParticipants;
   final String? image;
   final String? description;
+  final double? latitude;
+  final double? longitude;
 
   ActivityUpdateRequest({
     this.title,
@@ -18,8 +22,12 @@ class ActivityUpdateRequest {
     this.endTime,
     this.signupDeadline,
     this.address,
+    this.minParticipants,
+    this.maxParticipants,
     this.image,
     this.description,
+    this.latitude,
+    this.longitude,
   });
 
   factory ActivityUpdateRequest.fromJson(Map<String, dynamic> json) =>

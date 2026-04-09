@@ -9,8 +9,12 @@ class ActivityCreateRequest {
   final DateTime endTime;
   final DateTime signupDeadline;
   final String address;
+  final int minParticipants;
+  final int maxParticipants;
   final String? image;
   final String? description;
+  final double? latitude;
+  final double? longitude;
 
   ActivityCreateRequest({
     required this.title,
@@ -18,8 +22,12 @@ class ActivityCreateRequest {
     required this.endTime,
     required this.signupDeadline,
     required this.address,
+    required this.minParticipants,
+    required this.maxParticipants,
     this.image,
     this.description,
+    this.latitude,
+    this.longitude,
   });
 
   factory ActivityCreateRequest.fromJson(Map<String, dynamic> json) =>

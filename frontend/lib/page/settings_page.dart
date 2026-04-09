@@ -2,17 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../component/page_title.dart';
 import '../l10n/app_localizations.dart';
+import '../theme/theme_manager.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final isDark = ThemeManager().isDark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFCFA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 18),
@@ -23,7 +31,7 @@ class SettingsPage extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 17,
             fontWeight: FontWeight.w600,
-            color: Colors.grey[800],
+            color: Theme.of(context).textTheme.titleLarge?.color,
           ),
         ),
       ),
@@ -35,14 +43,25 @@ class SettingsPage extends StatelessWidget {
           _buildSettingItem(
             icon: Icons.language_outlined,
             title: l10n.language,
-            subtitle: 'English',
+            subtitle: '简体中文',
             onTap: () {},
           ),
           _buildSettingItem(
-            icon: Icons.palette_outlined,
+            icon: isDark ? Icons.dark_mode : Icons.light_mode,
             title: l10n.theme,
-            subtitle: 'Light',
-            onTap: () {},
+            subtitle: isDark ? '深色模式' : '浅色模式',
+            onTap: () async {
+              await ThemeManager().toggleTheme(!isDark);
+              if (mounted) setState(() {});
+            },
+            trailing: Switch(
+              value: isDark,
+              onChanged: (val) async {
+                await ThemeManager().toggleTheme(val);
+                if (mounted) setState(() {});
+              },
+              activeColor: const Color(0xFF4CAF50),
+            ),
           ),
           _buildSettingItem(
             icon: Icons.info_outline,
@@ -60,20 +79,34 @@ class SettingsPage extends StatelessWidget {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    Widget? trailing,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 4),
+        margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? Colors.grey[900] : Colors.white,
           borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            if (!isDark)
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+          ],
         ),
         child: Row(
           children: [
-            Icon(icon, size: 22, color: Colors.grey[600]),
+            Icon(
+              icon,
+              size: 22,
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
@@ -84,7 +117,7 @@ class SettingsPage extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey[800],
+                      color: isDark ? Colors.white : Colors.grey[800],
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -92,13 +125,20 @@ class SettingsPage extends StatelessWidget {
                     subtitle,
                     style: GoogleFonts.inter(
                       fontSize: 13,
-                      color: Colors.grey[500],
+                      color: isDark ? Colors.grey[500] : Colors.grey[500],
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, size: 20, color: Colors.grey[400]),
+            if (trailing != null)
+              trailing
+            else
+              Icon(
+                Icons.chevron_right,
+                size: 20,
+                color: isDark ? Colors.grey[600] : Colors.grey[300],
+              ),
           ],
         ),
       ),
