@@ -1,6 +1,7 @@
 package com.venus.meetspace.repository;
 
 import com.venus.meetspace.entity.ActivityParticipant;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,12 +24,17 @@ public interface ActivityParticipantRepository extends JpaRepository<ActivityPar
             "CASE a.status " +
             "   WHEN 'READY' THEN 1 " +
             "   WHEN 'CLOSED' THEN 2 " +
-            "   ELSE 3 END, " +
+            "   WHEN 'OVER' THEN 3 " +
+            "   ELSE 4 END, " +
             "a.startTime DESC")
     Optional<List<ActivityParticipant>> findByParticipantId(@Param("participantId") Long participantId);
+
+    @Transactional
     void deleteById(Long id);
 
+    @Transactional
     @Modifying
     @Query("DELETE FROM ActivityParticipant ap WHERE ap.activityId = :activityId AND ap.participantId = :participantId")
     void deleteByIds(@Param("activityId") Long activityId, @Param("participantId") Long ParticipantId);
+
 }

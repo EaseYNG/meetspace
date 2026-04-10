@@ -8,6 +8,7 @@ import '../model/activity.dart';
 import '../service/activity_service.dart';
 import '../service/navigation_service.dart';
 import 'create_activity_page.dart';
+import '../model/activity_status.dart';
 
 class ActivityDetailPage extends StatefulWidget {
   final Activity activity;
@@ -38,6 +39,19 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     _isParticipated = widget.isParticipated;
   }
 
+  Future<void> _loadActivity() async {
+    try {
+      final result = await _activityService.getActivity(_activity.id.toInt());
+      if (mounted && result.isSuccess && result.data != null) {
+        setState(() {
+          _activity = result.data!;
+        });
+      }
+    } catch (e) {
+      print('Error reloading activity: $e');
+    }
+  }
+
   Future<void> _handleSignup() async {
     setState(() => _isLoading = true);
     try {
@@ -57,6 +71,49 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleQuit() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(context.l10n.quit),
+        content: const Text('确定要退出该活动吗？'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.orange),
+            child: Text(context.l10n.quit),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      setState(() => _isLoading = true);
+      try {
+        await _activityService.quitActivity(_activity.id.toInt());
+        if (mounted) {
+          setState(() => _isParticipated = false);
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('已退出活动')));
+          widget.onRefresh();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(e.toString())));
+        }
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -129,10 +186,19 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
 
   List<Widget> _buildActionButtons() {
     final buttons = <Widget>[];
-    final status = _activity.status;
 
-    if (status.name == 'ready') {
-      if (!_isParticipated) {
+    // 根据活动状态和参与情况显示“报名”或“退出”按钮
+    if (_activity.isReady) {
+      if (_isParticipated) {
+        buttons.add(
+          CustomButton(
+            text: context.l10n.quit,
+            onPressed: _handleQuit,
+            isLoading: _isLoading,
+            backgroundColor: Colors.orange[400],
+          ),
+        );
+      } else {
         buttons.add(
           CustomButton(
             text: context.l10n.signUpForActivity,
@@ -141,35 +207,36 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
           ),
         );
       }
-      buttons.add(const SizedBox(height: 10));
+    } else {
+      // 其它状态显示禁用按钮
       buttons.add(
         CustomButton(
-          text: context.l10n.edit,
-          onPressed: () async {
-            await Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => CreateActivityPage(activity: _activity),
-              ),
-            );
-            widget.onRefresh();
-          },
-          backgroundColor: Colors.blue[400],
+          text: _activity.isClosed ? '报名已截止' : '活动已结束',
+          onPressed: null, // 禁用按钮
+          backgroundColor: Colors.grey[400],
         ),
       );
     }
 
-    if (_isParticipated && status.name == 'ready') {
-      buttons.add(const SizedBox(height: 10));
-      buttons.add(
-        CustomButton(
-          text: context.l10n.quit,
-          onPressed: () async {
-            // quit activity
-          },
-          backgroundColor: Colors.orange[400],
-        ),
-      );
-    }
+    // 始终显示“编辑”和“删除”按钮（通常由发起者看到，但此处为简化逻辑显示所有）
+    buttons.add(const SizedBox(height: 10));
+    buttons.add(
+      CustomButton(
+        text: context.l10n.edit,
+        onPressed: () async {
+          final result = await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => CreateActivityPage(activity: _activity),
+            ),
+          );
+          if (result == true) {
+            _loadActivity();
+            widget.onRefresh();
+          }
+        },
+        backgroundColor: Colors.blue[400],
+      ),
+    );
 
     buttons.add(const SizedBox(height: 10));
     buttons.add(

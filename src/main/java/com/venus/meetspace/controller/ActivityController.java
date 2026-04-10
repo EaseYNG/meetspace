@@ -57,14 +57,19 @@ public class ActivityController {
         return Result.success(null, "活动报名成功！");
     }
 
-    @GetMapping("/participated")
+    @GetMapping("/related")
     public Result<List<ActivityResponse>> getParticipatedActivities(@CurrentUserId Long participantId) {
-        return Result.success(apsi.getParticipatedActivities(participantId), "用户参加活动列表获取成功！");
+        return Result.success(apsi.getRelatedActivities(participantId), "用户参加活动列表获取成功！");
     }
 
     @GetMapping("/created")
     public Result<List<ActivityResponse>> getCreatedActivities(@CurrentUserId Long userId) {
-        return Result.success(asi.getActivityByOwnerId(userId));
+        return Result.success(apsi.getCreatedActivities(userId));
+    }
+
+    @GetMapping("/signed_up")
+    public Result<List<ActivityResponse>> getSignedUpActivities(@CurrentUserId Long userId) {
+        return Result.success(apsi.getSignedUpActivities(userId));
     }
 
     @PostMapping("/search")
@@ -72,13 +77,10 @@ public class ActivityController {
         return Result.success(afi.search(ar));
     }
 
-    /**
-     * 仅用于测试，获取所有活动
-     */
-    @GetMapping("/list")
-    public Result<List<ActivityResponse>> list(@CurrentUserId Long userId) {
-        List<ActivityResponse> list = asi.getActivityByOwnerId(userId);
-        return Result.success(list, "获取活动列表成功！");
+    @GetMapping("/quit/{activityId}")
+    public Result<Void> quit(@PathVariable Long activityId,
+                             @CurrentUserId Long userId) {
+        apsi.quit(activityId, userId);
+        return Result.success(null);
     }
-
 }

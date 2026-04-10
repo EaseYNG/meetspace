@@ -39,8 +39,23 @@ class ActivityService {
     return Result<void>.fromJson(response.data, (json) {});
   }
 
-  Future<Result<List<Activity>>> getParticipatedActivities() async {
-    final response = await _apiClient.dio.get('/activity/participated');
+  Future<Result<void>> quitActivity(int activityId) async {
+    final response = await _apiClient.dio.get('/activity/quit/$activityId');
+    return Result<void>.fromJson(response.data, (json) {});
+  }
+
+  Future<Result<List<Activity>>> getRelatedActivities() async {
+    final response = await _apiClient.dio.get('/activity/related');
+    return Result<List<Activity>>.fromJson(
+      response.data,
+      (json) => (json as List)
+          .map((e) => Activity.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  Future<Result<List<Activity>>> getSignedUpActivities() async {
+    final response = await _apiClient.dio.get('/activity/signed_up');
     return Result<List<Activity>>.fromJson(
       response.data,
       (json) => (json as List)
@@ -56,6 +71,14 @@ class ActivityService {
       (json) => (json as List)
           .map((e) => Activity.fromJson(e as Map<String, dynamic>))
           .toList(),
+    );
+  }
+
+  Future<Result<Activity>> getActivity(int activityId) async {
+    final response = await _apiClient.dio.get('/activity/$activityId');
+    return Result<Activity>.fromJson(
+      response.data,
+      (json) => Activity.fromJson(json as Map<String, dynamic>),
     );
   }
 

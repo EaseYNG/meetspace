@@ -35,29 +35,14 @@ class _ActivityPageState extends State<ActivityPage> {
     try {
       final results = await Future.wait([
         _activityService.getCreatedActivities(),
-        _activityService.getParticipatedActivities(),
+        _activityService.getSignedUpActivities(),
+        _activityService.getRelatedActivities(),
       ]);
       if (mounted) {
         setState(() {
           _createdActivities = results[0].data ?? [];
           _participatedActivities = results[1].data ?? [];
-
-          // 确保创建的活动也属于已报名的集合，这样在卡片上就会显示“已报名”
-          final participatedIds = _participatedActivities
-              .map((p) => p.id)
-              .toSet();
-          for (var activity in _createdActivities) {
-            if (!participatedIds.contains(activity.id)) {
-              _participatedActivities.add(activity);
-            }
-          }
-
-          _allActivities = [
-            ..._createdActivities,
-            ..._participatedActivities.where(
-              (p) => !_createdActivities.any((c) => c.id == p.id),
-            ),
-          ];
+          _allActivities = results[2].data ?? [];
           _isLoading = false;
         });
       }
@@ -80,9 +65,9 @@ class _ActivityPageState extends State<ActivityPage> {
   String _filterLabel(ActivityFilter filter) {
     switch (filter) {
       case ActivityFilter.created:
-        return context.l10n.createActivity;
+        return context.l10n.created;
       case ActivityFilter.participated:
-        return context.l10n.participated;
+        return context.l10n.signedUpTab;
       case ActivityFilter.all:
         return context.l10n.allActivities;
     }
@@ -109,6 +94,42 @@ class _ActivityPageState extends State<ActivityPage> {
     );
   }
 
+  Future<void> _handleSignup(Activity activity) async {
+    try {
+      await _activityService.signupActivity(activity.id.toInt());
+      if (mounted) {
+        _loadData();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('报名成功！')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('报名失败：$e')));
+      }
+    }
+  }
+
+  Future<void> _handleQuit(Activity activity) async {
+    try {
+      await _activityService.quitActivity(activity.id.toInt());
+      if (mounted) {
+        _loadData();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('已退出活动！')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('退出失败：$e')));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -125,10 +146,12 @@ class _ActivityPageState extends State<ActivityPage> {
           IconButton(
             icon: const Icon(Icons.add_circle_outline),
             onPressed: () async {
-              await Navigator.of(context).push(
+              final result = await Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const CreateActivityPage()),
               );
-              _loadData();
+              if (result == true) {
+                _loadData();
+              }
             },
           ),
         ],

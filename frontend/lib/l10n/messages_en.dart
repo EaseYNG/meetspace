@@ -52,5 +52,10 @@ class MessagesEn {
     'confirm': 'Confirm',
     'cancel': 'Cancel',
     'selectLocation': 'Select Location',
+    'title': 'Title',
+    'created': 'Created',
+    'signedUpTab': 'Signed Up',
+    'update': 'Update',
+    'create': 'Create',
   };
 }

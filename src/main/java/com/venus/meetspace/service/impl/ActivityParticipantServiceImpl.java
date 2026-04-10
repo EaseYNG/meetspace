@@ -1,6 +1,7 @@
 package com.venus.meetspace.service.impl;
 
 import com.venus.meetspace.common.type.ActivityStatus;
+import com.venus.meetspace.common.type.Role;
 import com.venus.meetspace.dto.response.ActivityResponse;
 import com.venus.meetspace.entity.Activity;
 import com.venus.meetspace.entity.ActivityParticipant;
@@ -10,6 +11,7 @@ import com.venus.meetspace.repository.ActivityParticipantRepository;
 import com.venus.meetspace.repository.ActivityRepository;
 import com.venus.meetspace.service.ActivityParticipantService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.BeanDefinitionDsl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -55,6 +57,7 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
         ActivityParticipant ap = new ActivityParticipant();
         ap.setParticipantId(userId);
         ap.setActivityId(activityId);
+        ap.setRole(Role.NORMAL);
         activityParticipantRepository.save(ap);
         log.info("报名活动: " + "user_id: " + userId + "activity_id: " + activityId);
     }
@@ -67,26 +70,54 @@ public class ActivityParticipantServiceImpl implements ActivityParticipantServic
                 !activity.getStatus().equals(ActivityStatus.CLOSED)) {
             throw new BusinessException(408, "活动已结束！");
         }
-        ActivityParticipant ap = new ActivityParticipant();
-        ap.setParticipantId(userId);
-        ap.setActivityId(activityId);
         activityParticipantRepository.deleteByIds(activityId, userId);
         log.info("退出活动: " + "user_id: " + userId + "activity_id: " + activityId);
     }
 
+    /**
+     * 工具方法：获取用户有参与记录的全部活动列表
+     * 用于获取原始ActivityParticipant对象进行role校验
+     * @param participantId 参与者ID
+     * @return 用户有参与记录的全部活动列表
+     */
+    private List<ActivityParticipant> _getRelatedActivities(Long participantId) {
+        return activityParticipantRepository.findByParticipantId(participantId).orElseThrow();
+    }
+
     @Override
-    public List<ActivityResponse> getParticipatedActivities(Long participantId) {
-        List<Activity> activities = new ArrayList<>();
-        List<ActivityParticipant> participants = activityParticipantRepository
-                .findByParticipantId(participantId)
-                .orElseThrow();
-        for(ActivityParticipant ap : participants) {
-            long activityId = ap.getActivityId();
-            Activity temp = activityRepository.findById(activityId)
-                    .orElseThrow(() -> new BusinessException(404, "活动未找到！"));
-            activities.add(temp);
+    public List<ActivityResponse> getRelatedActivities(Long participantId) {
+        List<ActivityParticipant> temp = _getRelatedActivities(participantId);
+        List<Long> tempIds = new ArrayList<>();
+        for(ActivityParticipant ap : temp) {
+            tempIds.add(ap.getId());
         }
-        log.info("获取全部参与的活动: ");
+        List<Activity> activities = activityRepository.findAllByIds(tempIds);
+        return activityMapper.toResponseList(activities);
+    }
+
+    @Override
+    public List<ActivityResponse> getSignedUpActivities(Long participantId) {
+        List<ActivityParticipant> temp = _getRelatedActivities(participantId);
+        List<Long> tempIds = new ArrayList<>();
+        for(ActivityParticipant ap : temp) {
+            if(ap.getRole() == Role.NORMAL) {
+                tempIds.add(ap.getId());
+            }
+        }
+        List<Activity> activities = activityRepository.findAllByIds(tempIds);
+        return activityMapper.toResponseList(activities);
+    }
+
+    @Override
+    public List<ActivityResponse> getCreatedActivities(Long participantId) {
+        List<ActivityParticipant> temp = _getRelatedActivities(participantId);
+        List<Long> tempIds = new ArrayList<>();
+        for(ActivityParticipant ap : temp) {
+            if(ap.getRole() == Role.CREATOR) {
+                tempIds.add(ap.getId());
+            }
+        }
+        List<Activity> activities = activityRepository.findAllByIds(tempIds);
         return activityMapper.toResponseList(activities);
     }
 }

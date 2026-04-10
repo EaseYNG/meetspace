@@ -65,20 +65,20 @@ class _ExplorePageState extends State<ExplorePage> {
 
   Future<void> _loadParticipated() async {
     try {
-      final result = await _activityService.getParticipatedActivities();
-      print('Load participated result: $result');
+      final result = await _activityService.getRelatedActivities();
+      print('Load related activities result: $result');
       if (mounted && result.isSuccess) {
-        print('Participated activities loaded: ${result.data?.length ?? 0}');
+        print('Related activities loaded: ${result.data?.length ?? 0}');
         setState(() {
           _participatedIds = (result.data ?? [])
               .map((a) => a.id.toInt())
               .toSet();
         });
       } else if (mounted) {
-        print('Failed to load participated activities: ${result.msg}');
+        print('Failed to load related activities: ${result.msg}');
       }
     } catch (e) {
-      print('Error loading participated activities: $e');
+      print('Error loading related activities: $e');
       // ignore - 不参与不影响主要功能
     }
   }
@@ -96,6 +96,46 @@ class _ExplorePageState extends State<ExplorePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleSignup(Activity activity) async {
+    try {
+      await _activityService.signupActivity(activity.id.toInt());
+      if (mounted) {
+        setState(() {
+          _participatedIds.add(activity.id.toInt());
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('报名成功！')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('报名失败：$e')));
+      }
+    }
+  }
+
+  Future<void> _handleQuit(Activity activity) async {
+    try {
+      await _activityService.quitActivity(activity.id.toInt());
+      if (mounted) {
+        setState(() {
+          _participatedIds.remove(activity.id.toInt());
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('已退出活动！')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('退出失败：$e')));
+      }
+    }
   }
 
   @override

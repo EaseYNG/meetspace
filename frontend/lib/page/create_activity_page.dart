@@ -169,7 +169,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(_isEdit ? 'Updated!' : 'Created!')),
         );
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {
@@ -211,7 +211,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PageTitle(title: _isEdit ? l10n.edit : l10n.createActivity),
-              _buildTextField(_titleController, l10n.explore),
+              _buildTextField(_titleController, l10n.title),
               const SizedBox(height: 12),
               _buildLocationField(),
               const SizedBox(height: 12),
@@ -256,7 +256,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
               ),
               const SizedBox(height: 28),
               CustomButton(
-                text: _isEdit ? 'Update' : 'Create',
+                text: _isEdit ? l10n.update : l10n.create,
                 onPressed: _handleSubmit,
                 isLoading: _isLoading,
               ),

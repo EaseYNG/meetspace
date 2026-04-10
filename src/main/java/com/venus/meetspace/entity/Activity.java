@@ -17,11 +17,8 @@ import java.time.LocalDateTime;
 @Setter
 public class Activity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @Column(nullable = false)
-    private long ownerId; // 创建者id
 
     @Column(nullable = false, name = "start_time")
     private LocalDateTime startTime;
@@ -34,6 +31,7 @@ public class Activity {
     private String description;
     @Column(nullable = false)
     private String address;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ActivityStatus status;
     @Column(nullable = false, name = "min_participants")

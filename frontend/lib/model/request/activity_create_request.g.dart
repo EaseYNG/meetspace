@@ -18,6 +18,8 @@ ActivityCreateRequest _$ActivityCreateRequestFromJson(
   maxParticipants: (json['maxParticipants'] as num).toInt(),
   image: json['image'] as String?,
   description: json['description'] as String?,
+  latitude: (json['latitude'] as num?)?.toDouble(),
+  longitude: (json['longitude'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$ActivityCreateRequestToJson(
@@ -32,4 +34,6 @@ Map<String, dynamic> _$ActivityCreateRequestToJson(
   'maxParticipants': instance.maxParticipants,
   'image': instance.image,
   'description': instance.description,
+  'latitude': instance.latitude,
+  'longitude': instance.longitude,
 };

@@ -25,6 +25,32 @@ class _ActivityCardState extends State<ActivityCard> {
   bool _isHovered = false;
   bool _isPressed = false;
 
+  String _statusText() {
+    switch (widget.activity.status) {
+      case ActivityStatus.READY:
+        return '报名中';
+      case ActivityStatus.CLOSED:
+        return '已截止';
+      case ActivityStatus.OVER:
+        return '已结束';
+      case ActivityStatus.DELETED:
+        return '已删除';
+    }
+  }
+
+  Color _statusColor() {
+    switch (widget.activity.status) {
+      case ActivityStatus.READY:
+        return Colors.green[500]!;
+      case ActivityStatus.CLOSED:
+        return Colors.blue[500]!;
+      case ActivityStatus.OVER:
+        return Colors.grey[500]!;
+      case ActivityStatus.DELETED:
+        return Colors.red[400]!;
+    }
+  }
+
   Color _borderColor() {
     if (widget.activity.status == ActivityStatus.READY) {
       return Colors.green[400]!;
@@ -84,7 +110,8 @@ class _ActivityCardState extends State<ActivityCard> {
                       child: SizedBox(
                         width: double.infinity,
                         height: 140,
-                        child: widget.activity.image != null &&
+                        child:
+                            widget.activity.image != null &&
                                 widget.activity.image!.isNotEmpty
                             ? Image.network(
                                 widget.activity.image!,
@@ -104,13 +131,11 @@ class _ActivityCardState extends State<ActivityCard> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: widget.isParticipated
-                              ? Colors.green[500]
-                              : Colors.grey[400],
+                          color: _statusColor(),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          widget.isParticipated ? '已报名' : '未报名',
+                          _statusText(),
                           style: GoogleFonts.inter(
                             fontSize: 11,
                             color: Colors.white,

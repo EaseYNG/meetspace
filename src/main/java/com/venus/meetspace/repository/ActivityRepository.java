@@ -1,6 +1,7 @@
 package com.venus.meetspace.repository;
 
 import com.venus.meetspace.entity.Activity;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,12 +14,19 @@ import java.util.Optional;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
     Optional<Activity> findById(long id);
-    void deleteById(long id);
-    Optional<List<Activity>> findByOwnerId(long id);
 
+    @Transactional
+    void deleteById(long id);
+
+    // 根据id列表返回活动列表
+    @Query(value = "SELECT * FROM activity WHERE id IN (:activity_ids) ", nativeQuery = true)
+    List<Activity> findAllByIds(@Param("activity_ids") List<Long> activityIds);
+
+    // 获取表中所有READY状态的活动列表
     @Query(value = "SELECT * FROM activity WHERE status = 0", nativeQuery = true)
     List<Activity> findAllReady();
 
+    // 根据筛选条件查询活动列表
     @Query(value = "SELECT * FROM activity e WHERE " +
             "(:radius IS NULL OR (ST_Distance_Sphere(e.location, POINT(:longitude, :latitude)) <= :radius * 1000)) " +
             "AND (:start_time IS NULL OR e.start_time >= :start_time) " +
@@ -36,4 +44,5 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
             @Param("min") Integer min,
             @Param("max") Integer max
     );
+
 }

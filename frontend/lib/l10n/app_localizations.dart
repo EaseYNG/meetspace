@@ -74,6 +74,11 @@ class AppLocalizations {
   String get confirm => get('confirm') ?? 'Confirm';
   String get cancel => get('cancel') ?? 'Cancel';
   String get selectLocation => get('selectLocation') ?? 'Select Location';
+  String get title => get('title') ?? 'Title';
+  String get created => get('created') ?? 'Created';
+  String get signedUpTab => get('signedUpTab') ?? 'Signed Up';
+  String get update => get('update') ?? 'Update';
+  String get create => get('create') ?? 'Create';
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();

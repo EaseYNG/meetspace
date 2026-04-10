@@ -13,7 +13,9 @@ class ActivityUpdateRequest {
   final int? maxParticipants;
   final String? image;
   final String? description;
+  @JsonKey(name: 'latitude')
   final double? latitude;
+  @JsonKey(name: 'longitude')
   final double? longitude;
 
   ActivityUpdateRequest({

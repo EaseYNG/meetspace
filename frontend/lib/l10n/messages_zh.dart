@@ -52,5 +52,10 @@ class MessagesZh {
     'confirm': '确认',
     'cancel': '取消',
     'selectLocation': '选择位置',
+    'title': '标题',
+    'created': '创建的',
+    'signedUpTab': '报名的',
+    'update': '更新',
+    'create': '创建',
   };
 }

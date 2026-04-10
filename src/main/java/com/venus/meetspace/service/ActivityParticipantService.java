@@ -28,7 +28,21 @@ public interface ActivityParticipantService {
     /**
      * 获取当前用户已参加的所有活动
      * @param participantId 当前的用户ID
-     * @return 活动VO列表
+     * @return 当前用户相关全部活动
      */
-    List<ActivityResponse> getParticipatedActivities(Long participantId);
+    List<ActivityResponse> getRelatedActivities(Long participantId);
+
+    /**
+     * 获取当前用户已报名的所有活动
+     * @param participantId 当前的用户ID
+     * @return 当前用户已报名的活动列表
+     */
+    List<ActivityResponse> getSignedUpActivities(Long participantId);
+
+    /**
+     * 获取当前用户已创建的所有活动
+     * @param participantId 当前的用户ID
+     * @return 当前用户已创建的活动列表
+     */
+    List<ActivityResponse> getCreatedActivities(Long participantId);
 }

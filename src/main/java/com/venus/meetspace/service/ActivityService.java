@@ -17,18 +17,4 @@ public interface ActivityService {
      * @return 活动id对应的活动
      */
     ActivityResponse getActivityById(Long id);
-
-    /**
-     * 获取所有活动
-     * @param id 所有者id
-     * @return 所有者的全部活动
-     */
-    List<ActivityResponse> getActivityByOwnerId(Long id);
-
-    /**
-     * 获取所有活动状态下的活动
-     * @param id 所有者id
-     * @return 所有者的全部活动状态下的活动
-     */
-    List<ActivityResponse> getActiveActivityByOwnerId(Long id);
 }
