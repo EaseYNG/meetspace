@@ -1,86 +1,96 @@
 package com.venus.meetspace.controller;
 
-import com.venus.meetspace.annotation.CurrentUserId;
-import com.venus.meetspace.common.Result;
-import com.venus.meetspace.dto.request.ActivityCreateRequest;
-import com.venus.meetspace.dto.request.ActivitySearchRequest;
-import com.venus.meetspace.dto.request.ActivityUpdateRequest;
-import com.venus.meetspace.dto.response.ActivityResponse;
-import com.venus.meetspace.service.impl.ActivityFilterImpl;
-import com.venus.meetspace.service.impl.ActivityParticipantServiceImpl;
-import com.venus.meetspace.service.impl.ActivityServiceImpl;
+import com.venus.meetspace.common.constant.ApiConstants;
+import com.venus.meetspace.common.result.Result;
+import com.venus.meetspace.model.cmd.ActivityCreateCmd;
+import com.venus.meetspace.model.cmd.ActivityUpdateCmd;
+import com.venus.meetspace.model.query.ActivitySearchQuery;
+import com.venus.meetspace.model.vo.ActivityVO;
+import com.venus.meetspace.security.SecurityUtil;
+import com.venus.meetspace.service.ActivityFilterService;
+import com.venus.meetspace.service.ActivityParticipantService;
+import com.venus.meetspace.service.ActivityService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/activity")
+@RequestMapping(ApiConstants.ACTIVITY_PREFIX) // /api/v1/activities
 @Slf4j
+@Tag(name = "Activity", description = "Activity CRUD, search, and participation")
 public class ActivityController {
-    private final ActivityServiceImpl asi;
-    private final ActivityParticipantServiceImpl apsi;
-    private final ActivityFilterImpl afi;
 
-    public ActivityController(ActivityServiceImpl asi,
-                              ActivityParticipantServiceImpl apsi, ActivityFilterImpl afi) {
-        this.asi = asi;
-        this.apsi = apsi;
-        this.afi = afi;
+    private final ActivityService activityService;
+    private final ActivityParticipantService participantService;
+    private final ActivityFilterService filterService;
+
+    public ActivityController(ActivityService activityService,
+                               ActivityParticipantService participantService,
+                               ActivityFilterService filterService) {
+        this.activityService = activityService;
+        this.participantService = participantService;
+        this.filterService = filterService;
     }
 
     @PostMapping("/create")
-    public Result<Void> createActivity(@RequestBody ActivityCreateRequest ar,
-                                       @CurrentUserId Long userId) {
-        asi.createActivity(ar, userId);
-        return Result.success(null, "活动创建成功！");
+    @Operation(summary = "Create activity", description = "Create a new activity, creator becomes the owner")
+    public Result<Void> createActivity(@Valid @RequestBody ActivityCreateCmd cmd) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        activityService.createActivity(cmd, userId);
+        return Result.success(null, "Activity created");
     }
 
-    @PatchMapping("/update/{activityId}")
-    public Result<Void> updateActivity(@PathVariable Long activityId,
-                                       @RequestBody ActivityUpdateRequest ar,
-                                       @CurrentUserId Long userId) {
-        asi.updateActivity(activityId, ar, userId);
-        return Result.success(null, "活动更新成功！");
+    @GetMapping("/{activityId}")
+    @Operation(summary = "Get activity by ID", description = "Get detailed information of an activity")
+    public Result<ActivityVO> getActivity(
+            @Parameter(description = "Activity ID") @PathVariable Long activityId) {
+        return Result.success(activityService.getActivityById(activityId));
     }
 
-    @DeleteMapping("/delete/{activityId}")
-    public Result<Void> deleteActivity(@PathVariable Long activityId) {
-        asi.deleteActivity(activityId);
-        return Result.success(null, "活动删除成功！");
+    @PatchMapping("/{activityId}")
+    @Operation(summary = "Update activity", description = "Update activity fields (partial update)")
+    public Result<Void> updateActivity(
+            @Parameter(description = "Activity ID") @PathVariable Long activityId,
+            @Valid @RequestBody ActivityUpdateCmd cmd) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        activityService.updateActivity(activityId, cmd, userId);
+        return Result.success(null, "Activity updated");
     }
 
-    @GetMapping("/signup/{activityId}")
-    public Result<Void> signupActivity(@PathVariable Long activityId,
-                                       @CurrentUserId Long userId) {
-        apsi.signup(activityId, userId);
-        return Result.success(null, "活动报名成功！");
-    }
-
-    @GetMapping("/related")
-    public Result<List<ActivityResponse>> getParticipatedActivities(@CurrentUserId Long participantId) {
-        return Result.success(apsi.getRelatedActivities(participantId), "用户参加活动列表获取成功！");
-    }
-
-    @GetMapping("/created")
-    public Result<List<ActivityResponse>> getCreatedActivities(@CurrentUserId Long userId) {
-        return Result.success(apsi.getCreatedActivities(userId));
-    }
-
-    @GetMapping("/signed_up")
-    public Result<List<ActivityResponse>> getSignedUpActivities(@CurrentUserId Long userId) {
-        return Result.success(apsi.getSignedUpActivities(userId));
+    @DeleteMapping("/{activityId}")
+    @Operation(summary = "Delete activity", description = "Soft delete an activity (mark as DELETED)")
+    public Result<Void> deleteActivity(
+            @Parameter(description = "Activity ID") @PathVariable Long activityId) {
+        activityService.deleteActivity(activityId);
+        return Result.success(null, "Activity deleted");
     }
 
     @PostMapping("/search")
-    public Result<List<ActivityResponse>> searchActivities(@RequestBody ActivitySearchRequest ar) {
-        return Result.success(afi.search(ar));
+    @Operation(summary = "Search activities", description = "Search activities by time range, location, participant count, etc.")
+    public Result<List<ActivityVO>> searchActivities(@RequestBody ActivitySearchQuery query) {
+        return Result.success(filterService.search(query));
     }
 
-    @GetMapping("/quit/{activityId}")
-    public Result<Void> quit(@PathVariable Long activityId,
-                             @CurrentUserId Long userId) {
-        apsi.quit(activityId, userId);
-        return Result.success(null);
+    @PostMapping("/{activityId}/participants")
+    @Operation(summary = "Participate in activity", description = "Current user signs up for an activity")
+    public Result<Void> participate(
+            @Parameter(description = "Activity ID") @PathVariable Long activityId) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        participantService.participate(activityId, userId);
+        return Result.success(null, "Signed up successfully");
+    }
+
+    @DeleteMapping("/{activityId}/participants/me")
+    @Operation(summary = "Quit activity", description = "Current user quits a previously signed-up activity")
+    public Result<Void> quit(
+            @Parameter(description = "Activity ID") @PathVariable Long activityId) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        participantService.quit(activityId, userId);
+        return Result.success(null, "Quit successfully");
     }
 }

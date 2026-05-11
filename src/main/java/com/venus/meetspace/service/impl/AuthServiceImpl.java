@@ -1,32 +1,80 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.dto.request.AuthRequest;
-import com.venus.meetspace.entity.User;
-import com.venus.meetspace.exception.BusinessException;
-import com.venus.meetspace.repository.UserRepository;
+import com.venus.meetspace.common.enums.ResultCode;
+import com.venus.meetspace.common.exception.BusinessException;
+import com.venus.meetspace.model.cmd.LoginCmd;
+import com.venus.meetspace.model.cmd.RegisterCmd;
+import com.venus.meetspace.model.entity.User;
+import com.venus.meetspace.repository.UserMapper;
+import com.venus.meetspace.security.CustomUserDetails;
 import com.venus.meetspace.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder pe;
 
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder pe) {
-        this.userRepository = userRepository;
-        this.pe = pe;
+    private final UserMapper userMapper;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final SecurityContextRepository securityContextRepository;
+
+    public AuthServiceImpl(UserMapper userMapper,
+                           AuthenticationManager authenticationManager,
+                           PasswordEncoder passwordEncoder) {
+        this.userMapper = userMapper;
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
+        this.securityContextRepository = new HttpSessionSecurityContextRepository();
     }
 
     @Override
-    public User login(AuthRequest authDTO) {
-        User temp = userRepository.findByUsername(authDTO.getUsername())
-                .orElseThrow(() -> new BusinessException(404, "用户未找到！"));
-        if(!pe.matches(authDTO.getPassword(), temp.getPassword()))
-            throw new BusinessException(401, "密码错误");
-        log.info("登录成功! " + temp.getId());
-        return temp;
+    public CustomUserDetails login(LoginCmd cmd, HttpServletRequest request, HttpServletResponse response) {
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(cmd.getUsername(), cmd.getPassword());
+
+        Authentication authentication = authenticationManager.authenticate(authToken);
+
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+
+        securityContextRepository.saveContext(context, request, response);
+
+        log.info("User logged in: {}", cmd.getUsername());
+        return (CustomUserDetails) authentication.getPrincipal();
+    }
+
+    @Override
+    public void register(RegisterCmd cmd) {
+        if (userMapper.findByUsername(cmd.getUsername()) != null) {
+            throw new BusinessException(ResultCode.CONFLICT, "Username already exists");
+        }
+
+        User user = new User();
+        user.setNickname(cmd.getNickname());
+        user.setUsername(cmd.getUsername());
+        user.setPassword(passwordEncoder.encode(cmd.getPassword()));
+
+        userMapper.insert(user);
+        log.info("User registered: id={}, username={}", user.getId(), cmd.getUsername());
+    }
+
+    @Override
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        SecurityContextHolder.clearContext();
+        request.getSession().invalidate();
+        log.info("User logged out");
     }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.venus.meetspace.repository.ActivityParticipantMapper">
+
+    <select id="findByParticipantId" resultType="com.venus.meetspace.model.entity.ActivityParticipant">
+        SELECT ap.* FROM activity_participant ap
+        INNER JOIN activity a ON ap.activity_id = a.id
+        WHERE ap.participant_id = #{participantId}
+        ORDER BY
+            CASE a.status
+                WHEN 'READY' THEN 1
+                WHEN 'CLOSED' THEN 2
+                WHEN 'OVER' THEN 3
+                ELSE 4
+            END,
+            a.start_time DESC
+    </select>
+
+    <delete id="deleteByIds">
+        DELETE FROM activity_participant
+        WHERE activity_id = #{activityId} AND participant_id = #{participantId}
+    </delete>
+
+</mapper>

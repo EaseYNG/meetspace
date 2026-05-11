@@ -42,3 +42,5 @@ testdb.trace.db
 *.log
 /workbuddy
 *.gz
+
+*.bat

@@ -1,14 +1,16 @@
 package com.venus.meetspace.service;
 
-import com.venus.meetspace.dto.request.AuthRequest;
-import com.venus.meetspace.entity.User;
-
+import com.venus.meetspace.model.cmd.LoginCmd;
+import com.venus.meetspace.model.cmd.RegisterCmd;
+import com.venus.meetspace.security.CustomUserDetails;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthService {
-    /**
-     * 处理用户登录
-     * @param authDTO POST认证请求
-     * @return 登录成功的User对象
-     */
-    User login(AuthRequest authDTO);
+
+    CustomUserDetails login(LoginCmd cmd, HttpServletRequest request, HttpServletResponse response);
+
+    void register(RegisterCmd cmd);
+
+    void logout(HttpServletRequest request, HttpServletResponse response);
 }

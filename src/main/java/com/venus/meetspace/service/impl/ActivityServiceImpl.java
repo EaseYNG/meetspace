@@ -1,16 +1,19 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.common.type.ActivityStatus;
-import com.venus.meetspace.common.type.Role;
-import com.venus.meetspace.dto.request.ActivityCreateRequest;
-import com.venus.meetspace.dto.request.ActivityUpdateRequest;
-import com.venus.meetspace.dto.response.ActivityResponse;
-import com.venus.meetspace.entity.Activity;
-import com.venus.meetspace.entity.ActivityParticipant;
-import com.venus.meetspace.exception.BusinessException;
-import com.venus.meetspace.mapper.ActivityMapper;
-import com.venus.meetspace.repository.ActivityParticipantRepository;
-import com.venus.meetspace.repository.ActivityRepository;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.venus.meetspace.common.enums.ActivityStatus;
+import com.venus.meetspace.common.enums.ParticipantRole;
+import com.venus.meetspace.common.enums.ResultCode;
+import com.venus.meetspace.common.exception.BusinessException;
+import com.venus.meetspace.convert.ActivityConvert;
+import com.venus.meetspace.model.cmd.ActivityCreateCmd;
+import com.venus.meetspace.model.cmd.ActivityUpdateCmd;
+import com.venus.meetspace.model.entity.Activity;
+import com.venus.meetspace.model.entity.ActivityParticipant;
+import com.venus.meetspace.model.vo.ActivityVO;
+import com.venus.meetspace.repository.ActivityMapper;
+import com.venus.meetspace.repository.ActivityParticipantMapper;
 import com.venus.meetspace.service.ActivityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,66 +23,84 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class ActivityServiceImpl implements ActivityService {
+public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> implements ActivityService {
 
-    private final ActivityRepository activityRepository;
-    private final ActivityParticipantRepository activityParticipantRepo;
-    private final ActivityMapper activityMapper;
+    private final ActivityConvert activityConvert;
+    private final ActivityParticipantMapper participantMapper;
 
-    public ActivityServiceImpl(ActivityRepository activityRepository, ActivityParticipantRepository activityParticipantRepo, ActivityMapper activityMapper) {
-        this.activityRepository = activityRepository;
-        this.activityParticipantRepo = activityParticipantRepo;
-        this.activityMapper = activityMapper;
+    public ActivityServiceImpl(ActivityConvert activityConvert,
+                                ActivityParticipantMapper participantMapper) {
+        this.activityConvert = activityConvert;
+        this.participantMapper = participantMapper;
     }
 
     @Override
-    public void createActivity(ActivityCreateRequest activityRequest, Long ownerId) {
-        LocalDateTime now = LocalDateTime.now();
-
-        if(activityRequest.getStartTime().isBefore(now)) {
-            throw new BusinessException(406, "起始时间早于现在！");
+    public Long createActivity(ActivityCreateCmd cmd, Long ownerId) {
+        if (cmd.getStartTime().isBefore(LocalDateTime.now())) {
+            throw new BusinessException(ResultCode.VALUE_ERROR, "Start time must be in the future");
         }
-        Activity activity = activityMapper.toEntity(activityRequest);
-        activity.setStatus(ActivityStatus.READY); // 确保活动处于就绪状态
-        activityRepository.save(activity);
+
+        Activity activity = activityConvert.toEntity(cmd);
+        activity.setStatus(ActivityStatus.READY);
+        this.save(activity);
 
         ActivityParticipant ap = new ActivityParticipant();
         ap.setActivityId(activity.getId());
         ap.setParticipantId(ownerId);
-        ap.setRole(Role.CREATOR);
-        activityParticipantRepo.save(ap);
-        log.info("活动创建: " + activity.getId());
+        ap.setRole(ParticipantRole.CREATOR);
+        participantMapper.insert(ap);
+
+        log.info("Activity created: id={}, owner={}", activity.getId(), ownerId);
+        return activity.getId();
     }
 
     @Override
-    public void updateActivity(Long id, ActivityUpdateRequest activityUpdateRequest, Long ownerId) {
-        Activity activity = activityRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
-        if(activity.getStatus() == ActivityStatus.CLOSED ||
-                activity.getStatus() == ActivityStatus.DELETED) {
-            throw new BusinessException(408, "活动不可编辑");
+    public void updateActivity(Long activityId, ActivityUpdateCmd cmd, Long ownerId) {
+        Activity activity = this.getById(activityId);
+        if (activity == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
         }
-        // 编辑逻辑
-        activityMapper.update(activityUpdateRequest, activity);
-        activityRepository.save(activity);
-        log.info("活动更新: " + activity.getId());
-    }
+        if (activity.getStatus() == ActivityStatus.CLOSED ||
+                activity.getStatus() == ActivityStatus.DELETED) {
+            throw new BusinessException(ResultCode.STATUS_ERROR, "Activity cannot be edited");
+        }
 
-
-    @Override
-    public void deleteActivity(Long id) {
-        Activity activity = activityRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
-        activity.setStatus(ActivityStatus.DELETED); // 设置活动状态
-        activityRepository.save(activity);
-        log.info("活动删除: " + activity.getId());
+        activityConvert.update(activity, cmd);
+        this.updateById(activity);
+        log.info("Activity updated: id={}", activityId);
     }
 
     @Override
-    public ActivityResponse getActivityById(Long id) {
-        Activity activity = activityRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(407, "未找到该活动！"));
-        log.info("获取活动: " + activity.getId());
-        return activityMapper.toResponse(activity);
+    public void deleteActivity(Long activityId) {
+        Activity activity = this.getById(activityId);
+        if (activity == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
+        }
+        activity.setStatus(ActivityStatus.DELETED);
+        this.updateById(activity);
+        log.info("Activity deleted: id={}", activityId);
+    }
+
+    @Override
+    public ActivityVO getActivityById(Long activityId) {
+        Activity activity = this.getById(activityId);
+        if (activity == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
+        }
+        return activityConvert.toVO(activity);
+    }
+
+    @Override
+    public List<ActivityVO> getActivitiesByIds(List<Long> ids) {
+        List<Activity> activities = this.getBaseMapper().findAllByIds(ids);
+        return activityConvert.toVOList(activities);
+    }
+
+    @Override
+    public List<ActivityVO> getReadyActivities() {
+        LambdaQueryWrapper<Activity> query = new LambdaQueryWrapper<>();
+        query.eq(Activity::getStatus, ActivityStatus.READY);
+        List<Activity> activities = this.list(query);
+        return activityConvert.toVOList(activities);
     }
 }

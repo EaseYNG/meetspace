@@ -1,48 +1,20 @@
 package com.venus.meetspace.service;
 
-import com.venus.meetspace.dto.response.ActivityResponse;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.venus.meetspace.model.entity.ActivityParticipant;
+import com.venus.meetspace.model.vo.ActivityVO;
 
 import java.util.List;
 
-public interface ActivityParticipantService {
-    /**
-     * 报名活动
-     * 应检查活动状态为READY，报名最大人数
-     * 应检查是否报名过该活动
-     * @author Void
-     * @param activityId 活动ID
-     * @param userId 用户ID
-     */
-    void signup(Long activityId, Long userId);
+public interface ActivityParticipantService extends IService<ActivityParticipant> {
 
-    /**
-     * 退出已报名的活动
-     * 应检查活动状态为READY/CLOSED
-     * 应检查是否报名过该活动
-     * @author Void
-     * @param activityId 活动ID
-     * @param userId 用户ID
-     */
+    void participate(Long activityId, Long userId);
+
     void quit(Long activityId, Long userId);
 
-    /**
-     * 获取当前用户已参加的所有活动
-     * @param participantId 当前的用户ID
-     * @return 当前用户相关全部活动
-     */
-    List<ActivityResponse> getRelatedActivities(Long participantId);
+    List<ActivityVO> getParticipatedActivities(Long userId);
 
-    /**
-     * 获取当前用户已报名的所有活动
-     * @param participantId 当前的用户ID
-     * @return 当前用户已报名的活动列表
-     */
-    List<ActivityResponse> getSignedUpActivities(Long participantId);
+    List<ActivityVO> getCreatedActivities(Long userId);
 
-    /**
-     * 获取当前用户已创建的所有活动
-     * @param participantId 当前的用户ID
-     * @return 当前用户已创建的活动列表
-     */
-    List<ActivityResponse> getCreatedActivities(Long participantId);
+    List<ActivityVO> getSignedUpActivities(Long userId);
 }

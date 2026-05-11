@@ -1,20 +1,24 @@
 package com.venus.meetspace.service;
 
-import com.venus.meetspace.dto.request.ActivityCreateRequest;
-import com.venus.meetspace.dto.request.ActivityUpdateRequest;
-import com.venus.meetspace.dto.response.ActivityResponse;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.venus.meetspace.model.cmd.ActivityCreateCmd;
+import com.venus.meetspace.model.cmd.ActivityUpdateCmd;
+import com.venus.meetspace.model.entity.Activity;
+import com.venus.meetspace.model.vo.ActivityVO;
 
 import java.util.List;
 
-public interface ActivityService {
-    void createActivity(ActivityCreateRequest activityRequest, Long ownerId);
-    void updateActivity(Long id, ActivityUpdateRequest activityUpdateRequest, Long ownerId);
-    void deleteActivity(Long id);
+public interface ActivityService extends IService<Activity> {
 
-    /**
-     * 根据活动id获取活动vo
-     * @param id 活动id
-     * @return 活动id对应的活动
-     */
-    ActivityResponse getActivityById(Long id);
+    Long createActivity(ActivityCreateCmd cmd, Long ownerId);
+
+    void updateActivity(Long activityId, ActivityUpdateCmd cmd, Long ownerId);
+
+    void deleteActivity(Long activityId);
+
+    ActivityVO getActivityById(Long activityId);
+
+    List<ActivityVO> getActivitiesByIds(List<Long> ids);
+
+    List<ActivityVO> getReadyActivities();
 }

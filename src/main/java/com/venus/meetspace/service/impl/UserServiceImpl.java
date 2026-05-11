@@ -1,67 +1,62 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.dto.request.RegisterRequest;
-import com.venus.meetspace.dto.Profile;
-import com.venus.meetspace.entity.User;
-import com.venus.meetspace.exception.BusinessException;
-import com.venus.meetspace.repository.UserRepository;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.venus.meetspace.common.enums.ResultCode;
+import com.venus.meetspace.common.exception.BusinessException;
+import com.venus.meetspace.convert.UserConvert;
+import com.venus.meetspace.model.cmd.ProfileUpdateCmd;
+import com.venus.meetspace.model.entity.User;
+import com.venus.meetspace.model.vo.ActivityVO;
+import com.venus.meetspace.model.vo.UserHomeVO;
+import com.venus.meetspace.model.vo.UserProfileVO;
+import com.venus.meetspace.repository.UserMapper;
+import com.venus.meetspace.service.ActivityService;
 import com.venus.meetspace.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @Slf4j
-public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder pe;
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder pe) {
-        this.userRepository = userRepository;
-        this.pe = pe;
+    private final UserConvert userConvert;
+    private final ActivityService activityService;
+
+    public UserServiceImpl(UserConvert userConvert, ActivityService activityService) {
+        this.userConvert = userConvert;
+        this.activityService = activityService;
     }
 
     @Override
-    public void register(RegisterRequest rq) {
-        // 用户名已存在则抛出异常
-        this.userRepository.findByUsername(rq.getUsername())
-                .ifPresent(u -> { throw new BusinessException(409, "用户名已被注册！"); });
-        // 用户名不存在，创建新用户
-        User user = new User();
-        user.setNickname(rq.getNickname());
-        user.setUsername(rq.getUsername());
-        user.setPassword(pe.encode(rq.getPassword()));
-        userRepository.save(user);
-        log.info("注册成功! " + user.getId());
-    }
-    @Override
-    public void setProfile(Profile temp, long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(404, "用户未找到！"));
-        user.setAge(temp.getAge());
-        user.setGender(temp.getGender());
-        user.setEmail(temp.getEmail());
-        user.setFirstname(temp.getFirstname());
-        user.setLastname(temp.getLastname());
-
-        userRepository.save(user);
-        log.info("设置个人资料: user_id: " + user.getId());
+    public UserProfileVO getProfile(Long userId) {
+        User user = this.getById(userId);
+        if (user == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "User not found");
+        }
+        return userConvert.toProfileVO(user);
     }
 
     @Override
-    public Profile getProfile(long id) {
-        Profile profile = new Profile();
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(404, "用户未找到！"));
+    public void updateProfile(Long userId, ProfileUpdateCmd cmd) {
+        User user = this.getById(userId);
+        if (user == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "User not found");
+        }
+        userConvert.updateProfile(user, cmd);
+        this.updateById(user);
+        log.info("Profile updated: userId={}", userId);
+    }
 
-        profile.setAge(user.getAge());
-        profile.setGender(user.getGender());
-        profile.setEmail(user.getEmail());
-        profile.setFirstname(user.getFirstname());
-        profile.setLastname(user.getLastname());
-        log.info("获取个人资料: user_id: " + user.getId());
-        return profile;
+    @Override
+    public UserHomeVO getHome(Long userId) {
+        UserProfileVO profile = getProfile(userId);
+        List<ActivityVO> recommended = activityService.getReadyActivities();
+
+        UserHomeVO home = new UserHomeVO();
+        home.setProfile(profile);
+        home.setRecommendedActivities(recommended);
+        return home;
     }
 }

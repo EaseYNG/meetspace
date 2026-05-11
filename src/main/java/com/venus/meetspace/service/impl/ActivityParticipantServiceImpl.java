@@ -1,17 +1,19 @@
 package com.venus.meetspace.service.impl;
 
-import com.venus.meetspace.common.type.ActivityStatus;
-import com.venus.meetspace.common.type.Role;
-import com.venus.meetspace.dto.response.ActivityResponse;
-import com.venus.meetspace.entity.Activity;
-import com.venus.meetspace.entity.ActivityParticipant;
-import com.venus.meetspace.exception.BusinessException;
-import com.venus.meetspace.mapper.ActivityMapper;
-import com.venus.meetspace.repository.ActivityParticipantRepository;
-import com.venus.meetspace.repository.ActivityRepository;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.venus.meetspace.common.enums.ActivityStatus;
+import com.venus.meetspace.common.enums.ParticipantRole;
+import com.venus.meetspace.common.enums.ResultCode;
+import com.venus.meetspace.common.exception.BusinessException;
+import com.venus.meetspace.convert.ActivityConvert;
+import com.venus.meetspace.model.entity.Activity;
+import com.venus.meetspace.model.entity.ActivityParticipant;
+import com.venus.meetspace.model.vo.ActivityVO;
+import com.venus.meetspace.repository.ActivityMapper;
+import com.venus.meetspace.repository.ActivityParticipantMapper;
 import com.venus.meetspace.service.ActivityParticipantService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.BeanDefinitionDsl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,104 +22,104 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class ActivityParticipantServiceImpl implements ActivityParticipantService {
-    private final ActivityRepository activityRepository;
-    private final ActivityParticipantRepository activityParticipantRepository;
-    private final ActivityMapper activityMapper;
+public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticipantMapper, ActivityParticipant>
+        implements ActivityParticipantService {
 
-    public ActivityParticipantServiceImpl(ActivityRepository activityRepository,
-                                          ActivityParticipantRepository activityParticipantRepository,
-                                           ActivityMapper activityMapper) {
-        this.activityRepository = activityRepository;
-        this.activityParticipantRepository = activityParticipantRepository;
+    private final ActivityMapper activityMapper;
+    private final ActivityConvert activityConvert;
+
+    public ActivityParticipantServiceImpl(ActivityMapper activityMapper,
+                                           ActivityConvert activityConvert) {
         this.activityMapper = activityMapper;
+        this.activityConvert = activityConvert;
     }
 
     @Override
-    public void signup(Long activityId, Long userId) {
-        Activity activity = activityRepository.findById(activityId)
-                .orElseThrow(() -> new BusinessException(407, "活动未找到！"));
-
-        // 检测活动状态
-        if(!activity.getStatus().equals(ActivityStatus.READY)) {
-            throw new BusinessException(408, "活动状态不可报名！");
+    public void participate(Long activityId, Long userId) {
+        Activity activity = activityMapper.selectById(activityId);
+        if (activity == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
+        }
+        if (!activity.getStatus().equals(ActivityStatus.READY)) {
+            throw new BusinessException(ResultCode.STATUS_ERROR, "Activity is not open for signup");
+        }
+        if (activity.getSignupDeadline().isBefore(LocalDateTime.now())) {
+            throw new BusinessException(ResultCode.STATUS_ERROR, "Signup deadline has passed");
         }
 
-        // 检测报名ddl
-        if(activity.getSignupDeadline().isBefore(LocalDateTime.now())) {
-            throw new BusinessException(408, "已过报名时间！");
+        LambdaQueryWrapper<ActivityParticipant> query = new LambdaQueryWrapper<>();
+        query.eq(ActivityParticipant::getActivityId, activityId)
+             .eq(ActivityParticipant::getParticipantId, userId);
+        if (this.getOne(query) != null) {
+            throw new BusinessException(ResultCode.NO_SUCH_OBJECT, "Already signed up for this activity");
         }
-
-        // 检测是否报名过
-        activityParticipantRepository.findByActivityIdAndParticipantId(activityId, userId)
-                .ifPresent(activityParticipant -> {
-                    throw new BusinessException(408, "已报名该活动！");}
-                );
 
         ActivityParticipant ap = new ActivityParticipant();
         ap.setParticipantId(userId);
         ap.setActivityId(activityId);
-        ap.setRole(Role.NORMAL);
-        activityParticipantRepository.save(ap);
-        log.info("报名活动: " + "user_id: " + userId + "activity_id: " + activityId);
+        ap.setRole(ParticipantRole.NORMAL);
+        this.save(ap);
+
+        log.info("Participant signed up: userId={}, activityId={}", userId, activityId);
     }
 
     @Override
     public void quit(Long activityId, Long userId) {
-        Activity activity = activityRepository.findById(activityId)
-                .orElseThrow(() -> new BusinessException(407, "活动未找到！"));
-        if(!activity.getStatus().equals(ActivityStatus.READY) &&
+        Activity activity = activityMapper.selectById(activityId);
+        if (activity == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
+        }
+        if (!activity.getStatus().equals(ActivityStatus.READY) &&
                 !activity.getStatus().equals(ActivityStatus.CLOSED)) {
-            throw new BusinessException(408, "活动已结束！");
+            throw new BusinessException(ResultCode.STATUS_ERROR, "Activity has ended");
         }
-        activityParticipantRepository.deleteByIds(activityId, userId);
-        log.info("退出活动: " + "user_id: " + userId + "activity_id: " + activityId);
-    }
 
-    /**
-     * 工具方法：获取用户有参与记录的全部活动列表
-     * 用于获取原始ActivityParticipant对象进行role校验
-     * @param participantId 参与者ID
-     * @return 用户有参与记录的全部活动列表
-     */
-    private List<ActivityParticipant> _getRelatedActivities(Long participantId) {
-        return activityParticipantRepository.findByParticipantId(participantId).orElseThrow();
+        LambdaQueryWrapper<ActivityParticipant> query = new LambdaQueryWrapper<>();
+        query.eq(ActivityParticipant::getActivityId, activityId)
+             .eq(ActivityParticipant::getParticipantId, userId);
+        this.remove(query);
+
+        log.info("Participant quit: userId={}, activityId={}", userId, activityId);
     }
 
     @Override
-    public List<ActivityResponse> getRelatedActivities(Long participantId) {
-        List<ActivityParticipant> temp = _getRelatedActivities(participantId);
-        List<Long> tempIds = new ArrayList<>();
-        for(ActivityParticipant ap : temp) {
-            tempIds.add(ap.getId());
+    public List<ActivityVO> getParticipatedActivities(Long userId) {
+        List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
+        List<Long> activityIds = records.stream()
+                .map(ActivityParticipant::getActivityId)
+                .toList();
+        if (activityIds.isEmpty()) {
+            return List.of();
         }
-        List<Activity> activities = activityRepository.findAllByIds(tempIds);
-        return activityMapper.toResponseList(activities);
+        List<Activity> activities = activityMapper.findAllByIds(activityIds);
+        return activityConvert.toVOList(activities);
     }
 
     @Override
-    public List<ActivityResponse> getSignedUpActivities(Long participantId) {
-        List<ActivityParticipant> temp = _getRelatedActivities(participantId);
-        List<Long> tempIds = new ArrayList<>();
-        for(ActivityParticipant ap : temp) {
-            if(ap.getRole() == Role.NORMAL) {
-                tempIds.add(ap.getId());
-            }
+    public List<ActivityVO> getSignedUpActivities(Long userId) {
+        List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
+        List<Long> activityIds = records.stream()
+                .filter(ap -> ap.getRole() == ParticipantRole.NORMAL)
+                .map(ActivityParticipant::getActivityId)
+                .toList();
+        if (activityIds.isEmpty()) {
+            return List.of();
         }
-        List<Activity> activities = activityRepository.findAllByIds(tempIds);
-        return activityMapper.toResponseList(activities);
+        List<Activity> activities = activityMapper.findAllByIds(activityIds);
+        return activityConvert.toVOList(activities);
     }
 
     @Override
-    public List<ActivityResponse> getCreatedActivities(Long participantId) {
-        List<ActivityParticipant> temp = _getRelatedActivities(participantId);
-        List<Long> tempIds = new ArrayList<>();
-        for(ActivityParticipant ap : temp) {
-            if(ap.getRole() == Role.CREATOR) {
-                tempIds.add(ap.getId());
-            }
+    public List<ActivityVO> getCreatedActivities(Long userId) {
+        List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
+        List<Long> activityIds = records.stream()
+                .filter(ap -> ap.getRole() == ParticipantRole.CREATOR)
+                .map(ActivityParticipant::getActivityId)
+                .toList();
+        if (activityIds.isEmpty()) {
+            return List.of();
         }
-        List<Activity> activities = activityRepository.findAllByIds(tempIds);
-        return activityMapper.toResponseList(activities);
+        List<Activity> activities = activityMapper.findAllByIds(activityIds);
+        return activityConvert.toVOList(activities);
     }
 }

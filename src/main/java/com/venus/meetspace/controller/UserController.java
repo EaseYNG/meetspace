@@ -1,45 +1,49 @@
 package com.venus.meetspace.controller;
 
-import com.venus.meetspace.common.Result;
-import com.venus.meetspace.dto.request.AuthRequest;
-import com.venus.meetspace.dto.request.RegisterRequest;
-import com.venus.meetspace.service.impl.AuthServiceImpl;
-import com.venus.meetspace.service.impl.UserServiceImpl;
-import com.venus.meetspace.security.JwtUtil;
+import com.venus.meetspace.common.constant.ApiConstants;
+import com.venus.meetspace.common.result.Result;
+import com.venus.meetspace.model.cmd.ProfileUpdateCmd;
+import com.venus.meetspace.model.vo.UserHomeVO;
+import com.venus.meetspace.model.vo.UserProfileVO;
+import com.venus.meetspace.service.UserService;
+import com.venus.meetspace.security.SecurityUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
-@RequestMapping("/user")
+@RequestMapping(ApiConstants.USER_PREFIX) // /api/v1/users
 @Slf4j
+@Tag(name = "User", description = "User profile and home page")
 public class UserController {
-    private final UserServiceImpl usi;
-    private final AuthServiceImpl asi;
-    private final JwtUtil jwtUtil;
 
-    public UserController(UserServiceImpl usi, AuthServiceImpl asi, JwtUtil jwtUtil) {
-        this.usi = usi;
-        this.asi = asi;
-        this.jwtUtil = jwtUtil;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    // 注册必须提供nickname, username, password
-    @PostMapping("/register")
-    public Result<Void> register(@RequestBody RegisterRequest rq) {
-        usi.register(rq);
-        return Result.success(null, "用户创建成功！");
+    @GetMapping("/me/home")
+    @Operation(summary = "Get home page", description = "Returns current user's home page with profile and recommendations")
+    public Result<UserHomeVO> getHome() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        return Result.success(userService.getHome(userId));
     }
 
-    @PostMapping("/login")
-    public Result<String> login(@RequestBody AuthRequest authDTO) {
-        String token = jwtUtil.generateUserToken(asi.login(authDTO));
-        return Result.success(token, "登录成功！");
+    @GetMapping("/me/profile")
+    @Operation(summary = "Get profile", description = "Get current user's profile information")
+    public Result<UserProfileVO> getProfile() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        return Result.success(userService.getProfile(userId));
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "ok";
+    @PutMapping("/me/profile")
+    @Operation(summary = "Update profile", description = "Update current user's profile information")
+    public Result<Void> updateProfile(@Valid @RequestBody ProfileUpdateCmd cmd) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        userService.updateProfile(userId, cmd);
+        return Result.success(null, "Profile updated");
     }
-
 }

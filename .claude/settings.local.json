@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jar tf *)",
+      "Bash(mvn clean *)",
+      "Bash(mvn spring-boot:run -DskipTests)",
+      "Bash(mvn spring-boot:run -Dmaven.test.skip=true)",
+      "Bash(./mvnw compile *)",
+      "Bash(./mvnw clean *)",
+      "Bash(chmod +x *)",
+      "Bash(mvn compile *)",
+      "Bash(mvn spring-boot:run)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/api/v1/health)",
+      "Bash(break)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:8080/doc.html)",
+      "Bash(curl -s http://localhost:8080/api/v1/users/me/profile)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:8080/favicon.ico)",
+      "Bash(mvn spring-boot:run -q)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} \\(%{size_download} bytes\\)\\\\n\" http://localhost:8080/doc.html)",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s http://localhost:8080/v3/api-docs)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'API count: {len\\(d.get\\(\\\\\"paths\\\\\",{}\\)\\)}'\\)\")",
+      "Bash(curl -s -X POST http://localhost:8080/api/v1/auth/register -H \"Content-Type: application/json\" -d '{\"username\":\"testuser\",\"password\":\"123456\",\"nickname\":\"Test\"}' -c /tmp/cookies.txt)",
+      "Bash(curl -s -X POST http://localhost:8080/api/v1/auth/login -H \"Content-Type: application/json\" -d '{\"username\":\"testuser\",\"password\":\"123456\"}' -c /tmp/cookies.txt -b /tmp/cookies.txt)",
+      "Bash(curl -s http://localhost:8080/api/v1/users/me/profile -b /tmp/cookies.txt)",
+      "Bash(curl *)",
+      "Bash(python3 -c ' *)",
+      "Bash(mysql -u root -p123456 meetspace_db -e \"SHOW CREATE TABLE user\\\\G\")",
+      "Bash(mysql *)",
+      "Bash(netstat -ano)",
+      "Bash(awk '{print $5}')",
+      "Bash(awk '{print $NF}')",
+      "Bash(taskkill /f /im java.exe)",
+      "Bash(rm -f /tmp/test_cookies.txt)",
+      "Read(//tmp/**)"
+    ]
+  }
+}
