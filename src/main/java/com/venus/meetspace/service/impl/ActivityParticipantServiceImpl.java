@@ -15,6 +15,7 @@ import com.venus.meetspace.repository.ActivityParticipantMapper;
 import com.venus.meetspace.service.ActivityParticipantService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void participate(Long activityId, Long userId) {
         Activity activity = activityMapper.selectById(activityId);
         if (activity == null) {
@@ -64,6 +66,7 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void quit(Long activityId, Long userId) {
         Activity activity = activityMapper.selectById(activityId);
         if (activity == null) {

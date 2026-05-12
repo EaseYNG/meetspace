@@ -12,7 +12,7 @@ public interface ActivityService extends IService<Activity> {
 
     Long createActivity(ActivityCreateCmd cmd, Long ownerId);
 
-    void updateActivity(Long activityId, ActivityUpdateCmd cmd, Long ownerId);
+    void updateActivity(Long activityId, ActivityUpdateCmd cmd);
 
     void deleteActivity(Long activityId);
 

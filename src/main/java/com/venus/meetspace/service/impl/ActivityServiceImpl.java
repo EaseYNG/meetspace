@@ -17,6 +17,7 @@ import com.venus.meetspace.repository.ActivityParticipantMapper;
 import com.venus.meetspace.service.ActivityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,6 +36,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long createActivity(ActivityCreateCmd cmd, Long ownerId) {
         if (cmd.getStartTime().isBefore(LocalDateTime.now())) {
             throw new BusinessException(ResultCode.VALUE_ERROR, "Start time must be in the future");
@@ -44,6 +46,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         activity.setStatus(ActivityStatus.READY);
         this.save(activity);
 
+        // 插入活动参与记录
         ActivityParticipant ap = new ActivityParticipant();
         ap.setActivityId(activity.getId());
         ap.setParticipantId(ownerId);
@@ -55,7 +58,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     }
 
     @Override
-    public void updateActivity(Long activityId, ActivityUpdateCmd cmd, Long ownerId) {
+    public void updateActivity(Long activityId, ActivityUpdateCmd cmd) {
         Activity activity = this.getById(activityId);
         if (activity == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");

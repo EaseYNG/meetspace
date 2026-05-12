@@ -39,7 +39,7 @@ public class UserController {
         return Result.success(userService.getProfile(userId));
     }
 
-    @PutMapping("/me/profile")
+    @PatchMapping("/me/profile")
     @Operation(summary = "Update profile", description = "Update current user's profile information")
     public Result<Void> updateProfile(@Valid @RequestBody ProfileUpdateCmd cmd) {
         Long userId = SecurityUtil.getCurrentUserId();

@@ -57,8 +57,7 @@ public class ActivityController {
     public Result<Void> updateActivity(
             @Parameter(description = "Activity ID") @PathVariable Long activityId,
             @Valid @RequestBody ActivityUpdateCmd cmd) {
-        Long userId = SecurityUtil.getCurrentUserId();
-        activityService.updateActivity(activityId, cmd, userId);
+        activityService.updateActivity(activityId, cmd);
         return Result.success(null, "Activity updated");
     }
 

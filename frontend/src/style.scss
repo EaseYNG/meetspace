@@ -1,0 +1,199 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #4caf50;
+  --primary-light: #81c784;
+  --primary-dark: #388e3c;
+  --bg: #f0f4f0;
+  --surface: rgba(255, 255, 255, 0.7);
+  --surface-border: rgba(255, 255, 255, 0.3);
+  --text: #2c3e2c;
+  --text-secondary: #5a6a5a;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --blur: 20px;
+}
+
+[data-theme='dark'] {
+  --bg: #121b12;
+  --surface: rgba(30, 40, 30, 0.7);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --text: #e0eae0;
+  --text-secondary: #9aab9a;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+html, body, #app {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+#app {
+  position: relative;
+  min-height: 100vh;
+}
+
+.liquid-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.liquid-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: liquidFloat 20s ease-in-out infinite;
+}
+
+.liquid-blob:nth-child(1) {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #4caf50, #81c784);
+  top: -200px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.liquid-blob:nth-child(2) {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #66bb6a, #a5d6a7);
+  bottom: -150px;
+  right: -100px;
+  animation-delay: -5s;
+}
+
+.liquid-blob:nth-child(3) {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #aed581, #81c784);
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -10s;
+}
+
+@keyframes liquidFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(50px, -50px) scale(1.1) rotate(5deg);
+  }
+  50% {
+    transform: translate(-30px, 30px) scale(0.95) rotate(-3deg);
+  }
+  75% {
+    transform: translate(40px, 40px) scale(1.05) rotate(4deg);
+  }
+}
+
+.glass-card {
+  background: var(--surface);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.glass-btn {
+  background: rgba(76, 175, 80, 0.8);
+  backdrop-filter: blur(10px);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: white;
+  padding: 12px 24px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.glass-btn:hover {
+  background: rgba(76, 175, 80, 0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: var(--radius-sm) !important;
+  transition: all 0.3s ease !important;
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15) !important;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+.el-button--primary {
+  --el-button-bg-color: var(--primary) !important;
+  --el-button-border-color: var(--primary) !important;
+  --el-button-hover-bg-color: var(--primary-dark) !important;
+}
+
+.el-input__wrapper {
+  box-shadow: 0 0 0 1px rgba(76, 175, 80, 0.15) inset !important;
+}
+
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--primary) inset !important;
+}
+
+.el-tabs__item.is-active {
+  color: var(--primary) !important;
+}
+
+.el-tabs__active-bar {
+  background-color: var(--primary) !important;
+}
