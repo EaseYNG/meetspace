@@ -2,6 +2,7 @@ package com.venus.meetspace.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.venus.meetspace.cache.CacheService;
 import com.venus.meetspace.common.enums.ActivityStatus;
 import com.venus.meetspace.common.enums.ParticipantRole;
 import com.venus.meetspace.common.enums.ResultCode;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -28,11 +30,13 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
 
     private final ActivityConvert activityConvert;
     private final ActivityParticipantMapper participantMapper;
+    private final CacheService cacheService;
 
     public ActivityServiceImpl(ActivityConvert activityConvert,
-                                ActivityParticipantMapper participantMapper) {
+                               ActivityParticipantMapper participantMapper, CacheService cacheService) {
         this.activityConvert = activityConvert;
         this.participantMapper = participantMapper;
+        this.cacheService = cacheService;
     }
 
     @Override
@@ -86,11 +90,20 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
 
     @Override
     public ActivityVO getActivityById(Long activityId) {
-        Activity activity = this.getById(activityId);
-        if (activity == null) {
-            throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
-        }
-        return activityConvert.toVO(activity);
+        ActivityVO vo = cacheService.getOrLoad(
+                "activity:"+activityId,
+                ActivityVO.class,
+                30,
+                TimeUnit.MINUTES,
+                () -> {
+                    Activity activity = this.getById(activityId);
+                    if (activity == null) {
+                        throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
+                    }
+                    return activityConvert.toVO(activity);
+                }
+        );
+        return vo;
     }
 
     @Override

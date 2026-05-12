@@ -397,3 +397,14 @@ Spring Security 的 CORS 处理和 Spring MVC 的 `@CrossOrigin` 是两个独立
 | **SecurityContextHolderFilter**         | SecurityFilterAutoConfiguration                              | 每个请求从 Session 恢复 SecurityContext         |
 | **WebSecurityConfigurerAdapter 的后继** | 自动检测 SecurityFilterChain bean                            | 替代旧版继承方式                                |
 | **UserDetailsService 发现**             | DaoAuthenticationProvider 通过容器找到 CustomUserDetailsService | 自动注入                                        |
+
+
+
+## MyBatis-Plus
+
+
+
+
+
+
+

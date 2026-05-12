@@ -1,5 +1,6 @@
 package com.venus.meetspace.service.impl;
 
+import com.venus.meetspace.cache.CacheService;
 import com.venus.meetspace.common.enums.ResultCode;
 import com.venus.meetspace.common.exception.BusinessException;
 import com.venus.meetspace.model.cmd.LoginCmd;
@@ -33,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
 
     public AuthServiceImpl(UserMapper userMapper,
                            AuthenticationManager authenticationManager,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, CacheService cacheService) {
         this.userMapper = userMapper;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
@@ -75,6 +76,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response) {
+        // 无人登录时
+        if(SecurityContextHolder.getContext().getAuthentication() == null) {
+            log.warn("No user is currently authenticated");
+            throw new BusinessException(ResultCode.UNAUTHORIZED, "No user is currently authenticated");
+        }
         SecurityContextHolder.clearContext();
         request.getSession().invalidate();
         log.info("User logged out");

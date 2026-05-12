@@ -36,4 +36,8 @@
         </foreach>
     </select>
 
+    <select id="selectAllIds" resultType="Long">
+        SELECT id FROM activity
+    </select>
+
 </mapper>

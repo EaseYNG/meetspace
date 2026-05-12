@@ -24,4 +24,6 @@ public interface ActivityMapper extends BaseMapper<Activity> {
     List<Activity> findAllReady();
 
     List<Activity> findAllByIds(@Param("ids") List<Long> ids);
+
+    List<Long> selectAllIds();
 }

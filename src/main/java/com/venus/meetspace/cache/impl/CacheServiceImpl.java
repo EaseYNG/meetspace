@@ -1,12 +1,18 @@
 package com.venus.meetspace.cache.impl;
 
 import com.venus.meetspace.cache.CacheService;
+import com.venus.meetspace.repository.ActivityMapper;
+import com.venus.meetspace.repository.UserMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -20,10 +26,14 @@ public class CacheServiceImpl implements CacheService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedissonClient redissonClient;
+    private final ActivityMapper activityMapper;
+    private final UserMapper userMapper;
 
-    public CacheServiceImpl(RedisTemplate<String, Object> redisTemplate, RedissonClient redissonClient) {
+    public CacheServiceImpl(RedisTemplate<String, Object> redisTemplate, RedissonClient redissonClient, ActivityMapper activityMapper, UserMapper userMapper) {
         this.redisTemplate = redisTemplate;
         this.redissonClient = redissonClient;
+        this.activityMapper = activityMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -38,12 +48,24 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public void set(String key, Object value, long timeout, TimeUnit unit) {
-        redisTemplate.opsForValue().set(key, value, timeout, unit);
+        long baseTTL = unit.toSeconds(timeout);
+        long jitter = ThreadLocalRandom.current().nextLong(baseTTL / 10); // 防雪崩
+        redisTemplate.opsForValue().set(key, value, baseTTL+jitter, TimeUnit.SECONDS);
     }
 
     @Override
     public void delete(String key) {
         redisTemplate.delete(key);
+    }
+
+    @Override
+    @PostConstruct
+    public void init() {
+        RBloomFilter<Long> bloomFilter = redissonClient.getBloomFilter("activityIdBloom");
+        bloomFilter.tryInit(100000L, 0.001); // 预计容量 + 期望误判率
+        List<Long> allIds = activityMapper.selectAllIds();
+        allIds.forEach(bloomFilter::add);
+        log.info("布隆过滤器初始化完成，已加载 {} 条记录", allIds.size());
     }
 
     @Override

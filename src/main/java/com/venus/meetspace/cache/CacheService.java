@@ -11,6 +11,8 @@ public interface CacheService {
 
     void delete(String key);
 
+    void init();
+
     boolean setIfAbsent(String key, Object value, long timeout, TimeUnit unit);
 
     /**

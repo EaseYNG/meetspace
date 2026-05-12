@@ -1,5 +1,6 @@
 package com.venus.meetspace.controller;
 
+import com.venus.meetspace.cache.CacheService;
 import com.venus.meetspace.common.constant.ApiConstants;
 import com.venus.meetspace.common.result.Result;
 import com.venus.meetspace.model.cmd.LoginCmd;
@@ -22,9 +23,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final CacheService cacheService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, CacheService cacheService) {
         this.authService = authService;
+        this.cacheService = cacheService;
     }
 
     @PostMapping("/login")
@@ -32,6 +35,9 @@ public class AuthController {
     public Result<UserProfileVO> login(@Valid @RequestBody LoginCmd cmd,
                                         HttpServletRequest request,
                                         HttpServletResponse response) {
+        String key = "login:attempt:" + cmd.getUsername();
+        String val = cacheService.get(key, String.class);
+
         CustomUserDetails userDetails = authService.login(cmd, request, response);
         UserProfileVO profile = new UserProfileVO();
         profile.setId(userDetails.getId());
