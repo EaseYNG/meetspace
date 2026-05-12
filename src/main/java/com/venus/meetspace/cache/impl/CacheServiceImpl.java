@@ -28,6 +28,7 @@ public class CacheServiceImpl implements CacheService {
     private final RedissonClient redissonClient;
     private final ActivityMapper activityMapper;
     private final UserMapper userMapper;
+    private RBloomFilter<Long> bloomFilter;
 
     public CacheServiceImpl(RedisTemplate<String, Object> redisTemplate, RedissonClient redissonClient, ActivityMapper activityMapper, UserMapper userMapper) {
         this.redisTemplate = redisTemplate;
@@ -61,7 +62,7 @@ public class CacheServiceImpl implements CacheService {
     @Override
     @PostConstruct
     public void init() {
-        RBloomFilter<Long> bloomFilter = redissonClient.getBloomFilter("activityIdBloom");
+        this.bloomFilter = redissonClient.getBloomFilter("activityIdBloom");
         bloomFilter.tryInit(100000L, 0.001); // 预计容量 + 期望误判率
         List<Long> allIds = activityMapper.selectAllIds();
         allIds.forEach(bloomFilter::add);

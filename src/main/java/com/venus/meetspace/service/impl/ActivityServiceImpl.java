@@ -30,12 +30,14 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
 
     private final ActivityConvert activityConvert;
     private final ActivityParticipantMapper participantMapper;
+    private final ActivityMapper activityMapper;
     private final CacheService cacheService;
 
     public ActivityServiceImpl(ActivityConvert activityConvert,
-                               ActivityParticipantMapper participantMapper, CacheService cacheService) {
+                               ActivityParticipantMapper participantMapper, ActivityMapper activityMapper, CacheService cacheService) {
         this.activityConvert = activityConvert;
         this.participantMapper = participantMapper;
+        this.activityMapper = activityMapper;
         this.cacheService = cacheService;
     }
 
@@ -62,6 +64,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateActivity(Long activityId, ActivityUpdateCmd cmd) {
         Activity activity = this.getById(activityId);
         if (activity == null) {
@@ -108,7 +111,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
 
     @Override
     public List<ActivityVO> getActivitiesByIds(List<Long> ids) {
-        List<Activity> activities = this.getBaseMapper().findAllByIds(ids);
+        List<Activity> activities = activityMapper.findAllByIds(ids);
         return activityConvert.toVOList(activities);
     }
 

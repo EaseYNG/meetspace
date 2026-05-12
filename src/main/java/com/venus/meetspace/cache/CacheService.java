@@ -11,6 +11,9 @@ public interface CacheService {
 
     void delete(String key);
 
+    /**
+     * 初始化activity_id布隆过滤器
+     */
     void init();
 
     boolean setIfAbsent(String key, Object value, long timeout, TimeUnit unit);
