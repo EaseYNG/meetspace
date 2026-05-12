@@ -15,8 +15,13 @@
             END,
             a.start_time DESC
     </select>
+    
+    <select id="findByActivityId" resultType="com.venus.meetspace.model.entity.ActivityParticipant">
+        SELECT * FROM activity_participant
+        WHERE activity_id = #{activityId} AND participant_id = #{participantId}
+    </select>
 
-    <delete id="deleteByIds">
+    <delete id="deleteBy2Ids">
         DELETE FROM activity_participant
         WHERE activity_id = #{activityId} AND participant_id = #{participantId}
     </delete>

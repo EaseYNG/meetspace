@@ -1,0 +1,1 @@
+import{q as o}from"./index-BpwDgHYJ.js";function n(t){return o.post("/auth/login",t)}function u(t){return o.post("/auth/register",t)}function e(){return o.post("/auth/logout")}export{e as a,n as l,u as r};

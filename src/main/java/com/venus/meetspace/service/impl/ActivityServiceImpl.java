@@ -59,6 +59,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         ap.setRole(ParticipantRole.CREATOR);
         participantMapper.insert(ap);
 
+        cacheService.delete("activity:ready:list");
         log.info("Activity created: id={}, owner={}", activity.getId(), ownerId);
         return activity.getId();
     }
@@ -77,6 +78,8 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
 
         activityConvert.update(activity, cmd);
         this.updateById(activity);
+        cacheService.delete("activity:" + activityId);
+        cacheService.delete("activity:ready:list");
         log.info("Activity updated: id={}", activityId);
     }
 
@@ -88,6 +91,8 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         }
         activity.setStatus(ActivityStatus.DELETED);
         this.updateById(activity);
+        cacheService.delete("activity:" + activityId);
+        cacheService.delete("activity:ready:list");
         log.info("Activity deleted: id={}", activityId);
     }
 
@@ -116,10 +121,13 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<ActivityVO> getReadyActivities() {
-        LambdaQueryWrapper<Activity> query = new LambdaQueryWrapper<>();
-        query.eq(Activity::getStatus, ActivityStatus.READY);
-        List<Activity> activities = this.list(query);
-        return activityConvert.toVOList(activities);
+        return cacheService.getOrLoad("activity:ready:list", List.class, 5, TimeUnit.MINUTES, () -> {
+            LambdaQueryWrapper<Activity> query = new LambdaQueryWrapper<>();
+            query.eq(Activity::getStatus, ActivityStatus.READY);
+            List<Activity> activities = this.list(query);
+            return activityConvert.toVOList(activities);
+        });
     }
 }

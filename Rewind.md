@@ -412,6 +412,22 @@ Spring Security 的 CORS 处理和 Spring MVC 的 `@CrossOrigin` 是两个独立
 
 
 
+### 数据结构
+
+- 基本数据结构：
+
+```plaintext
+string
+hash
+list
+set
+zset
+```
+
+
+
+
+
 ### 缓存穿透
 
 - 缓存击穿指向缓存取一个缓存中不存在的值，从而打到DB。
@@ -431,6 +447,66 @@ Spring Security 的 CORS 处理和 Spring MVC 的 `@CrossOrigin` 是两个独立
      cons：有差错可能**（不合法->合法）**
 
   3. controller加校验：从请求层避免明显的参数错误。
+
+- 本项目写法：
+
+```java
+// 布隆过滤器初始化
+    @Override
+    @PostConstruct
+    public void init() {
+        this.bloomFilter = redissonClient.getBloomFilter("activityIdBloom");
+        bloomFilter.tryInit(100000L, 0.001); // 预计容量 + 期望误判率
+        List<Long> allIds = activityMapper.selectAllIds();
+        allIds.forEach(bloomFilter::add);
+        log.info("布隆过滤器初始化完成，已加载 {} 条记录", allIds.size());
+    }
+
+// 获取Key，不存在则回源加载
+    @Override
+    public <T> T getOrLoad(String key, Class<T> clazz, long ttl, TimeUnit unit, Supplier<T> supplier) {
+        T cached = get(key, clazz);
+        if (cached != null) {
+            log.debug("缓存命中: {}", key);
+            return cached;
+        }
+
+        log.debug("缓存未命中，回源加载: {}", key);
+        T value = supplier.get();
+        if (value != null) {
+            set(key, value, ttl, unit);
+        } else {
+            // 缓存空值防止穿透
+            set(key, "NULL_PLACEHOLDER", NULL_VALUE_TTL_SECONDS, TimeUnit.SECONDS);
+        }
+        return value;
+    }
+
+```
+
+- 调用
+
+```java
+    @Override
+    public ActivityVO getActivityById(Long activityId) {
+        ActivityVO vo = cacheService.getOrLoad(
+                "activity:"+activityId, // key
+                ActivityVO.class, // clazz
+                30, // ttl
+                TimeUnit.MINUTES, // unit
+                () -> {
+                    Activity activity = this.getById(activityId);
+                    if (activity == null) {
+                        throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
+                    }
+                    return activityConvert.toVO(activity);
+                } // supplier
+        );
+        return vo;
+    }
+```
+
+
 
 
 
@@ -454,6 +530,57 @@ Spring Security 的 CORS 处理和 Spring MVC 的 `@CrossOrigin` 是两个独立
 
      cons：同样舍弃一点一致性
 
+- 本项目写法：
+
+```java
+// 分布式锁版本
+	@Override
+    @SuppressWarnings("unchecked")
+    public <T> T getOrLoadWithLock(String lockKey, String cacheKey, Class<T> clazz,
+                                    long ttl, TimeUnit unit, Supplier<T> supplier) {
+        T cached = get(cacheKey, clazz);
+        if (cached != null) {
+            log.debug("缓存命中: {}", cacheKey);
+            return cached;
+        }
+		// 缓存未命中时抢夺锁
+        RLock lock = redissonClient.getLock(lockKey);
+        try {
+            if (lock.tryLock(LOCK_WAIT_SECONDS, LOCK_LEASE_SECONDS, TimeUnit.SECONDS)) {
+                // 抢到锁的情况
+                try {
+                    // 双重检查
+                    cached = get(cacheKey, clazz);
+                    if (cached != null) {
+                        return cached;
+                    }
+
+                    log.info("重建缓存: {}", cacheKey);
+                    T value = supplier.get();
+                    if (value != null) {
+                        set(cacheKey, value, ttl, unit);
+                    } else {
+                        set(cacheKey, "NULL_PLACEHOLDER", NULL_VALUE_TTL_SECONDS, TimeUnit.SECONDS);
+                    }
+                    return value;
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                // 未抢到锁的情况
+                log.warn("获取分布式锁超时: {}", lockKey);
+                // 降级，回源查找
+                return supplier.get();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return supplier.get();
+        }
+    }
+```
+
+
+
 
 
 ### 缓存雪崩
@@ -471,3 +598,15 @@ Spring Security 的 CORS 处理和 Spring MVC 的 `@CrossOrigin` 是两个独立
   2. Redis高可用集群：通过哨兵模式等保证redis不宕机
 
   3. 服务层限流、熔断、降级
+
+- 本项目写法：
+
+```java
+    @Override
+    public void set(String key, Object value, long timeout, TimeUnit unit) {
+        long baseTTL = unit.toSeconds(timeout); // 基础TTL
+        long jitter = ThreadLocalRandom.current().nextLong(baseTTL / 10); // 加入抖动，防雪崩
+        redisTemplate.opsForValue().set(key, value, baseTTL+jitter, TimeUnit.SECONDS);
+    }
+```
+

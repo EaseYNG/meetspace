@@ -12,5 +12,7 @@ public interface ActivityParticipantMapper extends BaseMapper<ActivityParticipan
 
     List<ActivityParticipant> findByParticipantId(@Param("participantId") Long participantId);
 
-    int deleteByIds(@Param("activityId") Long activityId, @Param("participantId") Long participantId);
+    int deleteBy2Ids(@Param("activityId") Long activityId, @Param("participantId") Long participantId);
+
+    ActivityParticipant findBy2Ids(@Param("activityId") Long activityId, @Param("participantId") Long participantId);
 }

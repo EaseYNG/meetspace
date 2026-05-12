@@ -15,8 +15,12 @@ MeetSpace 是一个集用户注册、登录、认证、活动创建、修改、�
 | 安全 | Spring Security + Session | 6.x |
 | 对象映射 | MapStruct + Lombok | 1.5.5 / 1.18.32 |
 | API 文档 | Knife4j (Swagger 3) | 4.5.0 |
-| 前端 | Flutter | 3.41.6-stable |
-| 构建 | Maven | 3.x |
+| 前端框架 | Vue 3 (Composition API) | 3.5.x |
+| 前端语言 | TypeScript | 5.7.x |
+| 构建（后端） | Maven | 3.x |
+| 构建（前端） | Vite | 6.x |
+| UI 库 | Element Plus | 2.9.x |
+| HTTP 客户端 | axios | 1.7.x |
 
 ## 前置环境
 
@@ -26,7 +30,7 @@ MeetSpace 是一个集用户注册、登录、认证、活动创建、修改、�
 |------|----------|------|------|
 | MySQL | 3306 | 是 | 数据库 `meetspace_db`，字符集 UTF-8 |
 | Redis | 6379 | 是 | 缓存、分布式锁、Session 存储 |
-| Elasticsearch | 9200 | 是 | 活动全文搜索，需安装 [IK 分词器](https://github.com/medcl/elasticsearch-analysis-ik) |
+| Elasticsearch | 9200 | 否（未接入） | 计划中，ES 依赖和索引配置已就绪但未实际接入，搜索暂用 MySQL `ST_Distance_Sphere` |
 
 ### 安装 IK 分词器
 
@@ -112,9 +116,17 @@ spring:
 
 或使用 IDE 运行 `MeetspaceApplication.main()`。
 
-### 5. 访问接口文档
+### 5. 启动前端（可选）
 
-启动后打开浏览器访问：
+```bash
+cd frontend-vue
+npm install    # 首次运行
+npm run dev    # → http://localhost:5173
+```
+
+Vite 已配置 proxy，`/api/*` 自动转发到后端 `http://localhost:8080`。
+
+### 6. 访问接口文档
 
 ```
 http://localhost:8080/doc.html
@@ -122,96 +134,66 @@ http://localhost:8080/doc.html
 
 ## 项目结构
 
+### 后端
+
 ```
 src/main/java/com/venus/meetspace/
 ├── MeetspaceApplication.java          # 应用入口
-├── common/
-│   ├── constant/
-│   │   └── ApiConstants.java          # API 路径常量（版本前缀等）
-│   ├── enums/
-│   │   ├── ActivityStatus.java        # READY / CLOSED / DELETED / OVER
-│   │   ├── ParticipantRole.java       # CREATOR / NORMAL
-│   │   └── ResultCode.java            # 统一响应码枚举
-│   ├── exception/
-│   │   ├── BusinessException.java     # 业务异常（ErrorCode + message）
-│   │   └── GlobalExceptionHandler.java # 全局异常处理，统一返回 Result 格式
-│   ├── result/
-│   │   ├── Result.java                # 统一响应体 {code, msg, data}
-│   │   └── PageResult.java            # 分页响应体
-│   └── type/
-│       └── LocalDateTimeTypeHandler.java # MyBatis 时间类型处理器
-├── config/
-│   ├── ElasticsearchConfig.java       # ES 仓库扫描配置
-│   ├── JacksonConfig.java             # JSON 序列化配置
-│   ├── Knife4jConfig.java             # Swagger 文档配置
-│   ├── MybatisPlusConfig.java         # MyBatis-Plus 拦截器
-│   ├── RedisConfig.java               # Redis 序列化 + Redisson + CacheManager
-│   ├── SecurityConfig.java            # Spring Security 过滤器链 + CORS
-│   └── WebMvcConfig.java              # 全局 MVC 配置
+├── common/                            # 常量、枚举、异常、统一返回
+├── config/                            # Spring Security / Redis / MyBatis-Plus / Jackson / Knife4j
 ├── controller/                        # REST 控制器
-│   ├── ActivityController.java        # /api/v1/activities/** (CRUD + 搜索 + 报名/退出)
-│   ├── ActivityParticipantController.java # /api/v1/users/me/activities/** (活动记录查询)
-│   ├── AgentController.java           # /api/v1/agents/** (RAG+LLM 预留接口)
-│   ├── AuthController.java            # /api/v1/auth/** (注册/登录/登出)
-│   ├── HealthController.java          # /api/v1/health (健康检查)
-│   └── UserController.java            # /api/v1/users/** (个人资料/主页)
-├── convert/                           # MapStruct 对象映射器
-│   ├── ActivityConvert.java
-│   └── UserConvert.java
-├── model/
-│   ├── cmd/                           # 写操作 DTO（Command）
-│   │   ├── ActivityCreateCmd.java
-│   │   ├── ActivityUpdateCmd.java
-│   │   ├── AgentRecommendCmd.java
-│   │   ├── LoginCmd.java
-│   │   ├── ProfileUpdateCmd.java
-│   │   └── RegisterCmd.java
-│   ├── entity/                        # 数据实体
-│   │   ├── Activity.java
-│   │   ├── ActivityParticipant.java
-│   │   └── User.java
-│   ├── query/                         # 查询 DTO
-│   │   └── ActivitySearchQuery.java
-│   └── vo/                            # 视图对象（Value Object）
-│       ├── ActivityVO.java
-│       ├── AgentRecommendVO.java
-│       ├── UserHomeVO.java
-│       └── UserProfileVO.java
-├── repository/                        # MyBatis Mapper（替代旧 dao/）
-│   ├── ActivityMapper.java
-│   ├── ActivityParticipantMapper.java
-│   └── UserMapper.java
-├── search/                            # Elasticsearch 搜索
-│   ├── ActivityDocument.java          # ES 索引文档模型
-│   ├── ActivitySearchRepository.java  # Spring Data ES Repository
-│   ├── ActivitySearchService.java     # ES 高级搜索服务
-│   └── ElasticsearchDataSync.java     # 启动时 MySQL → ES 全量同步
-├── security/                          # Spring Security
-│   ├── CustomUserDetails.java         # 实现 UserDetails
-│   ├── CustomUserDetailsService.java  # 从 MySQL 加载用户
-│   └── SecurityUtil.java              # 获取当前登录用户 ID
-├── service/                           # 业务逻辑层
-│   ├── ActivityFilterService.java     # 活动筛选
-│   ├── ActivityParticipantService.java
-│   ├── ActivityService.java
-│   ├── AgentService.java
-│   ├── AuthService.java
-│   ├── UserService.java
-│   └── impl/                          # 接口实现
-├── cache/                             # 缓存服务
-│   ├── CacheService.java
-│   └── impl/CacheServiceImpl.java
-└── aspect/
-    └── ActivityScheduler.java         # 定时任务：每分钟检测并关闭过期的 READY 活动
+├── convert/                           # MapStruct 映射
+├── model/                             # entity / cmd / vo / query
+├── repository/                        # MyBatis-Plus Mapper + XML
+├── service/ + impl/                   # 业务逻辑
+├── cache/ + impl/                     # Redis 缓存（穿透/击穿/雪崩防护）
+├── security/                          # Session 认证 + SecurityUtil
+└── aspect/                            # 定时任务（关闭过期活动）
+```
 
-src/main/resources/
-├── application.yml                    # 主配置文件
-├── elasticsearch/
-│   └── activity-settings.json         # ES 索引配置（分片 + IK 分词器）
-└── repository/                        # MyBatis XML 映射
-    ├── ActivityMapper.xml
-    ├── ActivityParticipantMapper.xml
-    └── UserMapper.xml
+### 前端（`frontend-vue/`）
+
+```
+src/
+├── main.ts                            # 入口：Pinia + Router + Element Plus (zh-cn)
+├── App.vue                            # 根组件，监听 session 过期自动跳转登录
+├── api/                               # axios 实例 + 各模块 API 调用
+│   ├── client.ts                      # 实例化 + 拦截器（401 清空 auth / 错误提示）
+│   ├── auth.ts                        # login / register / logout
+│   ├── activity.ts                    # CRUD + 搜索 + 报名/退出
+│   └── user.ts                        # 主页 / 资料 / 活动列表
+├── types/index.ts                     # TypeScript 接口 + ActivityStatus 枚举
+├── stores/auth.ts                     # Pinia：session 状态、checkSession 初始化
+├── router/index.ts                    # 8 条路由 + 导航守卫（await session）
+├── layouts/
+│   └── DefaultLayout.vue              # 顶部导航 + 内容区
+├── components/
+│   ├── activity/
+│   │   ├── ActivityCard.vue           # 活动卡片（状态彩色边框 + badge）
+│   │   ├── ActivityStatusBadge.vue    # 状态标签（报名中/已截止/已结束/已删除）
+│   │   └── ActivitySearchFilters.vue  # 搜索面板（时间/位置/人数）
+│   ├── auth/
+│   │   ├── LoginForm.vue              # 登录表单
+│   │   └── RegisterForm.vue           # 注册表单
+│   ├── user/
+│   │   ├── ProfileInfo.vue            # 资料展示
+│   │   └── ProfileEdit.vue            # 资料编辑表单
+│   └── common/
+│       ├── LoadingSpinner.vue
+│       └── EmptyState.vue
+├── views/
+│   ├── LoginView.vue                  # 登录页
+│   ├── RegisterView.vue               # 注册页
+│   ├── HomeView.vue                   # 首页（统计 + 推荐 + 进行中）
+│   ├── ExploreView.vue                # 搜索发现
+│   ├── ActivityDetailView.vue         # 详情 + 状态驱动操作按钮
+│   ├── ActivityFormView.vue           # 创建/编辑（共用）
+│   ├── ProfileView.vue                # 个人中心
+│   ├── MyActivitiesView.vue           # 三个 Tab：参加的/报名的/创建的
+│   └── NotFoundView.vue               # 404
+└── styles/
+    ├── variables.scss                  # 主题变量（#4CAF50 绿色）
+    └── global.scss                     # 全局样式 + Element Plus 主题色
 ```
 
 ## API 接口概览
@@ -236,13 +218,13 @@ src/main/resources/
 |------|------|------|------|
 | GET | `/api/v1/users/me/home` | 获取主页信息（资料 + 推荐活动） | 是 |
 | GET | `/api/v1/users/me/profile` | 获取个人资料 | 是 |
-| PUT | `/api/v1/users/me/profile` | 更新个人资料 | 是 |
+| PATCH | `/api/v1/users/me/profile` | 更新个人资料 | 是 |
 
 ### 活动 `/api/v1/activities`
 
 | 方法 | 路径 | 说明 | 认证 |
 |------|------|------|------|
-| POST | `/api/v1/activities` | 创建活动 | 是 |
+| POST | `/api/v1/activities/create` | 创建活动 | 是 |
 | GET | `/api/v1/activities/{id}` | 获取活动详情 | 是 |
 | PATCH | `/api/v1/activities/{id}` | 更新活动信息 | 是 |
 | DELETE | `/api/v1/activities/{id}` | 删除活动（逻辑删除） | 是 |
@@ -297,23 +279,30 @@ Client                              Server
 
 ### 缓存策略
 
+#### 缓存键表
+
 | 缓存 Key | TTL | 说明 |
 |----------|-----|------|
-| `activity:{id}` | 30 分钟 | 活动详情，写时主动更新 |
-| `user:profile:{id}` | 1 小时 | 用户个人资料 |
-| `activity:ready:list` | 5 分钟 | 就绪活动列表 |
+| `activity:{id}` | 30 分钟 | 活动详情，写时主动失效 |
+| `activity:ready:list` | 5 分钟 | 就绪活动列表，增删改/定时关闭时失效 |
+| `user:profile:{id}` | 1 小时 | 用户个人资料，更新资料时失效 |
+| `user:participated:{userId}` | 5 分钟 | 用户全部参与的活动列表，报名/退出时失效 |
+| `user:signed_up:{userId}` | 5 分钟 | 用户已报名的活动列表，报名/退出时失效 |
+| `user:created:{userId}` | 5 分钟 | 用户创建的活动列表（缓存穿透防护） |
+| `activity_participant:activity_id:{id}:participant_id:{id}` | 30 分钟 | 单个参与记录，退出时失效 |
 
-三级防护：
-- **缓存穿透**：空值缓存 60 秒，防止恶意查询不存在的 ID
-- **缓存击穿**：Redisson 分布式锁互斥重建，仅一个线程回源 DB
-- **并发报名**：`SETNX` 原子操作防止重复报名
+#### 三级防护
 
-### ES 搜索
+- **缓存穿透**：`getOrLoad` 空值缓存 60 秒，防止恶意查询不存在的 ID
+- **缓存击穿**：`getOrLoadWithLock` 基于 Redisson 分布式锁互斥重建，仅一个线程回源 DB
+- **并发报名**：`RedisTemplate.setIfAbsent`（`SETNX`）原子操作防止重复报名
+- **缓存雪崩**：`set` 方法对 TTL 添加 ±10% 随机偏移，避免大批 key 同时过期
 
-- 索引名：`meetspace_activity`
-- 中文分词：`ik_max_word`（索引）/ `ik_smart`（搜索）
-- 支持：全文搜索、地理距离过滤、时间范围、人数范围、多条件组合
-- 数据同步：应用启动时全量同步，运行时增量同步
+### ES 搜索（计划中）
+
+- 索引配置 `elasticsearch/activity-settings.json` 和文档模型 `search/` 包已就绪
+- **暂未接入**：`pom.xml` 中无 `spring-data-elasticsearch` 依赖，当前搜索使用 MySQL `findByConditions`（`ST_Distance_Sphere` 空间距离过滤）
+- 后续接入需：添加依赖 → 启用 `ElasticsearchDataSync` → 实现 `ActivitySearchService`
 
 ## License
 
