@@ -48,4 +48,7 @@ public class ActivityVO {
 
     @Schema(description = "Longitude")
     private Double longitude;
+
+    @Schema(description = "Whether the current user is a participant")
+    private Boolean isParticipant;
 }

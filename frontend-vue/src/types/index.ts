@@ -19,6 +19,7 @@ export interface ActivityVO {
   maxParticipants: number
   latitude: number | null
   longitude: number | null
+  isParticipant?: boolean
 }
 
 export interface UserProfileVO {

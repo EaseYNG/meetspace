@@ -40,11 +40,17 @@ public class CacheServiceImpl implements CacheService {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz) {
-        Object value = redisTemplate.opsForValue().get(key);
-        if (value == null) {
+        try {
+            Object value = redisTemplate.opsForValue().get(key);
+            if (value == null) {
+                return null;
+            }
+            return (T) value;
+        } catch (Exception e) {
+            log.warn("缓存反序列化失败，删除过期缓存: key={}", key, e);
+            redisTemplate.delete(key);
             return null;
         }
-        return (T) value;
     }
 
     @Override

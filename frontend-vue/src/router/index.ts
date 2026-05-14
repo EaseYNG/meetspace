@@ -75,17 +75,16 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach(async (to, _from) => {
   const auth = useAuthStore()
   if (!auth.loaded) {
     await auth.checkSession()
   }
   if (to.meta.requiresAuth && !auth.isLoggedIn()) {
-    next('/login')
-  } else if (to.meta.guest && auth.isLoggedIn()) {
-    next('/')
-  } else {
-    next()
+    return '/login'
+  }
+  if (to.meta.guest && auth.isLoggedIn()) {
+    return '/'
   }
 })
 

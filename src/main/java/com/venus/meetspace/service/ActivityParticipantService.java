@@ -17,4 +17,6 @@ public interface ActivityParticipantService extends IService<ActivityParticipant
     List<ActivityVO> getCreatedActivities(Long userId);
 
     List<ActivityVO> getSignedUpActivities(Long userId);
+
+    boolean isParticipant(Long activityId, Long userId);
 }

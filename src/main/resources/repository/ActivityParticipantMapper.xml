@@ -16,7 +16,7 @@
             a.start_time DESC
     </select>
     
-    <select id="findByActivityId" resultType="com.venus.meetspace.model.entity.ActivityParticipant">
+    <select id="findBy2Ids" resultType="com.venus.meetspace.model.entity.ActivityParticipant">
         SELECT * FROM activity_participant
         WHERE activity_id = #{activityId} AND participant_id = #{participantId}
     </select>

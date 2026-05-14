@@ -8,19 +8,19 @@
           <el-col :span="8">
             <el-card shadow="hover" class="stat-card">
               <p class="stat-label">进行中的活动</p>
-              <p class="stat-value">{{ homeData?.ongoingActivities.length ?? 0 }}</p>
+              <p class="stat-value">{{ homeData?.ongoingActivities?.length ?? 0 }}</p>
             </el-card>
           </el-col>
           <el-col :span="8">
             <el-card shadow="hover" class="stat-card">
               <p class="stat-label">推荐活动</p>
-              <p class="stat-value">{{ homeData?.recommendedActivities.length ?? 0 }}</p>
+              <p class="stat-value">{{ homeData?.recommendedActivities?.length ?? 0 }}</p>
             </el-card>
           </el-col>
           <el-col :span="8">
             <el-card shadow="hover" class="stat-card">
               <p class="stat-label">状态</p>
-              <p class="stat-value" style="color: #4CAF50">已登录</p>
+              <p class="stat-value">已登录</p>
             </el-card>
           </el-col>
         </el-row>
@@ -71,6 +71,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { getHomeAPI } from '@/api/user'
+import { useActivityActions } from '@/composables/useActivityActions'
 import type { UserHomeVO } from '@/types'
 import ActivityCard from '@/components/activity/ActivityCard.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
@@ -78,11 +79,25 @@ import EmptyState from '@/components/common/EmptyState.vue'
 
 const loading = ref(true)
 const homeData = ref<UserHomeVO | null>(null)
+const { ensureLoaded, markParticipant } = useActivityActions()
 
 onMounted(async () => {
   try {
+    await ensureLoaded()
     const res = await getHomeAPI()
-    homeData.value = res.data.data
+    const data = res.data.data
+    if (data) {
+      // 同步参与状态到 composable
+      for (const act of data.ongoingActivities ?? []) {
+        markParticipant(act.id)
+      }
+      for (const act of data.recommendedActivities ?? []) {
+        if (act.isParticipant) markParticipant(act.id)
+      }
+    }
+    homeData.value = data ?? null
+  } catch {
+    homeData.value = null
   } finally {
     loading.value = false
   }
@@ -90,45 +105,65 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+@use '../styles/variables' as *;
+
 .home {
   .section {
-    margin-bottom: 32px;
+    margin-bottom: 36px;
 
     .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     .section-title {
       font-size: 20px;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 16px;
+      color: $text;
+      letter-spacing: -0.2px;
     }
 
     .section-more {
       font-size: 14px;
-      color: #4CAF50;
+      color: $primary;
+      font-weight: 500;
+      transition: color $transition-fast;
 
       &:hover {
-        text-decoration: underline;
+        color: $primary-dark;
       }
     }
 
     .stat-card {
       text-align: center;
+      border-radius: $radius;
+      border: 1px solid $border-light;
+      transition: transform $transition, box-shadow $transition;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-md;
+      }
 
       .stat-label {
-        font-size: 14px;
-        color: #909399;
+        font-size: 13px;
+        color: $text-muted;
         margin-bottom: 8px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
       .stat-value {
-        font-size: 28px;
-        font-weight: 700;
-        color: #4CAF50;
+        font-size: 32px;
+        font-weight: 800;
+        background: linear-gradient(135deg, $primary, $accent);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
     }
   }

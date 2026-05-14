@@ -23,8 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { searchActivitiesAPI } from '@/api/activity'
+import { useActivityActions } from '@/composables/useActivityActions'
 import type { ActivityVO, ActivitySearchQuery } from '@/types'
 import ActivityCard from '@/components/activity/ActivityCard.vue'
 import ActivitySearchFilters from '@/components/activity/ActivitySearchFilters.vue'
@@ -34,10 +35,13 @@ import EmptyState from '@/components/common/EmptyState.vue'
 const loading = ref(false)
 const results = ref<ActivityVO[]>([])
 const filterRef = ref<InstanceType<typeof ActivitySearchFilters> | null>(null)
+const { ensureLoaded, markParticipant } = useActivityActions()
 
 async function handleSearch(query: ActivitySearchQuery) {
   loading.value = true
   try {
+    // 先确保参与状态已加载，以便 ActivityCard 能正确显示按钮
+    await ensureLoaded()
     const res = await searchActivitiesAPI(query)
     results.value = res.data.data ?? []
   } catch {
@@ -50,6 +54,11 @@ async function handleSearch(query: ActivitySearchQuery) {
 function handleReset() {
   results.value = []
 }
+
+onMounted(async () => {
+  const emptyQuery: ActivitySearchQuery = {}
+  await handleSearch(emptyQuery)
+})
 </script>
 
 <style scoped lang="scss">

@@ -11,6 +11,7 @@ import com.venus.meetspace.model.vo.ActivityVO;
 import com.venus.meetspace.model.vo.UserHomeVO;
 import com.venus.meetspace.model.vo.UserProfileVO;
 import com.venus.meetspace.repository.UserMapper;
+import com.venus.meetspace.service.ActivityParticipantService;
 import com.venus.meetspace.service.ActivityService;
 import com.venus.meetspace.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +27,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final UserConvert userConvert;
     private final ActivityService activityService;
     private final CacheService cacheService;
+    private final ActivityParticipantService participantService;
 
-    public UserServiceImpl(UserConvert userConvert, ActivityService activityService, CacheService cacheService) {
+    public UserServiceImpl(UserConvert userConvert, ActivityService activityService,
+                           CacheService cacheService, ActivityParticipantService participantService) {
         this.userConvert = userConvert;
         this.activityService = activityService;
         this.cacheService = cacheService;
+        this.participantService = participantService;
     }
 
     @Override
@@ -60,10 +64,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public UserHomeVO getHome(Long userId) {
         UserProfileVO profile = getProfile(userId);
         List<ActivityVO> recommended = activityService.getReadyActivities();
+        List<ActivityVO> ongoing = participantService.getParticipatedActivities(userId);
+
+        // 为推荐活动和进行中的活动设置 isParticipant
+        if (recommended != null) {
+            recommended.forEach(vo -> vo.setIsParticipant(participantService.isParticipant(vo.getId(), userId)));
+        }
+        if (ongoing != null) {
+            ongoing.forEach(vo -> vo.setIsParticipant(true));
+        }
 
         UserHomeVO home = new UserHomeVO();
         home.setProfile(profile);
         home.setRecommendedActivities(recommended);
+        home.setOngoingActivities(ongoing);
         return home;
     }
 }

@@ -16,7 +16,10 @@
             :lg="6"
             style="margin-bottom: 16px"
           >
-            <ActivityCard :activity="act" />
+            <ActivityCard
+              :activity="act"
+              @quit="(id: number) => removeFromList(participated, id)"
+            />
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -34,7 +37,10 @@
             :lg="6"
             style="margin-bottom: 16px"
           >
-            <ActivityCard :activity="act" />
+            <ActivityCard
+              :activity="act"
+              @quit="(id: number) => removeFromList(signedUp, id)"
+            />
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -52,7 +58,10 @@
             :lg="6"
             style="margin-bottom: 16px"
           >
-            <ActivityCard :activity="act" />
+            <ActivityCard
+              :activity="act"
+              @quit="(id: number) => removeFromList(created, id)"
+            />
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -67,6 +76,7 @@ import {
   getSignedUpActivitiesAPI,
   getCreatedActivitiesAPI,
 } from '@/api/user'
+import { useActivityActions } from '@/composables/useActivityActions'
 import type { ActivityVO } from '@/types'
 import ActivityCard from '@/components/activity/ActivityCard.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
@@ -76,6 +86,7 @@ const activeTab = ref('participated')
 const participated = ref<ActivityVO[]>([])
 const signedUp = ref<ActivityVO[]>([])
 const created = ref<ActivityVO[]>([])
+const { ensureLoaded, markParticipant } = useActivityActions()
 
 const loading = reactive({
   participated: false,
@@ -87,8 +98,13 @@ const loaders: Record<string, () => Promise<void>> = {
   participated: async () => {
     loading.participated = true
     try {
+      await ensureLoaded()
       const res = await getParticipatedActivitiesAPI()
-      participated.value = res.data.data ?? []
+      const list = res.data.data ?? []
+      for (const act of list) {
+        if (act.isParticipant) markParticipant(act.id)
+      }
+      participated.value = list
     } finally {
       loading.participated = false
     }
@@ -96,8 +112,13 @@ const loaders: Record<string, () => Promise<void>> = {
   'signed-up': async () => {
     loading.signedUp = true
     try {
+      await ensureLoaded()
       const res = await getSignedUpActivitiesAPI()
-      signedUp.value = res.data.data ?? []
+      const list = res.data.data ?? []
+      for (const act of list) {
+        if (act.isParticipant) markParticipant(act.id)
+      }
+      signedUp.value = list
     } finally {
       loading.signedUp = false
     }
@@ -105,12 +126,22 @@ const loaders: Record<string, () => Promise<void>> = {
   created: async () => {
     loading.created = true
     try {
+      await ensureLoaded()
       const res = await getCreatedActivitiesAPI()
-      created.value = res.data.data ?? []
+      const list = res.data.data ?? []
+      for (const act of list) {
+        if (act.isParticipant) markParticipant(act.id)
+      }
+      created.value = list
     } finally {
       loading.created = false
     }
   },
+}
+
+function removeFromList(list: ActivityVO[], id: number) {
+  const idx = list.findIndex(a => a.id === id)
+  if (idx !== -1) list.splice(idx, 1)
 }
 
 watch(activeTab, (tab) => {

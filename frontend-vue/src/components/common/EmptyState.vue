@@ -1,6 +1,8 @@
 <template>
   <div class="empty-wrap">
-    <el-icon :size="48" color="#C0C4CC"><FolderDelete /></el-icon>
+    <div class="empty-icon">
+      <el-icon :size="36" color="#9CA3AF"><FolderDelete /></el-icon>
+    </div>
     <p class="empty-text">{{ text || '暂无数据' }}</p>
   </div>
 </template>
@@ -11,18 +13,31 @@ import { FolderDelete } from '@element-plus/icons-vue'
 defineProps<{ text?: string }>()
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use '../../styles/variables' as *;
+
 .empty-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 64px 0;
-}
+  padding: 72px 0;
 
-.empty-text {
-  margin-top: 12px;
-  font-size: 14px;
-  color: #909399;
+  .empty-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: $border-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .empty-text {
+    font-size: 14px;
+    color: $text-muted;
+    font-weight: 500;
+  }
 }
 </style>

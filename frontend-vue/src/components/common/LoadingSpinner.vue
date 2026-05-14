@@ -1,30 +1,44 @@
 <template>
   <div class="loading-wrap">
-    <el-icon class="is-loading" :size="32" color="#4CAF50">
-      <Loading />
-    </el-icon>
+    <div class="spinner"></div>
     <p v-if="text" class="loading-text">{{ text }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Loading } from '@element-plus/icons-vue'
-
 defineProps<{ text?: string }>()
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use '../../styles/variables' as *;
+
 .loading-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 64px 0;
+  padding: 72px 0;
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid $border;
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  .loading-text {
+    margin-top: 16px;
+    font-size: 14px;
+    color: $text-muted;
+    font-weight: 500;
+  }
 }
 
-.loading-text {
-  margin-top: 12px;
-  font-size: 14px;
-  color: #909399;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

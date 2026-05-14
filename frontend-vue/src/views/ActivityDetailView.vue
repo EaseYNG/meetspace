@@ -35,9 +35,8 @@
       </el-descriptions>
 
       <div class="detail-actions">
-        <!-- READY + 未报名 → 报名 -->
         <el-button
-          v-if="showSignup"
+          v-if="canSignup(activity)"
           type="primary"
           :loading="actionLoading"
           @click="handleSignup"
@@ -45,9 +44,8 @@
           我要报名
         </el-button>
 
-        <!-- READY/CLOSED + 已报名 → 退出 -->
         <el-button
-          v-if="showQuit"
+          v-if="canQuit(activity)"
           type="warning"
           :loading="actionLoading"
           @click="handleQuit"
@@ -55,7 +53,6 @@
           退出活动
         </el-button>
 
-        <!-- CLOSED + 未报名 → 禁用 -->
         <el-button
           v-if="showClosedHint"
           type="info"
@@ -64,7 +61,6 @@
           报名已截止
         </el-button>
 
-        <!-- OVER/DELETED → 禁用 -->
         <el-button
           v-if="showOverHint"
           type="info"
@@ -73,7 +69,6 @@
           活动已结束
         </el-button>
 
-        <!-- READY 状态才能编辑 -->
         <el-button
           v-if="activity.status === ActivityStatus.READY"
           type="primary"
@@ -83,7 +78,6 @@
           编辑活动
         </el-button>
 
-        <!-- 非 DELETED 才能删除 -->
         <el-button
           v-if="activity.status !== ActivityStatus.DELETED"
           type="danger"
@@ -105,7 +99,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import dayjs from 'dayjs'
 import { ActivityStatus } from '@/types'
 import type { ActivityVO } from '@/types'
-import { getActivityDetailAPI, signupActivityAPI, quitActivityAPI, deleteActivityAPI } from '@/api/activity'
+import { getActivityDetailAPI, deleteActivityAPI } from '@/api/activity'
+import { useActivityActions } from '@/composables/useActivityActions'
 import ActivityStatusBadge from '@/components/activity/ActivityStatusBadge.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
@@ -115,32 +110,36 @@ const router = useRouter()
 const loading = ref(true)
 const actionLoading = ref(false)
 const activity = ref<ActivityVO | null>(null)
-const amParticipant = ref(false)
+const { canSignup, canQuit, signup, quit, ensureLoaded, markParticipant } = useActivityActions()
 
 const activityId = computed(() => Number(route.params.id))
 
-// ---- 按钮可见性 ----
-const showSignup = computed(() =>
-  activity.value?.status === ActivityStatus.READY && !amParticipant.value
-)
-const showQuit = computed(() =>
-  (activity.value?.status === ActivityStatus.READY
-    || activity.value?.status === ActivityStatus.CLOSED)
-  && amParticipant.value
-)
-const showClosedHint = computed(() =>
-  activity.value?.status === ActivityStatus.CLOSED && !amParticipant.value
-)
-const showOverHint = computed(() =>
-  activity.value?.status === ActivityStatus.OVER
-  || activity.value?.status === ActivityStatus.DELETED
-)
+const showClosedHint = computed(() => {
+  if (!activity.value) return false
+  return activity.value.status === ActivityStatus.CLOSED && !canQuit(activity.value)
+})
+
+const showOverHint = computed(() => {
+  if (!activity.value) return false
+  return (
+    activity.value.status === ActivityStatus.OVER ||
+    activity.value.status === ActivityStatus.DELETED
+  )
+})
 
 async function loadActivity() {
   loading.value = true
   try {
+    await ensureLoaded()
     const res = await getActivityDetailAPI(activityId.value)
-    activity.value = res.data.data
+    const data = res.data.data
+    if (data) {
+      // 后端详情接口已设置 isParticipant，同步到 composable
+      if (data.isParticipant) {
+        markParticipant(data.id)
+      }
+    }
+    activity.value = data ?? null
   } catch {
     activity.value = null
   } finally {
@@ -151,9 +150,8 @@ async function loadActivity() {
 async function handleSignup() {
   actionLoading.value = true
   try {
-    await signupActivityAPI(activityId.value)
-    ElMessage.success('报名成功')
-    amParticipant.value = true
+    await signup(activityId.value)
+    if (activity.value) activity.value.isParticipant = true
   } finally {
     actionLoading.value = false
   }
@@ -167,9 +165,8 @@ async function handleQuit() {
   }
   actionLoading.value = true
   try {
-    await quitActivityAPI(activityId.value)
-    ElMessage.success('已退出活动')
-    amParticipant.value = false
+    await quit(activityId.value)
+    if (activity.value) activity.value.isParticipant = false
   } finally {
     actionLoading.value = false
   }
@@ -215,11 +212,12 @@ onMounted(loadActivity)
   .detail-header {
     .detail-image {
       position: relative;
-      height: 240px;
-      border-radius: $radius;
+      height: 260px;
+      border-radius: $radius-lg;
       overflow: hidden;
-      background: #f0f0f0;
-      margin-bottom: 16px;
+      background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%);
+      margin-bottom: 20px;
+      box-shadow: $shadow-md;
 
       img {
         width: 100%;
@@ -234,36 +232,55 @@ onMounted(loadActivity)
         height: 100%;
       }
 
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 40%);
+        pointer-events: none;
+      }
+
       .detail-badge {
         position: absolute;
-        top: 12px;
-        right: 12px;
+        top: 14px;
+        right: 14px;
+        z-index: 2;
       }
     }
   }
 
   .detail-body {
-    border-radius: $radius;
+    border-radius: $radius-lg;
+    border: 1px solid $border-light;
+    box-shadow: $shadow;
+
+    :deep(.el-descriptions__label) {
+      font-weight: 500;
+      color: $text-secondary;
+    }
 
     .detail-title {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      color: $text;
+      letter-spacing: -0.3px;
     }
 
     .detail-desc {
-      font-size: 14px;
+      font-size: 15px;
       color: $text-secondary;
       margin-bottom: 24px;
+      line-height: 1.7;
     }
 
     .detail-info {
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
 
     .detail-actions {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
   }

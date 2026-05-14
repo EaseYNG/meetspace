@@ -122,10 +122,10 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
                     .map(ActivityParticipant::getActivityId)
                     .toList();
             if (activityIds.isEmpty()) {
-                return List.of();
+                return new java.util.ArrayList<>();
             }
             List<Activity> activities = activityMapper.findAllByIds(activityIds);
-            return activityConvert.toVOList(activities);
+            return new java.util.ArrayList<>(activityConvert.toVOList(activities));
         });
     }
 
@@ -139,11 +139,19 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
                     .map(ActivityParticipant::getActivityId)
                     .toList();
             if (activityIds.isEmpty()) {
-                return List.of();
+                return new java.util.ArrayList<>();
             }
             List<Activity> activities = activityMapper.findAllByIds(activityIds);
-            return activityConvert.toVOList(activities);
+            return new java.util.ArrayList<>(activityConvert.toVOList(activities));
         });
+    }
+
+    @Override
+    public boolean isParticipant(Long activityId, Long userId) {
+        LambdaQueryWrapper<ActivityParticipant> query = new LambdaQueryWrapper<>();
+        query.eq(ActivityParticipant::getActivityId, activityId)
+             .eq(ActivityParticipant::getParticipantId, userId);
+        return this.count(query) > 0;
     }
 
     @Override
@@ -156,10 +164,10 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
                     .map(ActivityParticipant::getActivityId)
                     .toList();
             if (activityIds.isEmpty()) {
-                return List.of();
+                return new java.util.ArrayList<>();
             }
             List<Activity> activities = activityMapper.findAllByIds(activityIds);
-            return activityConvert.toVOList(activities);
+            return new java.util.ArrayList<>(activityConvert.toVOList(activities));
         });
     }
 }

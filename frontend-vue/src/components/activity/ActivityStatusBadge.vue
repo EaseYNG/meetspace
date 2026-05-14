@@ -1,5 +1,5 @@
 <template>
-  <el-tag :type="tagType" :hit="true" size="small" effect="dark">
+  <el-tag :type="tagType" :hit="true" size="small" effect="dark" round>
     {{ label }}
   </el-tag>
 </template>

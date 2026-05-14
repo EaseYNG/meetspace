@@ -60,6 +60,8 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         participantMapper.insert(ap);
 
         cacheService.delete("activity:ready:list");
+        cacheService.delete("user:created:" + ownerId);
+        cacheService.delete("user:participated:" + ownerId);
         log.info("Activity created: id={}, owner={}", activity.getId(), ownerId);
         return activity.getId();
     }

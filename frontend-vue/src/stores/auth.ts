@@ -22,6 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   function setProfile(p: UserProfileVO) {
     profile.value = p
+    loaded.value = true
   }
 
   function clear() {

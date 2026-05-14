@@ -37,6 +37,14 @@ public class ActivityController {
         this.filterService = filterService;
     }
 
+    private ActivityVO enrichParticipant(ActivityVO vo) {
+        if (vo != null) {
+            Long userId = SecurityUtil.getCurrentUserId();
+            vo.setIsParticipant(participantService.isParticipant(vo.getId(), userId));
+        }
+        return vo;
+    }
+
     @PostMapping("/create")
     @Operation(summary = "Create activity", description = "Create a new activity, creator becomes the owner")
     public Result<Void> createActivity(@Valid @RequestBody ActivityCreateCmd cmd) {
@@ -49,7 +57,7 @@ public class ActivityController {
     @Operation(summary = "Get activity by ID", description = "Get detailed information of an activity")
     public Result<ActivityVO> getActivity(
             @Parameter(description = "Activity ID") @PathVariable Long activityId) {
-        return Result.success(activityService.getActivityById(activityId));
+        return Result.success(enrichParticipant(activityService.getActivityById(activityId)));
     }
 
     @PatchMapping("/{activityId}")
@@ -72,7 +80,11 @@ public class ActivityController {
     @PostMapping("/search")
     @Operation(summary = "Search activities", description = "Search activities by time range, location, participant count, etc.")
     public Result<List<ActivityVO>> searchActivities(@RequestBody ActivitySearchQuery query) {
-        return Result.success(filterService.search(query));
+        List<ActivityVO> list = filterService.search(query);
+        if (list != null) {
+            list.forEach(this::enrichParticipant);
+        }
+        return Result.success(list);
     }
 
     @PostMapping("/{activityId}/participants")

@@ -64,12 +64,20 @@ async function handleUpdate(data: ProfileUpdateRequest, done: () => void) {
 </script>
 
 <style scoped lang="scss">
+@use '../styles/variables' as *;
+
 .profile {
   max-width: 640px;
   margin: 0 auto;
 
   .profile-card {
-    border-radius: 12px;
+    border-radius: $radius;
+    border: 1px solid $border-light;
+    transition: box-shadow $transition;
+
+    &:hover {
+      box-shadow: $shadow-md;
+    }
 
     .profile-header {
       display: flex;
@@ -77,15 +85,21 @@ async function handleUpdate(data: ProfileUpdateRequest, done: () => void) {
       gap: 16px;
 
       .profile-avatar {
-        background-color: #4CAF50;
+        background: linear-gradient(135deg, $primary, $accent);
         color: #fff;
         font-size: 24px;
         font-weight: 600;
       }
 
+      h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: $text;
+      }
+
       .profile-username {
         font-size: 14px;
-        color: #909399;
+        color: $text-muted;
         margin-top: 2px;
       }
     }
@@ -99,6 +113,7 @@ async function handleUpdate(data: ProfileUpdateRequest, done: () => void) {
       h3 {
         font-size: 16px;
         font-weight: 600;
+        color: $text;
       }
     }
   }

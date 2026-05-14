@@ -28,20 +28,32 @@ public class ActivityParticipantController {
     @Operation(summary = "Get participated activities", description = "All activities the user has participated in (created or signed up)")
     public Result<List<ActivityVO>> getParticipatedActivities() {
         Long userId = SecurityUtil.getCurrentUserId();
-        return Result.success(participantService.getParticipatedActivities(userId));
+        List<ActivityVO> list = participantService.getParticipatedActivities(userId);
+        markAsParticipant(list);
+        return Result.success(list);
     }
 
     @GetMapping("/activities/created")
     @Operation(summary = "Get created activities", description = "Activities created by the current user")
     public Result<List<ActivityVO>> getCreatedActivities() {
         Long userId = SecurityUtil.getCurrentUserId();
-        return Result.success(participantService.getCreatedActivities(userId));
+        List<ActivityVO> list = participantService.getCreatedActivities(userId);
+        markAsParticipant(list);
+        return Result.success(list);
     }
 
     @GetMapping("/activities/signed-up")
     @Operation(summary = "Get signed-up activities", description = "Activities the current user has signed up for")
     public Result<List<ActivityVO>> getSignedUpActivities() {
         Long userId = SecurityUtil.getCurrentUserId();
-        return Result.success(participantService.getSignedUpActivities(userId));
+        List<ActivityVO> list = participantService.getSignedUpActivities(userId);
+        markAsParticipant(list);
+        return Result.success(list);
+    }
+
+    private void markAsParticipant(List<ActivityVO> list) {
+        if (list != null) {
+            list.forEach(vo -> vo.setIsParticipant(true));
+        }
     }
 }
