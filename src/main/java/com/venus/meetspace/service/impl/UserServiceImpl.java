@@ -1,7 +1,6 @@
 package com.venus.meetspace.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.venus.meetspace.cache.CacheService;
 import com.venus.meetspace.common.enums.ResultCode;
 import com.venus.meetspace.common.exception.BusinessException;
 import com.venus.meetspace.convert.UserConvert;
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -26,26 +24,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private final UserConvert userConvert;
     private final ActivityService activityService;
-    private final CacheService cacheService;
     private final ActivityParticipantService participantService;
 
     public UserServiceImpl(UserConvert userConvert, ActivityService activityService,
-                           CacheService cacheService, ActivityParticipantService participantService) {
+                           ActivityParticipantService participantService) {
         this.userConvert = userConvert;
         this.activityService = activityService;
-        this.cacheService = cacheService;
         this.participantService = participantService;
     }
 
     @Override
     public UserProfileVO getProfile(Long userId) {
-        return cacheService.getOrLoad("user:profile:" + userId, UserProfileVO.class, 1, TimeUnit.HOURS, () -> {
-            User user = this.getById(userId);
-            if (user == null) {
-                throw new BusinessException(ResultCode.NOT_FOUND, "User not found");
-            }
-            return userConvert.toProfileVO(user);
-        });
+        User user = this.getById(userId);
+        if (user == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "User not found");
+        }
+        return userConvert.toProfileVO(user);
     }
 
     @Override
@@ -56,7 +50,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         userConvert.updateProfile(user, cmd);
         this.updateById(user);
-        cacheService.delete("user:profile:" + userId);
         log.info("Profile updated: userId={}", userId);
     }
 
@@ -66,7 +59,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<ActivityVO> recommended = activityService.getReadyActivities();
         List<ActivityVO> ongoing = participantService.getParticipatedActivities(userId);
 
-        // 为推荐活动和进行中的活动设置 isParticipant
         if (recommended != null) {
             recommended.forEach(vo -> vo.setIsParticipant(participantService.isParticipant(vo.getId(), userId)));
         }

@@ -7,20 +7,13 @@ MeetSpace 是一个集用户注册、登录、认证、活动创建、修改、�
 | 层次 | 技术 | 版本 |
 |------|------|------|
 | 后端框架 | Spring Boot | 3.4.5 |
-| 语言 | Java | 21 |
+| 语言 | Java | 17 |
 | ORM | MyBatis-Plus | 3.5.15 |
 | 数据库 | MySQL | 8.x |
 | 缓存 | Redis + Redisson | 7.x / 3.40.2 |
-| 搜索引擎 | Elasticsearch + IK 分词器 | 8.x |
 | 安全 | Spring Security + Session | 6.x |
 | 对象映射 | MapStruct + Lombok | 1.5.5 / 1.18.32 |
-| API 文档 | Knife4j (Swagger 3) | 4.5.0 |
-| 前端框架 | Vue 3 (Composition API) | 3.5.x |
-| 前端语言 | TypeScript | 5.7.x |
 | 构建（后端） | Maven | 3.x |
-| 构建（前端） | Vite | 6.x |
-| UI 库 | Element Plus | 2.9.x |
-| HTTP 客户端 | axios | 1.7.x |
 
 ## 前置环境
 
@@ -30,14 +23,7 @@ MeetSpace 是一个集用户注册、登录、认证、活动创建、修改、�
 |------|----------|------|------|
 | MySQL | 3306 | 是 | 数据库 `meetspace_db`，字符集 UTF-8 |
 | Redis | 6379 | 是 | 缓存、分布式锁、Session 存储 |
-| Elasticsearch | 9200 | 否（未接入） | 计划中，ES 依赖和索引配置已就绪但未实际接入，搜索暂用 MySQL `ST_Distance_Sphere` |
 
-### 安装 IK 分词器
-
-```bash
-# ES 8.x 示例（版本号请对齐你的 ES 版本）
-./bin/elasticsearch-plugin install https://get.infini.cloud/elasticsearch/analysis-ik/8.15.0
-```
 
 ## 快速开始
 
@@ -151,52 +137,8 @@ src/main/java/com/venus/meetspace/
 └── aspect/                            # 定时任务（关闭过期活动）
 ```
 
-### 前端（`frontend-vue/`）
 
-```
-src/
-├── main.ts                            # 入口：Pinia + Router + Element Plus (zh-cn)
-├── App.vue                            # 根组件，监听 session 过期自动跳转登录
-├── api/                               # axios 实例 + 各模块 API 调用
-│   ├── client.ts                      # 实例化 + 拦截器（401 清空 auth / 错误提示）
-│   ├── auth.ts                        # login / register / logout
-│   ├── activity.ts                    # CRUD + 搜索 + 报名/退出
-│   └── user.ts                        # 主页 / 资料 / 活动列表
-├── types/index.ts                     # TypeScript 接口 + ActivityStatus 枚举
-├── stores/auth.ts                     # Pinia：session 状态、checkSession 初始化
-├── router/index.ts                    # 8 条路由 + 导航守卫（await session）
-├── layouts/
-│   └── DefaultLayout.vue              # 顶部导航 + 内容区
-├── components/
-│   ├── activity/
-│   │   ├── ActivityCard.vue           # 活动卡片（状态彩色边框 + badge）
-│   │   ├── ActivityStatusBadge.vue    # 状态标签（报名中/已截止/已结束/已删除）
-│   │   └── ActivitySearchFilters.vue  # 搜索面板（时间/位置/人数）
-│   ├── auth/
-│   │   ├── LoginForm.vue              # 登录表单
-│   │   └── RegisterForm.vue           # 注册表单
-│   ├── user/
-│   │   ├── ProfileInfo.vue            # 资料展示
-│   │   └── ProfileEdit.vue            # 资料编辑表单
-│   └── common/
-│       ├── LoadingSpinner.vue
-│       └── EmptyState.vue
-├── views/
-│   ├── LoginView.vue                  # 登录页
-│   ├── RegisterView.vue               # 注册页
-│   ├── HomeView.vue                   # 首页（统计 + 推荐 + 进行中）
-│   ├── ExploreView.vue                # 搜索发现
-│   ├── ActivityDetailView.vue         # 详情 + 状态驱动操作按钮
-│   ├── ActivityFormView.vue           # 创建/编辑（共用）
-│   ├── ProfileView.vue                # 个人中心
-│   ├── MyActivitiesView.vue           # 三个 Tab：参加的/报名的/创建的
-│   └── NotFoundView.vue               # 404
-└── styles/
-    ├── variables.scss                  # 主题变量（#4CAF50 绿色）
-    └── global.scss                     # 全局样式 + Element Plus 主题色
-```
-
-## API 接口概览
+## API 端点概览
 
 ### 认证 `/api/v1/auth`
 
@@ -277,32 +219,6 @@ Client                              Server
   │                                   │  SecurityContext 清除
 ```
 
-### 缓存策略
-
-#### 缓存键表
-
-| 缓存 Key | TTL | 说明 |
-|----------|-----|------|
-| `activity:{id}` | 30 分钟 | 活动详情，写时主动失效 |
-| `activity:ready:list` | 5 分钟 | 就绪活动列表，增删改/定时关闭时失效 |
-| `user:profile:{id}` | 1 小时 | 用户个人资料，更新资料时失效 |
-| `user:participated:{userId}` | 5 分钟 | 用户全部参与的活动列表，报名/退出时失效 |
-| `user:signed_up:{userId}` | 5 分钟 | 用户已报名的活动列表，报名/退出时失效 |
-| `user:created:{userId}` | 5 分钟 | 用户创建的活动列表（缓存穿透防护） |
-| `activity_participant:activity_id:{id}:participant_id:{id}` | 30 分钟 | 单个参与记录，退出时失效 |
-
-#### 三级防护
-
-- **缓存穿透**：`getOrLoad` 空值缓存 60 秒，防止恶意查询不存在的 ID
-- **缓存击穿**：`getOrLoadWithLock` 基于 Redisson 分布式锁互斥重建，仅一个线程回源 DB
-- **并发报名**：`RedisTemplate.setIfAbsent`（`SETNX`）原子操作防止重复报名
-- **缓存雪崩**：`set` 方法对 TTL 添加 ±10% 随机偏移，避免大批 key 同时过期
-
-### ES 搜索（计划中）
-
-- 索引配置 `elasticsearch/activity-settings.json` 和文档模型 `search/` 包已就绪
-- **暂未接入**：`pom.xml` 中无 `spring-data-elasticsearch` 依赖，当前搜索使用 MySQL `findByConditions`（`ST_Distance_Sphere` 空间距离过滤）
-- 后续接入需：添加依赖 → 启用 `ElasticsearchDataSync` → 实现 `ActivitySearchService`
 
 ## License
 
