@@ -1,1 +1,0 @@
-import{s as o}from"./index-DtKXXlDl.js";function n(t){return o.post("/auth/login",t)}function u(t){return o.post("/auth/register",t)}function s(){return o.post("/auth/logout")}export{s as a,n as l,u as r};
