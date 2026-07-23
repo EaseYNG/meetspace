@@ -1,6 +1,5 @@
 package com.venus.meetspace.model.vo;
 
-import com.venus.meetspace.common.enums.ActivityStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ public class ActivityVO {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private LocalDateTime signupDeadline;
-    private ActivityStatus status;
+    private Integer status;
     private Integer minParticipants;
     private Integer maxParticipants;
     private Double latitude;

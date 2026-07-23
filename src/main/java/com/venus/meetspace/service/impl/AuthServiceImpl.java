@@ -11,6 +11,7 @@ import com.venus.meetspace.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,11 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
-
-    private final UserMapper userMapper;
-    private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
-    private final SecurityContextRepository securityContextRepository;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private SecurityContextRepository securityContextRepository;
 
     public AuthServiceImpl(UserMapper userMapper,
                            AuthenticationManager authenticationManager,

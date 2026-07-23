@@ -1,7 +1,8 @@
-package com.venus.meetspace.security;
+package com.venus.meetspace.service.impl;
 
 import com.venus.meetspace.model.entity.User;
 import com.venus.meetspace.repository.UserMapper;
+import com.venus.meetspace.security.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

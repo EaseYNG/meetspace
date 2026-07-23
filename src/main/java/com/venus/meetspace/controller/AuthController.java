@@ -9,23 +9,19 @@ import com.venus.meetspace.security.CustomUserDetails;
 import com.venus.meetspace.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(ApiConstants.AUTH_PREFIX) // /api/v1/auth
 @Slf4j
 public class AuthController {
-
-    private final AuthService authService;
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
+    @Autowired
+    private AuthService authService;
 
     @PostMapping("/login")
-    public Result<UserProfileVO> login(@Valid @RequestBody LoginCmd cmd,
+    public Result<UserProfileVO> login(@RequestBody LoginCmd cmd,
                                         HttpServletRequest request,
                                         HttpServletResponse response) {
         CustomUserDetails userDetails = authService.login(cmd, request, response);
@@ -37,7 +33,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public Result<Void> register(@Valid @RequestBody RegisterCmd cmd) {
+    public Result<Void> register(@RequestBody RegisterCmd cmd) {
         authService.register(cmd);
         return Result.success(null, "Registration successful");
     }

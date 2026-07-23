@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class ActivityUpdateCmd {
+    
     private String title;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

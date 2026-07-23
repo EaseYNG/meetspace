@@ -6,6 +6,7 @@ import com.venus.meetspace.model.vo.ActivityVO;
 import com.venus.meetspace.security.SecurityUtil;
 import com.venus.meetspace.service.ActivityParticipantService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,12 +15,8 @@ import java.util.List;
 @RequestMapping(ApiConstants.USER_PREFIX + "/me")
 @Slf4j
 public class ActivityParticipantController {
-
-    private final ActivityParticipantService participantService;
-
-    public ActivityParticipantController(ActivityParticipantService participantService) {
-        this.participantService = participantService;
-    }
+    @Autowired
+    private ActivityParticipantService participantService;
 
     @GetMapping("/activities/participated")
     public Result<List<ActivityVO>> getParticipatedActivities() {

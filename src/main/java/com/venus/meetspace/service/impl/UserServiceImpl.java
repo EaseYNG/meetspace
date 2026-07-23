@@ -14,6 +14,7 @@ import com.venus.meetspace.service.ActivityParticipantService;
 import com.venus.meetspace.service.ActivityService;
 import com.venus.meetspace.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,16 +23,12 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    private final UserConvert userConvert;
-    private final ActivityService activityService;
-    private final ActivityParticipantService participantService;
-
-    public UserServiceImpl(UserConvert userConvert, ActivityService activityService,
-                           ActivityParticipantService participantService) {
-        this.userConvert = userConvert;
-        this.activityService = activityService;
-        this.participantService = participantService;
-    }
+    @Autowired
+    private UserConvert userConvert;
+    @Autowired
+    private ActivityService activityService;
+    @Autowired
+    private ActivityParticipantService participantService;
 
     @Override
     public UserProfileVO getProfile(Long userId) {
