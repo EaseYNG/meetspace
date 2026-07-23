@@ -7,8 +7,6 @@ import com.venus.meetspace.model.vo.UserHomeVO;
 import com.venus.meetspace.model.vo.UserProfileVO;
 import com.venus.meetspace.service.UserService;
 import com.venus.meetspace.security.SecurityUtil;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(ApiConstants.USER_PREFIX) // /api/v1/users
 @Slf4j
-@Tag(name = "User", description = "User profile and home page")
 public class UserController {
 
     private final UserService userService;
@@ -26,21 +23,18 @@ public class UserController {
     }
 
     @GetMapping("/me/home")
-    @Operation(summary = "Get home page", description = "Returns current user's home page with profile and recommendations")
     public Result<UserHomeVO> getHome() {
         Long userId = SecurityUtil.getCurrentUserId();
         return Result.success(userService.getHome(userId));
     }
 
     @GetMapping("/me/profile")
-    @Operation(summary = "Get profile", description = "Get current user's profile information")
     public Result<UserProfileVO> getProfile() {
         Long userId = SecurityUtil.getCurrentUserId();
         return Result.success(userService.getProfile(userId));
     }
 
     @PatchMapping("/me/profile")
-    @Operation(summary = "Update profile", description = "Update current user's profile information")
     public Result<Void> updateProfile(@Valid @RequestBody ProfileUpdateCmd cmd) {
         Long userId = SecurityUtil.getCurrentUserId();
         userService.updateProfile(userId, cmd);

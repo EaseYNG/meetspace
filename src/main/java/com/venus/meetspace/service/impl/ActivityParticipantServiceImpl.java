@@ -2,7 +2,6 @@ package com.venus.meetspace.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.venus.meetspace.cache.CacheService;
 import com.venus.meetspace.common.enums.ActivityStatus;
 import com.venus.meetspace.common.enums.ParticipantRole;
 import com.venus.meetspace.common.enums.ResultCode;
@@ -15,46 +14,31 @@ import com.venus.meetspace.repository.ActivityMapper;
 import com.venus.meetspace.repository.ActivityParticipantMapper;
 import com.venus.meetspace.service.ActivityParticipantService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
 public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticipantMapper, ActivityParticipant>
         implements ActivityParticipantService {
 
-    private final ActivityMapper activityMapper;
-    private final ActivityParticipantMapper activityParticipantMapper;
-    private final ActivityConvert activityConvert;
-    private final CacheService cacheService;
-
-    public ActivityParticipantServiceImpl(ActivityMapper activityMapper, ActivityParticipantMapper activityParticipantMapper,
-                                          ActivityConvert activityConvert, CacheService cacheService) {
-        this.activityMapper = activityMapper;
-        this.activityParticipantMapper = activityParticipantMapper;
-        this.activityConvert = activityConvert;
-        this.cacheService = cacheService;
-    }
+    @Autowired
+    private ActivityMapper activityMapper;
+    @Autowired
+    private ActivityParticipantMapper activityParticipantMapper;
+    @Autowired
+    private ActivityConvert activityConvert;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void participate(Long activityId, Long userId) {
-        Activity activity = cacheService.getOrLoad(
-                "activity:id:" + activityId,
-                Activity.class,
-                30,
-                TimeUnit.MINUTES,
-                () -> {
-                    Activity temp = activityMapper.selectById(activityId);
-                    return temp;
-                }
-        );
+        Activity activity = activityMapper.selectById(activityId);
 
-        // 状态校验
         if (activity == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
         }
@@ -65,17 +49,7 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
             throw new BusinessException(ResultCode.STATUS_ERROR, "Signup deadline has passed");
         }
 
-        // 查参加记录
-        ActivityParticipant ap = cacheService.getOrLoad(
-            "activity_participant:activity_id:" + activityId + ":participant_id:" + userId,
-            ActivityParticipant.class,
-                30,
-                TimeUnit.MINUTES,
-                () -> {
-                    ActivityParticipant temp = activityParticipantMapper.findBy2Ids(activityId, userId);
-                    return temp;
-                }
-        );
+        ActivityParticipant ap = activityParticipantMapper.findBy2Ids(activityId, userId);
         if(ap != null) {
             throw new BusinessException(ResultCode.NO_SUCH_OBJECT, "Already signed up for this activity");
         }
@@ -85,8 +59,6 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
         ap.setRole(ParticipantRole.NORMAL);
         this.save(ap);
 
-        cacheService.delete("user:participated:" + userId);
-        cacheService.delete("user:signed_up:" + userId);
         log.info("Participant signed up: userId={}, activityId={}", userId, activityId);
     }
 
@@ -107,43 +79,34 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
              .eq(ActivityParticipant::getParticipantId, userId);
         this.remove(query);
 
-        cacheService.delete("activity_participant:activity_id:" + activityId + ":participant_id:" + userId);
-        cacheService.delete("user:participated:" + userId);
-        cacheService.delete("user:signed_up:" + userId);
         log.info("Participant quit: userId={}, activityId={}", userId, activityId);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<ActivityVO> getParticipatedActivities(Long userId) {
-        return cacheService.getOrLoad("user:participated:" + userId, List.class, 5, TimeUnit.MINUTES, () -> {
-            List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
-            List<Long> activityIds = records.stream()
-                    .map(ActivityParticipant::getActivityId)
-                    .toList();
-            if (activityIds.isEmpty()) {
-                return new java.util.ArrayList<>();
-            }
-            List<Activity> activities = activityMapper.findAllByIds(activityIds);
-            return new java.util.ArrayList<>(activityConvert.toVOList(activities));
-        });
+        List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
+        List<Long> activityIds = records.stream()
+                .map(ActivityParticipant::getActivityId)
+                .toList();
+        if (activityIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Activity> activities = activityMapper.findAllByIds(activityIds);
+        return new ArrayList<>(activityConvert.toVOList(activities));
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<ActivityVO> getSignedUpActivities(Long userId) {
-        return cacheService.getOrLoad("user:signed_up:" + userId, List.class, 5, TimeUnit.MINUTES, () -> {
-            List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
-            List<Long> activityIds = records.stream()
-                    .filter(ap -> ap.getRole() == ParticipantRole.NORMAL)
-                    .map(ActivityParticipant::getActivityId)
-                    .toList();
-            if (activityIds.isEmpty()) {
-                return new java.util.ArrayList<>();
-            }
-            List<Activity> activities = activityMapper.findAllByIds(activityIds);
-            return new java.util.ArrayList<>(activityConvert.toVOList(activities));
-        });
+        List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
+        List<Long> activityIds = records.stream()
+                .filter(ap -> ap.getRole() == ParticipantRole.NORMAL)
+                .map(ActivityParticipant::getActivityId)
+                .toList();
+        if (activityIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Activity> activities = activityMapper.findAllByIds(activityIds);
+        return new ArrayList<>(activityConvert.toVOList(activities));
     }
 
     @Override
@@ -155,19 +118,16 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<ActivityVO> getCreatedActivities(Long userId) {
-        return cacheService.getOrLoad("user:created:" + userId, List.class, 5, TimeUnit.MINUTES, () -> {
-            List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
-            List<Long> activityIds = records.stream()
-                    .filter(ap -> ap.getRole() == ParticipantRole.CREATOR)
-                    .map(ActivityParticipant::getActivityId)
-                    .toList();
-            if (activityIds.isEmpty()) {
-                return new java.util.ArrayList<>();
-            }
-            List<Activity> activities = activityMapper.findAllByIds(activityIds);
-            return new java.util.ArrayList<>(activityConvert.toVOList(activities));
-        });
+        List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
+        List<Long> activityIds = records.stream()
+                .filter(ap -> ap.getRole() == ParticipantRole.CREATOR)
+                .map(ActivityParticipant::getActivityId)
+                .toList();
+        if (activityIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Activity> activities = activityMapper.findAllByIds(activityIds);
+        return new ArrayList<>(activityConvert.toVOList(activities));
     }
 }

@@ -2,7 +2,6 @@ package com.venus.meetspace.common.exception;
 
 import com.venus.meetspace.common.enums.ResultCode;
 import com.venus.meetspace.common.result.Result;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,6 +13,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    /**
+     * 处理全局业务异常
+     * @param e 抛出的业务异常
+     * @return Result结构体
+     */
     @ExceptionHandler(BusinessException.class)
     public Result<Void> handleBusinessException(BusinessException e) {
         log.warn("Business exception: code={}, msg={}", e.getCode(), e.getMessage());
@@ -27,11 +31,6 @@ public class GlobalExceptionHandler {
                 .reduce((a, b) -> a + "; " + b)
                 .orElse("Parameter validation failed");
         return Result.fail(msg, ResultCode.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public Result<Void> handleConstraintViolation(ConstraintViolationException e) {
-        return Result.fail(e.getMessage(), ResultCode.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

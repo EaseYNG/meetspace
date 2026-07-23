@@ -1,20 +1,15 @@
 package com.venus.meetspace.common.result;
 
 import com.venus.meetspace.common.enums.ResultCode;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Unified response body")
 public class Result<T> {
 
-    @Schema(description = "Status code")
     private int code;
 
-    @Schema(description = "Response message")
     private String msg;
 
-    @Schema(description = "Response data")
     private T data;
 
     public static <T> Result<T> success(T data) {
