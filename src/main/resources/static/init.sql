@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS `activity`;
 DROP TABLE IF EXISTS `user`;
 
 -- 创建用户表
-CREATE TABLE `user` (
+CREATE TABLE `users` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `nickname` VARCHAR(255) DEFAULT NULL COMMENT '昵称',
   `username` VARCHAR(255) NOT NULL COMMENT '用户名',

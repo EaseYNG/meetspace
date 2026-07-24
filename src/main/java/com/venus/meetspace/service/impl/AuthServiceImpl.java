@@ -18,7 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,15 +33,6 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private SecurityContextRepository securityContextRepository;
-
-    public AuthServiceImpl(UserMapper userMapper,
-                           AuthenticationManager authenticationManager,
-                           PasswordEncoder passwordEncoder) {
-        this.userMapper = userMapper;
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-        this.securityContextRepository = new HttpSessionSecurityContextRepository();
-    }
 
     @Override
     public CustomUserDetails login(LoginCmd cmd, HttpServletRequest request, HttpServletResponse response) {
@@ -62,7 +52,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void register(RegisterCmd cmd) {
         if (userMapper.findByUsername(cmd.getUsername()) != null) {
             throw new BusinessException(ResultCode.CONFLICT, "Username already exists");

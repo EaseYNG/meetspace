@@ -10,7 +10,6 @@ MeetSpace 是一个集用户注册、登录、认证、活动创建、修改、�
 | 语言 | Java | 17 |
 | ORM | MyBatis-Plus | 3.5.15 |
 | 数据库 | MySQL | 8.x |
-| 缓存 | Redis + Redisson | 7.x / 3.40.2 |
 | 安全 | Spring Security + Session | 6.x |
 | 对象映射 | MapStruct + Lombok | 1.5.5 / 1.18.32 |
 | 构建（后端） | Maven | 3.x |
