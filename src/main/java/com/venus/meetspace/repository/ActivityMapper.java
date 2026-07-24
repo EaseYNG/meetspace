@@ -25,4 +25,6 @@ public interface ActivityMapper extends BaseMapper<Activity> {
 
     List<Activity> findAllByIds(@Param("ids") List<Long> ids);
 
+    List<Activity> findByOwnerId(@Param("ownerId") Long ownerId);
+
 }

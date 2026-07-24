@@ -3,7 +3,7 @@
 <mapper namespace="com.venus.meetspace.repository.UserMapper">
 
     <select id="findByUsername" resultType="com.venus.meetspace.model.entity.User">
-        SELECT * FROM user WHERE username = #{username}
+        SELECT * FROM users WHERE username = #{username}
     </select>
 
 </mapper>

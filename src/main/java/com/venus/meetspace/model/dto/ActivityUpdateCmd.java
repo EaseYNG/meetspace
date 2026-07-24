@@ -1,19 +1,17 @@
-package com.venus.meetspace.model.cmd;
+package com.venus.meetspace.model.dto;
 
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class ActivityCreateCmd {
-
+public class ActivityUpdateCmd {
+    
     private String title;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private LocalDateTime signupDeadline;
     private String address;
-    private Integer minParticipants;
-    private Integer maxParticipants;
     private String image;
     private String description;
 }

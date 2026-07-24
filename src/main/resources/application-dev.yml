@@ -2,7 +2,7 @@ spring:
   application:
     name: meetspace
   datasource:
-    url: jdbc:mysql://localhost:3306/meetspace_db?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/meetspace?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,6 +21,7 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath:/repository/**.xml
+  type-enums-package: com.venus.meetspace.model.enums
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
@@ -31,3 +32,7 @@ mybatis-plus:
 logging:
   level:
     com.venus.meetspace: debug
+
+meetspace:
+  api:
+    version: /api/v1

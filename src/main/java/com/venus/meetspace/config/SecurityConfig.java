@@ -3,6 +3,7 @@ package com.venus.meetspace.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.venus.meetspace.common.enums.ResultCode;
 import com.venus.meetspace.common.result.Result;
+import com.venus.meetspace.security.CsrfProtectionFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -33,8 +34,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .addFilterBefore(new CsrfProtectionFilter(),
+                    org.springframework.security.web.csrf.CsrfFilter.class)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .anonymous(anonymous -> anonymous.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/api/v1/auth/**",
@@ -59,6 +61,12 @@ public class SecurityConfig {
                     response.setContentType("application/json;charset=UTF-8");
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     Result<Void> result = Result.fail("Not authenticated", ResultCode.UNAUTHORIZED);
+                    new ObjectMapper().writeValue(response.getOutputStream(), result);
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    Result<Void> result = Result.fail("Access denied", ResultCode.FORBIDDEN);
                     new ObjectMapper().writeValue(response.getOutputStream(), result);
                 })
             );

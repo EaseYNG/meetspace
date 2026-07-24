@@ -7,6 +7,7 @@ import com.venus.meetspace.common.exception.BusinessException;
 import com.venus.meetspace.convert.ActivityConvert;
 import com.venus.meetspace.model.entity.Activity;
 import com.venus.meetspace.model.entity.ActivityParticipant;
+import com.venus.meetspace.model.enums.ActivityStatus;
 import com.venus.meetspace.model.vo.ActivityVO;
 import com.venus.meetspace.repository.ActivityMapper;
 import com.venus.meetspace.repository.ActivityParticipantMapper;
@@ -40,7 +41,7 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
         if (activity == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
         }
-        if (activity.getStatus() != 0) {
+        if (activity.getStatus() != ActivityStatus.READY) {
             throw new BusinessException(ResultCode.STATUS_ERROR, "Activity is not open for signup");
         }
         if (activity.getSignupDeadline().isBefore(LocalDateTime.now())) {
@@ -51,6 +52,17 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
         if(ap != null) {
             throw new BusinessException(ResultCode.NO_SUCH_OBJECT, "Already signed up for this activity");
         }
+
+        // 检查最大参与人数
+        if (activity.getMaxParticipants() != null) {
+            LambdaQueryWrapper<ActivityParticipant> countQuery = new LambdaQueryWrapper<>();
+            countQuery.eq(ActivityParticipant::getActivityId, activityId);
+            long currentCount = this.count(countQuery);
+            if (currentCount >= activity.getMaxParticipants()) {
+                throw new BusinessException(ResultCode.STATUS_ERROR, "Activity has reached the maximum number of participants");
+            }
+        }
+
         ap = new ActivityParticipant();
         ap.setParticipantId(userId);
         ap.setActivityId(activityId);
@@ -66,8 +78,8 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
         if (activity == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
         }
-        if (activity.getStatus() != 0 &&
-                activity.getStatus() != 4) {
+        if (activity.getStatus() != ActivityStatus.READY &&
+                activity.getStatus() != ActivityStatus.CLOSED) {
             throw new BusinessException(ResultCode.STATUS_ERROR, "Activity has ended");
         }
 
@@ -115,14 +127,7 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
 
     @Override
     public List<ActivityVO> getCreatedActivities(Long userId) {
-        List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
-        List<Long> activityIds = records.stream()
-                .map(ActivityParticipant::getActivityId)
-                .toList();
-        if (activityIds.isEmpty()) {
-            return new ArrayList<>();
-        }
-        List<Activity> activities = activityMapper.findAllByIds(activityIds);
-        return new ArrayList<>(activityConvert.toVOList(activities));
+        List<Activity> activities = activityMapper.findByOwnerId(userId);
+        return activityConvert.toVOList(activities);
     }
 }

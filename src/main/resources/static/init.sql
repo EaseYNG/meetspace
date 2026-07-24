@@ -1,14 +1,15 @@
+-- 创建并使用数据库
+CREATE DATABASE IF NOT EXISTS `meetspace` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `meetspace`;
+
 -- 设置字符集
 /*!40101 SET NAMES utf8mb4 */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 删除已存在的表（注意顺序，先删除有外键的表）
 DROP TABLE IF EXISTS `activity_participant`;
 DROP TABLE IF EXISTS `activity`;
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `users`;
 
 -- 创建用户表
 CREATE TABLE `users` (
@@ -19,7 +20,7 @@ CREATE TABLE `users` (
   `age` INT DEFAULT NULL COMMENT '年龄',
   `gender` VARCHAR(50) DEFAULT NULL COMMENT '性别',
   `email` VARCHAR(255) DEFAULT NULL COMMENT '邮箱',
-  `phone` VARCHAR(64)               COMMENT '电话',
+  `phone` VARCHAR(64) DEFAULT NULL COMMENT '电话',
   `firstname` VARCHAR(255) DEFAULT NULL COMMENT '名',
   `lastname` VARCHAR(255) DEFAULT NULL COMMENT '姓',
   PRIMARY KEY (`id`),
@@ -36,7 +37,8 @@ CREATE TABLE `activity` (
   `start_time` DATETIME NOT NULL COMMENT '开始时间',
   `end_time` DATETIME NOT NULL COMMENT '结束时间',
   `signup_deadline` DATETIME NOT NULL COMMENT '报名截止时间',
-  `status` TINYINT NOT NULL DEFAULT 'READY' COMMENT '活动状态：READY/CLOSED/DELETED/OVER',
+  `status` TINYINT NOT NULL DEFAULT 0 COMMENT '活动状态：READY/CLOSED/DELETED/OVER',
+  `owner_id` BIGINT NOT NULL COMMENT '创建者ID',
   `min_participants` INT DEFAULT NULL COMMENT '最小参与人数',
   `max_participants` INT DEFAULT NULL COMMENT '最大参与人数',
   `latitude` DOUBLE DEFAULT NULL COMMENT '纬度',
@@ -54,7 +56,7 @@ CREATE TABLE `activity_participant` (
   KEY `idx_activity_id` (`activity_id`),
   KEY `idx_participant_id` (`participant_id`),
   CONSTRAINT `fk_activity_participant_activity` FOREIGN KEY (`activity_id`) REFERENCES `activity` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_activity_participant_user` FOREIGN KEY (`participant_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_activity_participant_user` FOREIGN KEY (`participant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='活动参与表';
 
 SET FOREIGN_KEY_CHECKS = 1;

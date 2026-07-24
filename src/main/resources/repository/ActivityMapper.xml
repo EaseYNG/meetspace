@@ -4,7 +4,7 @@
 
     <select id="findByConditions" resultType="com.venus.meetspace.model.entity.Activity">
         SELECT * FROM activity
-        WHERE status = 'READY'
+        WHERE status = 0
         <if test="startTime != null">
             AND start_time &gt;= #{startTime}
         </if>
@@ -26,7 +26,7 @@
     </select>
 
     <select id="findAllReady" resultType="com.venus.meetspace.model.entity.Activity">
-        SELECT * FROM activity WHERE status = 'READY'
+        SELECT * FROM activity WHERE status = 0
     </select>
 
     <select id="findAllByIds" resultType="com.venus.meetspace.model.entity.Activity">
@@ -38,6 +38,10 @@
 
     <select id="selectAllIds" resultType="Long">
         SELECT id FROM activity
+    </select>
+
+    <select id="findByOwnerId" resultType="com.venus.meetspace.model.entity.Activity">
+        SELECT * FROM activity WHERE owner_id = #{ownerId}
     </select>
 
 </mapper>

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.venus.meetspace.model.enums.ActivityStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -28,13 +29,10 @@ public class Activity {
     @TableField("signup_deadline")
     private LocalDateTime signupDeadline;
 
-    /**
-     * 0 - READY
-     * 1 - CLOSED
-     * 2 - DELETED
-     * 3 - OVER
-     */
-    private Integer status;
+    private ActivityStatus status;
+
+    @TableField("owner_id")
+    private Long ownerId;
 
     @TableField("min_participants")
     private Integer minParticipants;

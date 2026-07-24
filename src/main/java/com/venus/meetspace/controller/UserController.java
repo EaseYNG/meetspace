@@ -1,18 +1,18 @@
 package com.venus.meetspace.controller;
 
-import com.venus.meetspace.common.constant.ApiConstants;
 import com.venus.meetspace.common.result.Result;
-import com.venus.meetspace.model.cmd.ProfileUpdateCmd;
+import com.venus.meetspace.model.dto.ProfileUpdateCmd;
 import com.venus.meetspace.model.vo.UserHomeVO;
 import com.venus.meetspace.model.vo.UserProfileVO;
 import com.venus.meetspace.service.UserService;
 import com.venus.meetspace.security.SecurityUtil;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(ApiConstants.USER_PREFIX) // /api/v1/users
+@RequestMapping("${meetspace.api.version}/users")
 @Slf4j
 public class UserController {
     @Autowired
@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PatchMapping("/me/profile")
-    public Result<Void> updateProfile(@RequestBody ProfileUpdateCmd cmd) {
+    public Result<Void> updateProfile(@Valid @RequestBody ProfileUpdateCmd cmd) {
         Long userId = SecurityUtil.getCurrentUserId();
         userService.updateProfile(userId, cmd);
         return Result.success(null, "Profile updated");

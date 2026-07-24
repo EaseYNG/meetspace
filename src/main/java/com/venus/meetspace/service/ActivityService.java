@@ -1,8 +1,8 @@
 package com.venus.meetspace.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.venus.meetspace.model.cmd.ActivityCreateCmd;
-import com.venus.meetspace.model.cmd.ActivityUpdateCmd;
+import com.venus.meetspace.model.dto.ActivityCreateCmd;
+import com.venus.meetspace.model.dto.ActivityUpdateCmd;
 import com.venus.meetspace.model.entity.Activity;
 import com.venus.meetspace.model.vo.ActivityVO;
 

@@ -21,8 +21,8 @@ public class User {
     private String gender;
     private String email;
     private String phone;
-    @TableField(value = "first_name")
+    @TableField("firstname")
     private String firstname;
-    @TableField(value = "last_name")
+    @TableField("lastname")
     private String lastname;
 }

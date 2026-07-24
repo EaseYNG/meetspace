@@ -2,8 +2,8 @@ package com.venus.meetspace.service.impl;
 
 import com.venus.meetspace.common.enums.ResultCode;
 import com.venus.meetspace.common.exception.BusinessException;
-import com.venus.meetspace.model.cmd.LoginCmd;
-import com.venus.meetspace.model.cmd.RegisterCmd;
+import com.venus.meetspace.model.dto.LoginCmd;
+import com.venus.meetspace.model.dto.RegisterCmd;
 import com.venus.meetspace.model.entity.User;
 import com.venus.meetspace.repository.UserMapper;
 import com.venus.meetspace.security.CustomUserDetails;
@@ -47,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
 
         securityContextRepository.saveContext(context, request, response);
 
-        log.info("User logged in: {}", cmd.getUsername());
+        log.info("User logged in: id={}", ((CustomUserDetails) authentication.getPrincipal()).getId());
         return (CustomUserDetails) authentication.getPrincipal();
     }
 

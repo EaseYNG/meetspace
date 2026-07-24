@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.venus.meetspace.common.enums.ResultCode;
 import com.venus.meetspace.common.exception.BusinessException;
 import com.venus.meetspace.convert.UserConvert;
-import com.venus.meetspace.model.cmd.ProfileUpdateCmd;
+import com.venus.meetspace.model.dto.ProfileUpdateCmd;
 import com.venus.meetspace.model.entity.User;
 import com.venus.meetspace.model.vo.ActivityVO;
 import com.venus.meetspace.model.vo.UserHomeVO;

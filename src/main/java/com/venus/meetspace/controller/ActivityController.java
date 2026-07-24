@@ -1,15 +1,15 @@
 package com.venus.meetspace.controller;
 
-import com.venus.meetspace.common.constant.ApiConstants;
 import com.venus.meetspace.common.result.Result;
-import com.venus.meetspace.model.cmd.ActivityCreateCmd;
-import com.venus.meetspace.model.cmd.ActivityUpdateCmd;
+import com.venus.meetspace.model.dto.ActivityCreateCmd;
+import com.venus.meetspace.model.dto.ActivityUpdateCmd;
 import com.venus.meetspace.model.query.ActivitySearchQuery;
 import com.venus.meetspace.model.vo.ActivityVO;
 import com.venus.meetspace.security.SecurityUtil;
 import com.venus.meetspace.service.ActivityFilterService;
 import com.venus.meetspace.service.ActivityParticipantService;
 import com.venus.meetspace.service.ActivityService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(ApiConstants.ACTIVITY_PREFIX) // /api/v1/activities
+@RequestMapping("${meetspace.api.version}/activities")
 @Slf4j
 public class ActivityController {
     @Autowired
@@ -36,7 +36,7 @@ public class ActivityController {
     }
 
     @PostMapping("/create")
-    public Result<Void> createActivity(@RequestBody ActivityCreateCmd cmd) {
+    public Result<Void> createActivity(@Valid @RequestBody ActivityCreateCmd cmd) {
         Long userId = SecurityUtil.getCurrentUserId();
         activityService.createActivity(cmd, userId);
         return Result.success(null, "Activity created");
@@ -50,7 +50,7 @@ public class ActivityController {
     @PatchMapping("/{activityId}")
     public Result<Void> updateActivity(
             @PathVariable Long activityId,
-            @RequestBody ActivityUpdateCmd cmd) {
+            @Valid @RequestBody ActivityUpdateCmd cmd) {
         activityService.updateActivity(activityId, cmd);
         return Result.success(null, "Activity updated");
     }

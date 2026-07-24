@@ -1,6 +1,6 @@
 package com.venus.meetspace.service;
 
-import com.venus.meetspace.model.cmd.ProfileUpdateCmd;
+import com.venus.meetspace.model.dto.ProfileUpdateCmd;
 import com.venus.meetspace.model.vo.UserHomeVO;
 import com.venus.meetspace.model.vo.UserProfileVO;
 

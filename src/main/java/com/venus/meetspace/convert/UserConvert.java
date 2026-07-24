@@ -1,6 +1,6 @@
 package com.venus.meetspace.convert;
 
-import com.venus.meetspace.model.cmd.ProfileUpdateCmd;
+import com.venus.meetspace.model.dto.ProfileUpdateCmd;
 import com.venus.meetspace.model.entity.User;
 import com.venus.meetspace.model.vo.UserProfileVO;
 import org.mapstruct.BeanMapping;

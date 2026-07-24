@@ -1,6 +1,5 @@
 package com.venus.meetspace.controller;
 
-import com.venus.meetspace.common.constant.ApiConstants;
 import com.venus.meetspace.common.result.Result;
 import com.venus.meetspace.model.vo.ActivityVO;
 import com.venus.meetspace.security.SecurityUtil;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(ApiConstants.USER_PREFIX + "/me")
+@RequestMapping("${meetspace.api.version}/users/me")
 @Slf4j
 public class ActivityParticipantController {
     @Autowired

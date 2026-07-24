@@ -5,13 +5,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.venus.meetspace.common.enums.ResultCode;
 import com.venus.meetspace.common.exception.BusinessException;
 import com.venus.meetspace.convert.ActivityConvert;
-import com.venus.meetspace.model.cmd.ActivityCreateCmd;
-import com.venus.meetspace.model.cmd.ActivityUpdateCmd;
+import com.venus.meetspace.model.dto.ActivityCreateCmd;
+import com.venus.meetspace.model.dto.ActivityUpdateCmd;
 import com.venus.meetspace.model.entity.Activity;
-import com.venus.meetspace.model.entity.ActivityParticipant;
+import com.venus.meetspace.model.enums.ActivityStatus;
 import com.venus.meetspace.model.vo.ActivityVO;
+import com.venus.meetspace.security.SecurityUtil;
 import com.venus.meetspace.repository.ActivityMapper;
-import com.venus.meetspace.repository.ActivityParticipantMapper;
 import com.venus.meetspace.service.ActivityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,13 +25,11 @@ import java.util.List;
 public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> implements ActivityService {
 
     private final ActivityConvert activityConvert;
-    private final ActivityParticipantMapper participantMapper;
     private final ActivityMapper activityMapper;
 
     public ActivityServiceImpl(ActivityConvert activityConvert,
-                               ActivityParticipantMapper participantMapper, ActivityMapper activityMapper) {
+                               ActivityMapper activityMapper) {
         this.activityConvert = activityConvert;
-        this.participantMapper = participantMapper;
         this.activityMapper = activityMapper;
     }
 
@@ -43,12 +41,8 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         }
 
         Activity activity = activityConvert.toEntity(cmd);
+        activity.setOwnerId(ownerId);
         this.save(activity);
-
-        ActivityParticipant ap = new ActivityParticipant();
-        ap.setActivityId(activity.getId());
-        ap.setParticipantId(ownerId);
-        participantMapper.insert(ap);
 
         log.info("Activity created: id={}, owner={}", activity.getId(), ownerId);
         return activity.getId();
@@ -61,8 +55,12 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         if (activity == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
         }
-        if (activity.getStatus() == 4 ||
-                activity.getStatus() == 3) {
+        Long currentUserId = SecurityUtil.getCurrentUserId();
+        if (!activity.getOwnerId().equals(currentUserId)) {
+            throw new BusinessException(ResultCode.FORBIDDEN, "Only the owner can edit this activity");
+        }
+        if (activity.getStatus() == ActivityStatus.DELETED ||
+                activity.getStatus() == ActivityStatus.OVER) {
             throw new BusinessException(ResultCode.STATUS_ERROR, "Activity cannot be edited");
         }
 
@@ -77,7 +75,11 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         if (activity == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
         }
-        activity.setStatus(3);
+        Long currentUserId = SecurityUtil.getCurrentUserId();
+        if (!activity.getOwnerId().equals(currentUserId)) {
+            throw new BusinessException(ResultCode.FORBIDDEN, "Only the owner can delete this activity");
+        }
+        activity.setStatus(ActivityStatus.DELETED);
         this.updateById(activity);
         log.info("Activity deleted: id={}", activityId);
     }
@@ -100,7 +102,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     @Override
     public List<ActivityVO> getReadyActivities() {
         LambdaQueryWrapper<Activity> query = new LambdaQueryWrapper<>();
-        query.eq(Activity::getStatus, 0);
+        query.eq(Activity::getStatus, ActivityStatus.READY);
         List<Activity> activities = this.list(query);
         return activityConvert.toVOList(activities);
     }
