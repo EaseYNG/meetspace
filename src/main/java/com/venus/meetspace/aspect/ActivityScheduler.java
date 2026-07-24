@@ -20,13 +20,11 @@ public class ActivityScheduler {
     @Scheduled(cron = "0 * * * * *")
     public void updateActivityStatus() {
         List<Activity> readyActivities = activityMapper.findAllReady();
-        boolean anyClosed = false;
         for (Activity activity : readyActivities) {
             if (activity.getSignupDeadline() != null
                     && activity.getSignupDeadline().isBefore(LocalDateTime.now())) {
                 activity.setStatus(ActivityStatus.CLOSED);
                 activityMapper.updateById(activity);
-                anyClosed = true;
                 log.info("已更改活动状态: {} -> CLOSED", activity.getId());
             }
         }

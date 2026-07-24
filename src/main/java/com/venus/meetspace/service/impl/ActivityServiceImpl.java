@@ -14,6 +14,7 @@ import com.venus.meetspace.security.SecurityUtil;
 import com.venus.meetspace.repository.ActivityMapper;
 import com.venus.meetspace.service.ActivityService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,15 +24,10 @@ import java.util.List;
 @Service
 @Slf4j
 public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> implements ActivityService {
-
-    private final ActivityConvert activityConvert;
-    private final ActivityMapper activityMapper;
-
-    public ActivityServiceImpl(ActivityConvert activityConvert,
-                               ActivityMapper activityMapper) {
-        this.activityConvert = activityConvert;
-        this.activityMapper = activityMapper;
-    }
+    @Autowired
+    private ActivityConvert activityConvert;
+    @Autowired
+    private ActivityMapper activityMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

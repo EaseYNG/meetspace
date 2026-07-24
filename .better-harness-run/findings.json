@@ -1,0 +1,141 @@
+{
+  "summary": {
+    "projectName": "meetspace",
+    "locale": "zh-CN",
+    "modelId": "agent-work-loop-v4",
+    "reportContractVersion": 25,
+    "overview": "项目具备基础的上下文路由（AGENTS.md + general-rules.md），但测试覆盖率为零且缺少自动化验证管道，改动后无法快速获得行为反馈。",
+    "aiAgentPractice": {
+      "inspectedSurfaces": [
+        "Rules"
+      ],
+      "coverageRows": [
+        {
+          "surface": "Rules",
+          "scopes": [
+            "Project"
+          ],
+          "count": 1,
+          "paths": [
+            "AGENTS.md"
+          ]
+        },
+        {
+          "surface": "Skills",
+          "scopes": [
+            "Project"
+          ],
+          "count": 0
+        }
+      ]
+    },
+    "assignmentSummaries": [],
+    "dimensions": [
+      {
+        "id": "task-understanding",
+        "label": "任务理解",
+        "score": 59,
+        "summary": "项目指导文档存在，但 code-review-fix-plan 标记不准确，降低了上下文可信度。",
+        "findingRefs": [
+          "inaccurate-fix-plan-status"
+        ]
+      },
+      {
+        "id": "controlled-execution",
+        "label": "可控执行",
+        "score": 59,
+        "summary": "Maven 构建可运行，但缺少明确的启动诊断脚本。",
+        "findingRefs": []
+      },
+      {
+        "id": "change-validation",
+        "label": "改动验证",
+        "score": 35,
+        "summary": "5 个测试文件中 4 个为空或仅验证上下文加载，核心业务逻辑零覆盖。",
+        "findingRefs": [
+          "zero-test-coverage"
+        ]
+      },
+      {
+        "id": "reliable-delivery",
+        "label": "可靠交付",
+        "score": 35,
+        "summary": "无 CI/CD 配置文件，无自动化测试管道，交付验收完全依赖人工。",
+        "findingRefs": [
+          "no-ci-pipeline"
+        ]
+      },
+      {
+        "id": "learning-capture",
+        "label": "经验沉淀",
+        "score": 40,
+        "summary": "0 个 project Skill，重复工作流无法沉淀为可复用的自动化流程。",
+        "findingRefs": [
+          "no-project-skills"
+        ]
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "zero-test-coverage",
+      "title": "核心业务逻辑无自动化测试覆盖",
+      "severity": "High",
+      "reason": "5 个测试文件中：ActivityControllerTest、UserControllerTest、HomeControllerTest 三个 Controller 测试类完全为空（仅含类声明），MeetspaceApplicationTests 仅验证 Spring 上下文加载，MyBatisPlusTest 仅验证 Mapper 注入。ActivityServiceImpl 的 CRUD 操作、AuthServiceImpl 的登录/注册/登出流程、ActivityParticipantServiceImpl 的报名逻辑均无任何测试。code-review-fix-plan.md 将 P1-5（补充单元测试）标记为已完成，但实际测试代码不存在。",
+      "expectedOutput": [
+        "每个核心 Service 方法至少有 1 个成功路径测试和 1 个失败路径测试",
+        "mvn test 全部通过且包含有意义的断言"
+      ],
+      "expectedArtifact": "单元测试",
+      "aiFixPrompt": "/better-harness fix this issue\n\n为核心 Service 层编写单元测试，覆盖 ActivityServiceImpl、AuthServiceImpl、ActivityParticipantServiceImpl 的关键方法（成功路径 + 失败路径）。\n\n验证:\n- 运行 mvn test 确认测试通过\n- 确认测试覆盖了至少 CRUD 基本流程和权限校验",
+      "dimensionRefs": [
+        "change-validation"
+      ]
+    },
+    {
+      "id": "inaccurate-fix-plan-status",
+      "title": "code-review-fix-plan 完成状态与实际代码不一致",
+      "severity": "Medium",
+      "reason": "docs/code-review-fix-plan.md 第 5 行声称状态全部完成，但 P1-5 任务（补充单元测试）涉及的 3 个 Controller 测试文件仍为空壳。该文档作为 Agent 上下文会被读取并信任其完成声明，导致 Agent 跳过必要的测试编写工作。",
+      "expectedOutput": [
+        "code-review-fix-plan.md 中 P1-5 的状态与实际测试文件状态一致"
+      ],
+      "expectedArtifact": "文档修正",
+      "aiFixPrompt": "/better-harness fix this issue\n\n更新 docs/code-review-fix-plan.md，将 P1-5 状态从已完成改为待完成，或明确标注 P0-P2 功能修复已完成且 P1-5 测试待补充。\n\n验证:\n- 打开 code-review-fix-plan.md 确认 P1-5 的状态描述与实际代码一致\n- 确保文档不包含虚假的完成声明",
+      "dimensionRefs": [
+        "task-understanding"
+      ]
+    },
+    {
+      "id": "no-project-skills",
+      "title": "缺少项目级 Skill 覆盖重复开发工作流",
+      "severity": "Low",
+      "reason": "general-rules.md 定义了重复出现的开发流程（架构设计、CR、测试、Git），但项目配置了 0 个 project Skill。.agents/skills/ 目录下存在 14 个候选 Skill（如 brainstorming、executing-plans、systematic-debugging 等），但它们未被注册为 project Skill。这意味着每次 Agent 执行相同类型任务时，都需要从零推理流程，无法复用标准化的操作步骤和验证门禁。",
+      "expectedOutput": [
+        "至少 1 个与项目日常流程相关的 Skill 被注册为 project Skill",
+        "Skill 定义完整（trigger、procedure、output、validation）"
+      ],
+      "expectedArtifact": "Skill 配置",
+      "aiFixPrompt": "/better-harness fix this issue\n\n审查 .agents/skills/ 下与项目日常开发流程最相关的 2-3 个 Skill（如 executing-plans、requesting-code-review、verification-before-completion），确认其 trigger、procedure、output 和 validation 定义完整，然后注册为 project Skill。\n\n验证:\n- 确认选定的 Skill 在 Agent 执行对应任务时被触发\n- Skill 定义包含明确的输入、步骤、输出和验证标准",
+      "dimensionRefs": [
+        "learning-capture"
+      ]
+    },
+    {
+      "id": "no-ci-pipeline",
+      "title": "缺少 CI/CD 自动化验证管道",
+      "severity": "Medium",
+      "reason": "项目根目录和 .github/ 目录下未发现 CI 配置文件（如 GitHub Actions workflow、GitLab CI 等）。当前项目没有任何自动化测试、构建检查或合并门禁，代码变更后的验证完全依赖开发者手动执行。这与 general-rules.md 中通过后才能交付代码的要求不匹配，缺少机械化的执行和记录。",
+      "expectedOutput": [
+        "项目包含 CI 配置文件（如 .github/workflows/ci.yml）",
+        "CI 至少执行 mvn test",
+        "CI 结果可被外部查看"
+      ],
+      "expectedArtifact": "CI 配置文件",
+      "aiFixPrompt": "/better-harness fix this issue\n\n为项目添加最简 CI 配置（GitHub Actions 或等效），至少包含 mvn test 自动执行。\n\n验证:\n- CI 配置文件存在于项目根目录\n- CI 流水线在 push 时自动触发 mvn test\n- 测试失败时流水线标记为失败",
+      "dimensionRefs": [
+        "reliable-delivery"
+      ]
+    }
+  ]
+}
