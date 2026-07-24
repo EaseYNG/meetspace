@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "summary": {},
+  "dimensions": [
+    {
+      "id": "task-understanding"
+    },
+    {
+      "id": "controlled-execution"
+    },
+    {
+      "id": "change-validation"
+    },
+    {
+      "id": "reliable-delivery"
+    },
+    {
+      "id": "learning-capture"
+    }
+  ],
+  "findings": [
+    {
+      "id": "zero-test-coverage",
+      "subdimensionRefs": [
+        "relevant-check"
+      ]
+    },
+    {
+      "id": "inaccurate-fix-plan-status",
+      "subdimensionRefs": [
+        "relevant-context"
+      ]
+    },
+    {
+      "id": "no-project-skills",
+      "subdimensionRefs": [
+        "loop-engineering"
+      ]
+    },
+    {
+      "id": "no-ci-pipeline",
+      "subdimensionRefs": [
+        "acceptance-evidence"
+      ]
+    }
+  ]
+}
