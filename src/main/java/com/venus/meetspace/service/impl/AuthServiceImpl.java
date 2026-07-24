@@ -11,13 +11,13 @@ import com.venus.meetspace.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,20 +25,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
-
-    private final UserMapper userMapper;
-    private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
-    private final SecurityContextRepository securityContextRepository;
-
-    public AuthServiceImpl(UserMapper userMapper,
-                           AuthenticationManager authenticationManager,
-                           PasswordEncoder passwordEncoder) {
-        this.userMapper = userMapper;
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-        this.securityContextRepository = new HttpSessionSecurityContextRepository();
-    }
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private SecurityContextRepository securityContextRepository;
 
     @Override
     public CustomUserDetails login(LoginCmd cmd, HttpServletRequest request, HttpServletResponse response) {
@@ -58,7 +52,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void register(RegisterCmd cmd) {
         if (userMapper.findByUsername(cmd.getUsername()) != null) {
             throw new BusinessException(ResultCode.CONFLICT, "Username already exists");

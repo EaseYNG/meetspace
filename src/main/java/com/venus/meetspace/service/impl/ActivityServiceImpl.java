@@ -2,8 +2,6 @@ package com.venus.meetspace.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.venus.meetspace.common.enums.ActivityStatus;
-import com.venus.meetspace.common.enums.ParticipantRole;
 import com.venus.meetspace.common.enums.ResultCode;
 import com.venus.meetspace.common.exception.BusinessException;
 import com.venus.meetspace.convert.ActivityConvert;
@@ -45,13 +43,11 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         }
 
         Activity activity = activityConvert.toEntity(cmd);
-        activity.setStatus(ActivityStatus.READY);
         this.save(activity);
 
         ActivityParticipant ap = new ActivityParticipant();
         ap.setActivityId(activity.getId());
         ap.setParticipantId(ownerId);
-        ap.setRole(ParticipantRole.CREATOR);
         participantMapper.insert(ap);
 
         log.info("Activity created: id={}, owner={}", activity.getId(), ownerId);
@@ -65,8 +61,8 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         if (activity == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
         }
-        if (activity.getStatus() == ActivityStatus.CLOSED ||
-                activity.getStatus() == ActivityStatus.DELETED) {
+        if (activity.getStatus() == 4 ||
+                activity.getStatus() == 3) {
             throw new BusinessException(ResultCode.STATUS_ERROR, "Activity cannot be edited");
         }
 
@@ -81,7 +77,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         if (activity == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
         }
-        activity.setStatus(ActivityStatus.DELETED);
+        activity.setStatus(3);
         this.updateById(activity);
         log.info("Activity deleted: id={}", activityId);
     }
@@ -104,7 +100,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     @Override
     public List<ActivityVO> getReadyActivities() {
         LambdaQueryWrapper<Activity> query = new LambdaQueryWrapper<>();
-        query.eq(Activity::getStatus, ActivityStatus.READY);
+        query.eq(Activity::getStatus, 0);
         List<Activity> activities = this.list(query);
         return activityConvert.toVOList(activities);
     }

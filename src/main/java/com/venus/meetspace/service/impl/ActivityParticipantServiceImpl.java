@@ -2,8 +2,6 @@ package com.venus.meetspace.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.venus.meetspace.common.enums.ActivityStatus;
-import com.venus.meetspace.common.enums.ParticipantRole;
 import com.venus.meetspace.common.enums.ResultCode;
 import com.venus.meetspace.common.exception.BusinessException;
 import com.venus.meetspace.convert.ActivityConvert;
@@ -42,7 +40,7 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
         if (activity == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
         }
-        if (!activity.getStatus().equals(ActivityStatus.READY)) {
+        if (activity.getStatus() != 0) {
             throw new BusinessException(ResultCode.STATUS_ERROR, "Activity is not open for signup");
         }
         if (activity.getSignupDeadline().isBefore(LocalDateTime.now())) {
@@ -56,7 +54,6 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
         ap = new ActivityParticipant();
         ap.setParticipantId(userId);
         ap.setActivityId(activityId);
-        ap.setRole(ParticipantRole.NORMAL);
         this.save(ap);
 
         log.info("Participant signed up: userId={}, activityId={}", userId, activityId);
@@ -69,8 +66,8 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
         if (activity == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "Activity not found");
         }
-        if (!activity.getStatus().equals(ActivityStatus.READY) &&
-                !activity.getStatus().equals(ActivityStatus.CLOSED)) {
+        if (activity.getStatus() != 0 &&
+                activity.getStatus() != 4) {
             throw new BusinessException(ResultCode.STATUS_ERROR, "Activity has ended");
         }
 
@@ -99,7 +96,6 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
     public List<ActivityVO> getSignedUpActivities(Long userId) {
         List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
         List<Long> activityIds = records.stream()
-                .filter(ap -> ap.getRole() == ParticipantRole.NORMAL)
                 .map(ActivityParticipant::getActivityId)
                 .toList();
         if (activityIds.isEmpty()) {
@@ -121,7 +117,6 @@ public class ActivityParticipantServiceImpl extends ServiceImpl<ActivityParticip
     public List<ActivityVO> getCreatedActivities(Long userId) {
         List<ActivityParticipant> records = this.getBaseMapper().findByParticipantId(userId);
         List<Long> activityIds = records.stream()
-                .filter(ap -> ap.getRole() == ParticipantRole.CREATOR)
                 .map(ActivityParticipant::getActivityId)
                 .toList();
         if (activityIds.isEmpty()) {

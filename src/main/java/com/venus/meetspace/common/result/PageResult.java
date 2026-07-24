@@ -8,13 +8,9 @@ import java.util.List;
 public class PageResult<T> {
 
     private List<T> records;
-
     private long total;
-
     private long page;
-
     private long size;
-
     private long totalPages;
 
     public static <T> PageResult<T> of(List<T> records, long total, long page, long size) {

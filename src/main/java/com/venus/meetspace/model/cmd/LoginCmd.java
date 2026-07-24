@@ -6,6 +6,5 @@ import lombok.Data;
 public class LoginCmd {
 
     private String username;
-
     private String password;
 }

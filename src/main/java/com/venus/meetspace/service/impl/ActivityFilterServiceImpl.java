@@ -7,6 +7,7 @@ import com.venus.meetspace.model.vo.ActivityVO;
 import com.venus.meetspace.repository.ActivityMapper;
 import com.venus.meetspace.service.ActivityFilterService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -16,13 +17,10 @@ import java.util.List;
 @Slf4j
 public class ActivityFilterServiceImpl implements ActivityFilterService {
 
-    private final ActivityMapper activityMapper;
-    private final ActivityConvert activityConvert;
-
-    public ActivityFilterServiceImpl(ActivityMapper activityMapper, ActivityConvert activityConvert) {
-        this.activityMapper = activityMapper;
-        this.activityConvert = activityConvert;
-    }
+    @Autowired
+    private ActivityMapper activityMapper;
+    @Autowired
+    private ActivityConvert activityConvert;
 
     @Override
     public List<ActivityVO> search(ActivitySearchQuery query) {

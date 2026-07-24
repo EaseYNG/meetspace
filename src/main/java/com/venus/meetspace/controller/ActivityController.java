@@ -10,8 +10,8 @@ import com.venus.meetspace.security.SecurityUtil;
 import com.venus.meetspace.service.ActivityFilterService;
 import com.venus.meetspace.service.ActivityParticipantService;
 import com.venus.meetspace.service.ActivityService;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,18 +20,12 @@ import java.util.List;
 @RequestMapping(ApiConstants.ACTIVITY_PREFIX) // /api/v1/activities
 @Slf4j
 public class ActivityController {
-
-    private final ActivityService activityService;
-    private final ActivityParticipantService participantService;
-    private final ActivityFilterService filterService;
-
-    public ActivityController(ActivityService activityService,
-                               ActivityParticipantService participantService,
-                               ActivityFilterService filterService) {
-        this.activityService = activityService;
-        this.participantService = participantService;
-        this.filterService = filterService;
-    }
+    @Autowired
+    private ActivityService activityService;
+    @Autowired
+    private ActivityParticipantService participantService;
+    @Autowired
+    private ActivityFilterService filterService;
 
     private ActivityVO enrichParticipant(ActivityVO vo) {
         if (vo != null) {
@@ -42,7 +36,7 @@ public class ActivityController {
     }
 
     @PostMapping("/create")
-    public Result<Void> createActivity(@Valid @RequestBody ActivityCreateCmd cmd) {
+    public Result<Void> createActivity(@RequestBody ActivityCreateCmd cmd) {
         Long userId = SecurityUtil.getCurrentUserId();
         activityService.createActivity(cmd, userId);
         return Result.success(null, "Activity created");
@@ -56,7 +50,7 @@ public class ActivityController {
     @PatchMapping("/{activityId}")
     public Result<Void> updateActivity(
             @PathVariable Long activityId,
-            @Valid @RequestBody ActivityUpdateCmd cmd) {
+            @RequestBody ActivityUpdateCmd cmd) {
         activityService.updateActivity(activityId, cmd);
         return Result.success(null, "Activity updated");
     }

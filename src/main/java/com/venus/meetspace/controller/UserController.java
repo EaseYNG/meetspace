@@ -7,20 +7,16 @@ import com.venus.meetspace.model.vo.UserHomeVO;
 import com.venus.meetspace.model.vo.UserProfileVO;
 import com.venus.meetspace.service.UserService;
 import com.venus.meetspace.security.SecurityUtil;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(ApiConstants.USER_PREFIX) // /api/v1/users
 @Slf4j
 public class UserController {
-
-    private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/me/home")
     public Result<UserHomeVO> getHome() {
@@ -35,7 +31,7 @@ public class UserController {
     }
 
     @PatchMapping("/me/profile")
-    public Result<Void> updateProfile(@Valid @RequestBody ProfileUpdateCmd cmd) {
+    public Result<Void> updateProfile(@RequestBody ProfileUpdateCmd cmd) {
         Long userId = SecurityUtil.getCurrentUserId();
         userService.updateProfile(userId, cmd);
         return Result.success(null, "Profile updated");
